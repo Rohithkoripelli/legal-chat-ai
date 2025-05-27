@@ -104,6 +104,50 @@ export const useDocuments = () => {
     }
   }, [fetchDocuments]);
 
+  const downloadDocument = useCallback(async (documentId: string) => {
+    try {
+      console.log('📥 Downloading document:', documentId);
+      
+      const response = await apiRequest(`/api/documents/${documentId}/download`);
+      
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status}`);
+      }
+
+      // Check if response contains a download URL (for services like S3)
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        // If JSON response, it might contain a presigned URL
+        const data = await response.json();
+        if (data.downloadUrl) {
+          // Open the presigned URL
+          window.open(data.downloadUrl, '_blank');
+          return;
+        }
+      }
+
+      // Direct file download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `document-${documentId}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('❌ Error downloading document:', error);
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to download document'
+      }));
+      throw error;
+    }
+  }, []);
+
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
@@ -114,6 +158,8 @@ export const useDocuments = () => {
     error: state.error,
     uploadDocument,
     deleteDocument,
-    refetch: fetchDocuments
+    downloadDocument,
+    refetch: fetchDocuments,
+    refreshDocuments: fetchDocuments // Alias for compatibility
   };
 };
