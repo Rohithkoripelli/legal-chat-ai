@@ -1,63 +1,40 @@
-import axios, { AxiosResponse } from 'axios';
-import { ApiResponse } from '../types';
+// frontend/src/config/api.ts - Create this new file
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isLocalhost = window.location.hostname === 'localhost';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Determine the correct API URL
+export const API_BASE_URL = 
+  process.env.REACT_APP_API_URL || 
+  (isDevelopment && isLocalhost 
+    ? 'http://localhost:3001' 
+    : 'https://legal-chat-ai.onrender.com'); // Replace with your actual Render URL
 
-// Create axios instance with default config
-export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+console.log('🔗 API Base URL:', API_BASE_URL);
 
-// Request interceptor
-apiClient.interceptors.request.use(
-  (config) => {
-    // Add auth token if available
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+// Export API helper
+export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const defaultOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  console.log(`🌐 API Request: ${options.method || 'GET'} ${url}`);
+  
+  try {
+    const response = await fetch(url, defaultOptions);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor
-apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
+    
     return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('authToken');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+  } catch (error) {
+    console.error(`❌ API Request failed: ${url}`, error);
+    throw error;
   }
-);
-
-// Generic API methods
-export const api = {
-  get: <T>(url: string): Promise<ApiResponse<T>> =>
-    apiClient.get(url).then(res => res.data),
-  
-  post: <T>(url: string, data?: any): Promise<ApiResponse<T>> =>
-    apiClient.post(url, data).then(res => res.data),
-  
-  put: <T>(url: string, data?: any): Promise<ApiResponse<T>> =>
-    apiClient.put(url, data).then(res => res.data),
-  
-  delete: <T>(url: string): Promise<ApiResponse<T>> =>
-    apiClient.delete(url).then(res => res.data),
-  
-  upload: <T>(url: string, formData: FormData): Promise<ApiResponse<T>> =>
-    apiClient.post(url, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    }).then(res => res.data),
 };

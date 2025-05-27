@@ -1,157 +1,119 @@
-import { useState, useCallback, useEffect } from 'react';
-import { documentApi } from '../utils/api';
+// frontend/src/hooks/useDocuments.ts
+import { useState, useEffect, useCallback } from 'react';
+import { apiRequest } from '../services/api';
 
 interface Document {
   id: string;
   name: string;
   size: number;
-  uploadedAt: Date;
   type: string;
+  uploadedAt: Date;
+}
+
+interface DocumentsState {
+  documents: Document[];
+  loading: boolean;
+  error: string | null;
 }
 
 export const useDocuments = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<DocumentsState>({
+    documents: [],
+    loading: false,
+    error: null
+  });
 
   const fetchDocuments = useCallback(async () => {
     try {
-      console.log('🔍 Fetching documents');
-      setLoading(true);
-      setError(null);
-
-      const data = await documentApi.getAll();
+      setState(prev => ({ ...prev, loading: true, error: null }));
       
-      // If test route is needed
-      // const testResponse = await fetch('http://localhost:3001/api/documents/test');
-      // const testData = await testResponse.json();
-      // const data = testData.documents;
+      const response = await apiRequest('/api/documents');
+      const documents = await response.json();
       
-      if (!data) {
-        console.log('No documents found');
-        setDocuments([]);
-        return;
-      }
+      setState(prev => ({
+        ...prev,
+        documents: documents.map((doc: any) => ({
+          ...doc,
+          uploadedAt: new Date(doc.uploadedAt)
+        })),
+        loading: false
+      }));
       
-      console.log('📄 Received documents data:', data);
-      
-      const processedDocuments = Array.isArray(data) ? data.map((doc: any) => ({
-        id: doc.id || doc._id, // Handle both id formats
-        name: doc.name || doc.originalName,
-        size: doc.size,
-        type: doc.type,
-        uploadedAt: new Date(doc.uploadedAt)
-      })) : [];
-      
-      console.log('✅ Processed documents:', processedDocuments);
-      setDocuments(processedDocuments);
     } catch (error) {
       console.error('❌ Error fetching documents:', error);
-      
-      // Try test route if main route fails
-      try {
-        console.log('Trying test route as fallback');
-        const response = await fetch('http://localhost:3001/api/documents/test');
-        const data = await response.json();
-        
-        if (data && data.documents) {
-          const processedDocuments = data.documents.map((doc: any) => ({
-            id: doc.id || doc._id,
-            name: doc.name,
-            size: doc.size,
-            type: doc.type,
-            uploadedAt: new Date(doc.uploadedAt)
-          }));
-          
-          console.log('✅ Test route success:', processedDocuments);
-          setDocuments(processedDocuments);
-          return;
-        }
-      } catch (backupError) {
-        console.error('Backup route also failed:', backupError);
-      }
-      
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch documents';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to fetch documents',
+        loading: false
+      }));
     }
   }, []);
 
   const uploadDocument = useCallback(async (file: File) => {
     try {
-      console.log('📤 Uploading file:', file.name);
-      setLoading(true);
-      setError(null);
+      setState(prev => ({ ...prev, loading: true, error: null }));
+      
+      const formData = new FormData();
+      formData.append('document', file);
 
-      const data = await documentApi.upload(file);
-      console.log('✅ Upload successful:', data);
+      const response = await apiRequest('/api/documents/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {} // Remove Content-Type to let browser set it for FormData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+
+      await fetchDocuments(); // Refresh the list
       
-      // Refresh document list after upload
-      fetchDocuments();
-      
-      return data;
     } catch (error) {
-      console.error('❌ Upload error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to upload document';
-      setError(errorMessage);
+      console.error('❌ Error uploading document:', error);
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to upload document',
+        loading: false
+      }));
       throw error;
-    } finally {
-      setLoading(false);
     }
   }, [fetchDocuments]);
 
-  const deleteDocument = useCallback(async (id: string) => {
+  const deleteDocument = useCallback(async (documentId: string) => {
     try {
-      console.log('🗑️ Deleting document:', id);
-      setLoading(true);
-      setError(null);
-
-      await documentApi.delete(id);
-      console.log('✅ Document deleted successfully');
+      setState(prev => ({ ...prev, loading: true, error: null }));
       
-      // Update local state by removing the deleted document
-      setDocuments(prevDocs => prevDocs.filter(doc => doc.id !== id));
-    } catch (error) {
-      console.error('❌ Delete error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete document';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      const response = await apiRequest(`/api/documents/${documentId}`, {
+        method: 'DELETE'
+      });
 
-  const downloadDocument = useCallback(async (id: string) => {
-    try {
-      const document = documents.find(doc => doc.id === id);
-      if (!document) {
-        throw new Error('Document not found');
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
       }
+
+      await fetchDocuments(); // Refresh the list
       
-      console.log('📥 Downloading document:', document.name);
-      await documentApi.download(id, document.name);
-      console.log('✅ Download successful');
     } catch (error) {
-      console.error('❌ Download error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to download document';
-      setError(errorMessage);
+      console.error('❌ Error deleting document:', error);
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to delete document',
+        loading: false
+      }));
+      throw error;
     }
-  }, [documents]);
+  }, [fetchDocuments]);
 
   useEffect(() => {
-    console.log('🚀 useDocuments: Initial fetch');
     fetchDocuments();
   }, [fetchDocuments]);
 
   return {
-    documents,
-    loading,
-    error,
+    documents: state.documents,
+    loading: state.loading,
+    error: state.error,
     uploadDocument,
     deleteDocument,
-    downloadDocument,
-    refreshDocuments: fetchDocuments
+    refetch: fetchDocuments
   };
 };
-
-export default useDocuments;
