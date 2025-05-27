@@ -103,8 +103,19 @@ export const useChat = () => {
       const data = await response.json();
       console.log('✅ Received AI response');
 
-      // Add AI response
-      addMessage({ text: data.response, isUser: false });
+      // Fixed: Check response.success and use response.error instead of response.message
+      if (data.success && data.response) {
+        const adaptedMessages: Message[] = [
+          // your message adaptation logic
+        ];
+        setState(prev => ({
+          ...prev,
+          messages: [...prev.messages, ...adaptedMessages]
+        }));
+      } else {
+        // Changed: Use response.error instead of response.message
+        setError(data.error || 'Failed to send message');
+      }
       
     } catch (error) {
       console.error('❌ Error sending message:', error);

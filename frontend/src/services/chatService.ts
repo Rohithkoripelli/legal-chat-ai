@@ -7,7 +7,7 @@ const API_BASE_URL =
   process.env.REACT_APP_API_URL || 
   (isDevelopment && isLocalhost 
     ? 'http://localhost:3001' 
-    : 'https://your-railway-app.railway.app'); // Update with your actual Railway URL
+    : 'https://legal-chat-ai.onrender.com'); // Update with your actual Railway URL
 
 export const chatService = {
   /**
