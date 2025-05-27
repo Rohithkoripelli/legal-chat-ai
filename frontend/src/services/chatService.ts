@@ -7,7 +7,7 @@ const API_BASE_URL =
   process.env.REACT_APP_API_URL || 
   (isDevelopment && isLocalhost 
     ? 'http://localhost:3001' 
-    : 'https://legal-ai-backend.onrender.com'); // Update with your actual Railway URL
+    : 'https://your-railway-app.railway.app'); // Update with your actual Railway URL
 
 export const chatService = {
   /**
@@ -47,8 +47,11 @@ export const chatService = {
 
   /**
    * Send message to chat API
+   * @param sessionId - The chat session ID
+   * @param message - The user message
+   * @param documentIds - Optional array of document IDs
    */
-  sendMessage: async (message: string, documentIds: string[] = []) => {
+  sendMessage: async (sessionId: string, message: string, documentIds: string[] = []) => {
     try {
       console.log('📤 Sending message to chat API:', message);
       
@@ -58,6 +61,7 @@ export const chatService = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          sessionId,
           message,
           documentIds
         }),
@@ -72,6 +76,7 @@ export const chatService = {
       
       return {
         success: true,
+        data: data,
         response: data.response
       };
     } catch (error) {
