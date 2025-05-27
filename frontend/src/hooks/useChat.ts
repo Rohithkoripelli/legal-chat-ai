@@ -1,60 +1,55 @@
+// frontend/src/hooks/useChat.ts
 import { useState, useCallback } from 'react';
+import { chatService } from '../services/chatService';
 
-const API_BASE_URL = 'https://legal-chat-ai.onrender.com';  // Hardcode for now
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isLocalhost = window.location.hostname === 'localhost';
 
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
-
-interface ChatState {
-  messages: Message[];
-  isLoading: boolean;
-  error: string | null;
-}
+const API_BASE_URL = 
+  process.env.REACT_APP_API_URL || 
+  (isDevelopment && isLocalhost 
+    ? 'http://localhost:3001' 
+    : 'https://your-railway-app.railway.app');
 
 export const useChat = () => {
-  const [state, setState] = useState<ChatState>({
-    messages: [],
-    isLoading: false,
-    error: null
-  });
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentSession, setCurrentSession] = useState<any>(null);
 
-  const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
-    const newMessage: Message = {
-      ...message,
-      id: Date.now().toString(),
+  const initializeSession = async () => {
+    try {
+      const response = await chatService.createSession();
+      if (response.success && response.data) {
+        setCurrentSession(response.data);
+        setError(null);
+      } else {
+        setError(response.error || 'Failed to create session');
+      }
+    } catch (err) {
+      setError('Failed to initialize chat session');
+    }
+  };
+
+  const sendMessage = useCallback(async (message: string) => {
+    if (!message.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    // Add user message immediately
+    const userMessage = {
+      id: Date.now(),
+      text: message,
+      isUser: true,
       timestamp: new Date()
     };
-    
-    setState(prev => ({
-      ...prev,
-      messages: [...prev.messages, newMessage]
-    }));
-  }, []);
+    setMessages(prev => [...prev, userMessage]);
 
-  const setLoading = useCallback((loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading }));
-  }, []);
-
-  const setError = useCallback((error: string | null) => {
-    setState(prev => ({ ...prev, error }));
-  }, []);
-
-  const sendMessage = useCallback(async ({ message }: { message: string }) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      console.log('📤 Sending message:', message);
-
-      // Add user message immediately
-      addMessage({ text: message, isUser: true });
-
-      // Get all documents first
+      // Get document IDs if available
       let documentIds: string[] = [];
+      
       try {
         const documentsResponse = await fetch(`${API_BASE_URL}/api/documents`, {
           method: 'GET',
@@ -75,76 +70,48 @@ export const useChat = () => {
         // Continue without documents
       }
 
-      // Send message to chat API
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message,
-          documentIds
-        }),
-      });
-
-      console.log('📡 Response status:', response.status);
-
-      if (!response.ok) {
-        let errorText;
-        try {
-          const errorData = await response.json();
-          errorText = errorData.error || `Server error: ${response.status}`;
-        } catch {
-          errorText = `Network error: ${response.status} ${response.statusText}`;
-        }
-        throw new Error(errorText);
-      }
-
-      const data = await response.json();
-      console.log('✅ Received AI response');
-
-      // Fixed: Check response.success and use response.error instead of response.message
-      if (data.success && data.response) {
-        const adaptedMessages: Message[] = [
-          // your message adaptation logic
-        ];
-        setState(prev => ({
-          ...prev,
-          messages: [...prev.messages, ...adaptedMessages]
-        }));
+      // Use chatService instead of direct fetch
+      const response = await chatService.sendMessage(
+        currentSession?.sessionId || 'default-session',
+        message,
+        documentIds
+      );
+      
+      if (response.success && response.data) {
+        // Adapt the response to your message format
+        const aiMessage = {
+          id: Date.now() + 1,
+          text: response.data.response || response.response || 'No response received',
+          isUser: false,
+          timestamp: new Date(),
+          sources: response.data.sources || []
+        };
+        
+        setMessages(prev => [...prev, aiMessage]);
       } else {
-        // Changed: Use response.error instead of response.message
-        setError(data.error || 'Failed to send message');
+        // FIXED: Use response.error instead of response.message
+        setError(response.error || 'Failed to send message');
       }
-      
-    } catch (error) {
-      console.error('❌ Error sending message:', error);
-      
-      let errorMessage = 'Failed to send message';
-      if (error instanceof Error) {
-        if (error.message.includes('fetch')) {
-          errorMessage = 'Unable to connect to server. Please check if the backend is running on port 3001.';
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
-      setError(errorMessage);
-      
-      // Add error message to chat
-      addMessage({ 
-        text: `Sorry, I encountered an error: ${errorMessage}. Please ensure the backend server is running and try again.`, 
-        isUser: false 
-      });
+    } catch (err) {
+      setError('Failed to send message');
+      console.error('Chat error:', err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [addMessage, setLoading, setError]);
+  }, [currentSession]);
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setError(null);
+  }, []);
 
   return {
-    messages: state.messages,
-    isLoading: state.isLoading,
-    error: state.error,
-    sendMessage
+    messages,
+    isLoading,
+    error,
+    sendMessage,
+    clearMessages,
+    initializeSession,
+    currentSession
   };
 };
