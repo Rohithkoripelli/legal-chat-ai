@@ -1,42 +1,18 @@
-import { api } from './api';
-import { ChatSession, Message, ApiResponse } from '../types';
+// frontend/src/services/chatService.ts
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Replace with your actual Render URL
 
 export const chatService = {
-  /**
-   * Create new chat session
-   */
-  createSession: async (documentIds?: string[]): Promise<ApiResponse<ChatSession>> => {
-    return api.post<ChatSession>('/chat/sessions', { documentIds });
-  },
-
-  /**
-   * Send message
-   */
-  sendMessage: async (sessionId: string, content: string): Promise<ApiResponse<{
-    userMessage: Message;
-    aiMessage: Message;
-  }>> => {
-    return api.post('/chat/message', { sessionId, content });
-  },
-
-  /**
-   * Get chat history
-   */
-  getChatHistory: async (sessionId: string, limit = 50, offset = 0): Promise<ApiResponse<Message[]>> => {
-    return api.get<Message[]>(`/chat/sessions/${sessionId}/history?limit=${limit}&offset=${offset}`);
-  },
-
-  /**
-   * Get all sessions
-   */
-  getSessions: async (): Promise<ApiResponse<ChatSession[]>> => {
-    return api.get<ChatSession[]>('/chat/sessions');
-  },
-
-  /**
-   * End session
-   */
-  endSession: async (sessionId: string): Promise<ApiResponse<void>> => {
-    return api.put<void>(`/chat/sessions/${sessionId}/end`);
-  },
+  sendMessage: async (message: string, documentIds: string[] = []) => {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, documentIds }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  }
 };

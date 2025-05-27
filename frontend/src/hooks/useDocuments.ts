@@ -1,6 +1,7 @@
 // frontend/src/hooks/useDocuments.ts
 import { useState, useEffect, useCallback } from 'react';
-import { apiRequest } from '../services/api';
+
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Replace with your actual Render URL
 
 interface Document {
   id: string;
@@ -10,142 +11,55 @@ interface Document {
   uploadedAt: Date;
 }
 
-interface DocumentsState {
-  documents: Document[];
-  loading: boolean;
-  error: string | null;
-}
-
 export const useDocuments = () => {
-  const [state, setState] = useState<DocumentsState>({
-    documents: [],
-    loading: false,
-    error: null
-  });
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchDocuments = useCallback(async () => {
     try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
+      setLoading(true);
+      setError(null);
       
-      const response = await apiRequest('/api/documents');
-      const documents = await response.json();
+      const response = await fetch(`${API_BASE_URL}/api/documents`);
+      if (!response.ok) throw new Error('Failed to fetch documents');
       
-      setState(prev => ({
-        ...prev,
-        documents: documents.map((doc: any) => ({
-          ...doc,
-          uploadedAt: new Date(doc.uploadedAt)
-        })),
-        loading: false
-      }));
-      
-    } catch (error) {
-      console.error('❌ Error fetching documents:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to fetch documents',
-        loading: false
-      }));
+      const data = await response.json();
+      setDocuments(data.map((doc: any) => ({
+        ...doc,
+        uploadedAt: new Date(doc.uploadedAt)
+      })));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch documents');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   const uploadDocument = useCallback(async (file: File) => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
-      const formData = new FormData();
-      formData.append('document', file);
+    const formData = new FormData();
+    formData.append('document', file);
 
-      const response = await apiRequest('/api/documents/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {} // Remove Content-Type to let browser set it for FormData
-      });
+    const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
+      method: 'POST',
+      body: formData,
+    });
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
-      await fetchDocuments(); // Refresh the list
-      
-    } catch (error) {
-      console.error('❌ Error uploading document:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to upload document',
-        loading: false
-      }));
-      throw error;
-    }
+    if (!response.ok) throw new Error('Upload failed');
+    await fetchDocuments();
   }, [fetchDocuments]);
 
-  const deleteDocument = useCallback(async (documentId: string) => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
-      const response = await apiRequest(`/api/documents/${documentId}`, {
-        method: 'DELETE'
-      });
+  const deleteDocument = useCallback(async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/documents/${id}`, {
+      method: 'DELETE',
+    });
 
-      if (!response.ok) {
-        throw new Error(`Delete failed: ${response.status}`);
-      }
-
-      await fetchDocuments(); // Refresh the list
-      
-    } catch (error) {
-      console.error('❌ Error deleting document:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to delete document',
-        loading: false
-      }));
-      throw error;
-    }
+    if (!response.ok) throw new Error('Delete failed');
+    await fetchDocuments();
   }, [fetchDocuments]);
 
-  const downloadDocument = useCallback(async (documentId: string) => {
-    try {
-      console.log('📥 Downloading document:', documentId);
-      
-      const response = await apiRequest(`/api/documents/${documentId}/download`);
-      
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.status}`);
-      }
-
-      // Check if response contains a download URL (for services like S3)
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
-        // If JSON response, it might contain a presigned URL
-        const data = await response.json();
-        if (data.downloadUrl) {
-          // Open the presigned URL
-          window.open(data.downloadUrl, '_blank');
-          return;
-        }
-      }
-
-      // Direct file download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `document-${documentId}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      
-    } catch (error) {
-      console.error('❌ Error downloading document:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to download document'
-      }));
-      throw error;
-    }
+  const downloadDocument = useCallback(async (id: string) => {
+    window.open(`${API_BASE_URL}/api/documents/${id}/download`, '_blank');
   }, []);
 
   useEffect(() => {
@@ -153,13 +67,13 @@ export const useDocuments = () => {
   }, [fetchDocuments]);
 
   return {
-    documents: state.documents,
-    loading: state.loading,
-    error: state.error,
+    documents,
+    loading,
+    error,
     uploadDocument,
     deleteDocument,
     downloadDocument,
     refetch: fetchDocuments,
-    refreshDocuments: fetchDocuments // Alias for compatibility
+    refreshDocuments: fetchDocuments
   };
 };
