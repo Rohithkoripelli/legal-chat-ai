@@ -1,5 +1,6 @@
-// backend/src/controllers/documentController.ts - ENHANCED VERSION
+// backend/src/controllers/documentController.ts - FIXED VERSION
 import { Request, Response } from 'express';
+import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { promises as fsPromises } from 'fs';
@@ -7,7 +8,12 @@ import Document from '../models/Document';
 import { extractTextFromDocument } from '../services/documentService';
 import { vectorizeDocument } from '../services/vectorizationService';
 
-export const uploadDocument = async (req: Request, res: Response) => {
+// Extend Request interface to include multer file
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
+
+export const uploadDocument = async (req: MulterRequest, res: Response) => {
   try {
     console.log('📂 Upload request received');
     

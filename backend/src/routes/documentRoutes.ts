@@ -1,10 +1,15 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import Document from '../models/Document';
 import * as documentController from '../controllers/documentController';
 
 const router = express.Router();
+
+// Extend Request interface to include multer file
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -23,7 +28,7 @@ const upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
-  fileFilter: (req, file, cb: any) => {
+  fileFilter: (req: MulterRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Check file type
     const allowedTypes = /\.(pdf|doc|docx|txt|rtf)$/i;
     const extname = allowedTypes.test(path.extname(file.originalname));
@@ -40,7 +45,7 @@ const upload = multer({
 
 // Test route to verify document list format
 // Must be before the :id routes to avoid conflict!
-router.get('/test', async (req, res) => {
+router.get('/test', async (req: Request, res: Response) => {
   try {
     const documents = await Document.find().sort({ uploadedAt: -1 });
     
