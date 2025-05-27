@@ -7,9 +7,44 @@ const API_BASE_URL =
   process.env.REACT_APP_API_URL || 
   (isDevelopment && isLocalhost 
     ? 'http://localhost:3001' 
-    : 'https://legal-ai-backend.onrender.com'); // Update with your actual Render URL
+    : 'https://legal-ai-backend.onrender.com'); // Update with your actual Railway URL
 
 export const chatService = {
+  /**
+   * Create a new chat session
+   */
+  createSession: async () => {
+    try {
+      console.log('📤 Creating new chat session');
+      
+      const response = await fetch(`${API_BASE_URL}/api/chat/session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Chat session created:', data);
+      
+      return {
+        success: true,
+        data: data
+      };
+    } catch (error) {
+      console.error('❌ Failed to create chat session:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to create session'
+      };
+    }
+  },
+
   /**
    * Send message to chat API
    */
