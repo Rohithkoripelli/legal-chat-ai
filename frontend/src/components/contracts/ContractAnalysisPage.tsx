@@ -84,7 +84,7 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
     try {
       setAnalyzing(true);
       setError(null);
-      const response = await fetch(`http://localhost:3001/api/contracts/analyze/${documentId}`, {
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analyze/${documentId}`, {
         method: 'POST'
       });
       if (!response.ok) throw new Error('Analysis failed');
