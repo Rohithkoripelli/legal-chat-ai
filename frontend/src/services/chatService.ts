@@ -1,13 +1,5 @@
 // frontend/src/services/chatService.ts
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isLocalhost = window.location.hostname === 'localhost';
-
-// Determine the correct API URL
-const API_BASE_URL = 
-  process.env.REACT_APP_API_URL || 
-  (isDevelopment && isLocalhost 
-    ? 'http://localhost:3001' 
-    : 'https://legal-chat-ai.onrender.com'); // Update with your actual Railway URL
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Update with your actual Render URL
 
 export const chatService = {
   /**
@@ -47,9 +39,6 @@ export const chatService = {
 
   /**
    * Send message to chat API
-   * @param sessionId - The chat session ID
-   * @param message - The user message
-   * @param documentIds - Optional array of document IDs
    */
   sendMessage: async (sessionId: string, message: string, documentIds: string[] = []) => {
     try {
@@ -77,7 +66,7 @@ export const chatService = {
       return {
         success: true,
         data: data,
-        response: data.response
+        response: data.response // Make sure response is available at top level too
       };
     } catch (error) {
       console.error('❌ Chat service error:', error);

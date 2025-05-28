@@ -2,14 +2,7 @@
 import { useState, useCallback } from 'react';
 import { chatService } from '../services/chatService';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isLocalhost = window.location.hostname === 'localhost';
-
-const API_BASE_URL = 
-  process.env.REACT_APP_API_URL || 
-  (isDevelopment && isLocalhost 
-    ? 'http://localhost:3001' 
-    : 'https://legal-chat-ai.onrender.com'); // Your Render URL
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Update with your actual Render URL
 
 export const useChat = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -31,7 +24,7 @@ export const useChat = () => {
     }
   };
 
-  // FIXED: Changed parameter to match how it's called from ChatPage
+  // This function receives { message: string } from App.tsx
   const sendMessage = useCallback(async ({ message }: { message: string }) => {
     if (!message.trim()) return;
 
@@ -71,30 +64,51 @@ export const useChat = () => {
         // Continue without documents
       }
 
-      // Use chatService
+      // Call chatService.sendMessage
       const response = await chatService.sendMessage(
         currentSession?.sessionId || 'default-session',
         message,
         documentIds
       );
       
-      if (response.success && response.data) {
-        // Add AI response
+      if (response.success) {
+        // SUCCESS: Extract the AI response
+        const aiResponseText = response.data?.response || response.response || 'No response received';
+        
         const aiMessage = {
           id: Date.now() + 1,
-          text: response.data.response || response.response || 'No response received',
+          text: aiResponseText,
           isUser: false,
-          timestamp: new Date(),
-          sources: response.data.sources || []
+          timestamp: new Date()
         };
         
         setMessages(prev => [...prev, aiMessage]);
       } else {
+        // FAILURE: Show error message
+        console.error('Chat service error:', response.error);
         setError(response.error || 'Failed to send message');
+        
+        // Add error message to chat
+        const errorMessage = {
+          id: Date.now() + 1,
+          text: 'Sorry, I encountered an error. Please try again.',
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
       }
     } catch (err) {
-      setError('Failed to send message');
       console.error('Chat error:', err);
+      setError('Failed to send message');
+      
+      // Add error message to chat
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: 'Sorry, I encountered an error. Please try again.',
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
