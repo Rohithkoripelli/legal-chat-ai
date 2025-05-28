@@ -1,42 +1,64 @@
-import { api } from './api';
-import { Document, ApiResponse } from '../types';
+// frontend/src/services/documentService.ts
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Your Render URL
 
 export const documentService = {
   /**
    * Upload a document
    */
-  uploadDocument: async (file: File): Promise<ApiResponse<Document>> => {
+  uploadDocument: async (file: File) => {
     const formData = new FormData();
     formData.append('document', file);
     
-    return api.upload<Document>('/documents/upload', formData);
+    const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status}`);
+    }
+
+    return await response.json();
   },
 
   /**
    * Get all documents
    */
-  getDocuments: async (): Promise<ApiResponse<Document[]>> => {
-    return api.get<Document[]>('/documents');
+  getDocuments: async () => {
+    const response = await fetch(`${API_BASE_URL}/api/documents`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch documents: ${response.status}`);
+    }
+
+    return await response.json();
   },
 
   /**
    * Get single document
    */
-  getDocument: async (id: string): Promise<ApiResponse<Document>> => {
-    return api.get<Document>(`/documents/${id}`);
+  getDocument: async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/documents/${id}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch document: ${response.status}`);
+    }
+
+    return await response.json();
   },
 
   /**
    * Delete document
    */
-  deleteDocument: async (id: string): Promise<ApiResponse<void>> => {
-    return api.delete<void>(`/documents/${id}`);
-  },
+  deleteDocument: async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/documents/${id}`, {
+      method: 'DELETE',
+    });
 
-  /**
-   * Get processing status
-   */
-  getProcessingStatus: async (id: string): Promise<ApiResponse<{ status: string }>> => {
-    return api.get<{ status: string }>(`/documents/${id}/status`);
+    if (!response.ok) {
+      throw new Error(`Failed to delete document: ${response.status}`);
+    }
+
+    return await response.json();
   },
 };
