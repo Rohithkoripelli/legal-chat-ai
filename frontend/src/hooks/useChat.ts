@@ -1,37 +1,20 @@
 // frontend/src/hooks/useChat.ts
 import { useState, useCallback } from 'react';
-import { chatService } from '../services/chatService';
 
-const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Update with your actual Render URL
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com'; // Update with your Render URL
 
 export const useChat = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentSession, setCurrentSession] = useState<any>(null);
 
-  const initializeSession = async () => {
-    try {
-      const response = await chatService.createSession();
-      if (response.success && response.data) {
-        setCurrentSession(response.data);
-        setError(null);
-      } else {
-        setError(response.error || 'Failed to create session');
-      }
-    } catch (err) {
-      setError('Failed to initialize chat session');
-    }
-  };
-
-  // This function receives { message: string } from App.tsx
   const sendMessage = useCallback(async ({ message }: { message: string }) => {
     if (!message.trim()) return;
 
     setIsLoading(true);
     setError(null);
 
-    // Add user message immediately
+    // Add user message
     const userMessage = {
       id: Date.now(),
       text: message,
@@ -41,78 +24,35 @@ export const useChat = () => {
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      // Get document IDs if available
-      let documentIds: string[] = [];
-      
-      try {
-        const documentsResponse = await fetch(`${API_BASE_URL}/api/documents`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+      // Simple fetch to your API
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, documentIds: [] }),
+      });
 
-        if (documentsResponse.ok) {
-          const documentsData = await documentsResponse.json();
-          documentIds = documentsData.map((doc: any) => doc.id);
-          console.log('📄 Including document IDs:', documentIds);
-        } else {
-          console.warn('Could not fetch documents, proceeding without them');
-        }
-      } catch (docError) {
-        console.warn('Error fetching documents:', docError);
-        // Continue without documents
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
       }
 
-      // Call chatService.sendMessage
-      const response = await chatService.sendMessage(
-        currentSession?.sessionId || 'default-session',
-        message,
-        documentIds
-      );
+      const data = await response.json();
       
-      if (response.success) {
-        // SUCCESS: Extract the AI response
-        const aiResponseText = response.data?.response || response.response || 'No response received';
-        
-        const aiMessage = {
-          id: Date.now() + 1,
-          text: aiResponseText,
-          isUser: false,
-          timestamp: new Date()
-        };
-        
-        setMessages(prev => [...prev, aiMessage]);
-      } else {
-        // FAILURE: Show error message
-        console.error('Chat service error:', response.error);
-        setError(response.error || 'Failed to send message');
-        
-        // Add error message to chat
-        const errorMessage = {
-          id: Date.now() + 1,
-          text: 'Sorry, I encountered an error. Please try again.',
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorMessage]);
-      }
-    } catch (err) {
-      console.error('Chat error:', err);
-      setError('Failed to send message');
-      
-      // Add error message to chat
-      const errorMessage = {
+      // Add AI response
+      const aiMessage = {
         id: Date.now() + 1,
-        text: 'Sorry, I encountered an error. Please try again.',
+        text: data.response || 'No response received',
         isUser: false,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, aiMessage]);
+
+    } catch (err) {
+      console.error('Chat error:', err);
+      setError('Failed to send message');
     } finally {
       setIsLoading(false);
     }
-  }, [currentSession]);
+  }, []);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -125,7 +65,7 @@ export const useChat = () => {
     error,
     sendMessage,
     clearMessages,
-    initializeSession,
-    currentSession
+    initializeSession: () => {}, // Empty function for compatibility
+    currentSession: null
   };
 };
