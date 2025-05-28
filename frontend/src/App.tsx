@@ -345,7 +345,7 @@ const ModernChatPage: React.FC = () => {
 
   const handleSendMessage = async (message: string) => {
     try {
-      await sendMessage(message);
+      await sendMessage({message});
     } catch (error) {
       console.error('Failed to send message:', error);
     }
