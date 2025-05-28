@@ -109,4 +109,13 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+const PORT = Number(process.env.PORT) || 3001;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Server URL: http://localhost:${PORT}`);
+});
+
+
 export default app;
