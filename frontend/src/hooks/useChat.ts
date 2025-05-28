@@ -1,7 +1,7 @@
 // frontend/src/hooks/useChat.ts
 import { useState, useCallback } from 'react';
 
-const API_BASE_URL = 'https://your-render-url.onrender.com';
+const API_BASE_URL = 'https://legal-chat-ai.onrender.com';
 
 export const useChat = () => {
   const [messages, setMessages] = useState<any[]>([]);
