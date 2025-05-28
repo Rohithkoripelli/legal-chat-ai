@@ -9,7 +9,7 @@ import {
   Divider,
   CircularProgress,
 } from '@mui/material';
-import { Send, Refresh } from '@mui/icons-material';
+import { Send, RefreshCw } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import { chatService } from '../../services/chatService';
 import { Message, ChatSession } from '../../types';
@@ -71,7 +71,7 @@ const ChatWindow: React.FC = () => {
         
         setMessages(prev => [...prev, ...adaptedMessages]);
       } else {
-        setError(response.message || 'Failed to send message');
+        setError(response.error || 'Failed to send message');
       }
     } catch (err) {
       setError('Failed to send message');
@@ -113,7 +113,7 @@ const ChatWindow: React.FC = () => {
           Legal Document Chat
         </Typography>
         <IconButton onClick={handleNewSession} disabled={isLoading}>
-          <Refresh />
+          <RefreshCw />
         </IconButton>
       </Box>
 
