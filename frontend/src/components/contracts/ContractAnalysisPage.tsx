@@ -64,7 +64,7 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
 
   const fetchAnalysis = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/contracts/analysis/${documentId}`);
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analysis/${documentId}`);
       if (response.status === 404) {
         // No analysis exists, trigger new analysis
         await startAnalysis();

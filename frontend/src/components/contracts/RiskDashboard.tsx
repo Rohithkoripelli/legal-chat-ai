@@ -48,7 +48,7 @@ const RiskDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/contracts/dashboard');
+      const response = await fetch('https://legal-chat-ai.onrender.com/api/contracts/dashboard');
       if (!response.ok) throw new Error('Failed to fetch dashboard data');
       const data = await response.json();
       setDashboardData(data);

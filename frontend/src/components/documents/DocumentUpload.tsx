@@ -58,7 +58,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
         const formData = new FormData();
         formData.append('document', file);
 
-        const response = await fetch('http://localhost:3001/api/documents/upload', {
+        const response = await fetch('https://legal-chat-ai.onrender.com/api/documents/upload', {
           method: 'POST',
           body: formData,
         });

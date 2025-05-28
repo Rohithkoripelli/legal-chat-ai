@@ -1439,7 +1439,7 @@ const generateAIDocument = async (template: DocumentTemplate, data: FormData): P
   try {
     console.log('🤖 Generating AI-powered document...');
     
-    const response = await fetch('http://localhost:3001/api/generate-document', {
+    const response = await fetch('http://https://legal-chat-ai.onrender.com/api/generate-document', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
