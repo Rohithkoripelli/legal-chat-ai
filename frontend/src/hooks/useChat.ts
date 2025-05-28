@@ -9,7 +9,7 @@ const API_BASE_URL =
   process.env.REACT_APP_API_URL || 
   (isDevelopment && isLocalhost 
     ? 'http://localhost:3001' 
-    : 'https://your-railway-app.railway.app');
+    : 'https://legal-chat-ai.onrender.com'); // Your Render URL
 
 export const useChat = () => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -31,7 +31,8 @@ export const useChat = () => {
     }
   };
 
-  const sendMessage = useCallback(async (message: string) => {
+  // FIXED: Changed parameter to match how it's called from ChatPage
+  const sendMessage = useCallback(async ({ message }: { message: string }) => {
     if (!message.trim()) return;
 
     setIsLoading(true);
@@ -70,7 +71,7 @@ export const useChat = () => {
         // Continue without documents
       }
 
-      // Use chatService instead of direct fetch
+      // Use chatService
       const response = await chatService.sendMessage(
         currentSession?.sessionId || 'default-session',
         message,
@@ -78,7 +79,7 @@ export const useChat = () => {
       );
       
       if (response.success && response.data) {
-        // Adapt the response to your message format
+        // Add AI response
         const aiMessage = {
           id: Date.now() + 1,
           text: response.data.response || response.response || 'No response received',
@@ -89,7 +90,6 @@ export const useChat = () => {
         
         setMessages(prev => [...prev, aiMessage]);
       } else {
-        // FIXED: Use response.error instead of response.message
         setError(response.error || 'Failed to send message');
       }
     } catch (err) {
