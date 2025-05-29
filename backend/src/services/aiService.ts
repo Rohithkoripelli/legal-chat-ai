@@ -1,191 +1,181 @@
 import { IDocument } from '../models/Document';
 import dotenv from 'dotenv';
-import { BulletproofOpenAI } from './bulletproofOpenAI';
+import { OpenAI } from 'openai';
 
 // Load environment variables
 dotenv.config();
 
+// Initialize OpenAI
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+let openai: OpenAI | null = null;
+
+try {
+  if (OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: OPENAI_API_KEY,
+    });
+    console.log('✅ OpenAI initialized');
+  } else {
+    console.warn('⚠️ No OpenAI API key found');
+  }
+} catch (error) {
+  console.error('❌ OpenAI initialization error:', error);
+}
+
 /**
- * Process a message using bulletproof OpenAI with enhanced vector search
+ * Process a message using OpenAI
  */
 export const processMessage = async (
   message: string, 
   documents: any[] = []
 ): Promise<string> => {
   try {
-    console.log(`\n======== BULLETPROOF AI SERVICE: PROCESS MESSAGE ========`);
+    console.log(`\n======== AI SERVICE: PROCESS MESSAGE ========`);
     console.log(`Message: "${message}"`);
-    console.log(`Documents count: ${documents.length}`);
+    console.log(`Documents: ${documents.length}`);
     
     // Get document IDs for vector search
     const documentIds = documents.map(doc => doc._id ? doc._id.toString() : doc.id ? doc.id.toString() : '');
     
-    // Try to get relevant context using vector search first
+    // Try vector search first
     let context = '';
     let usingVectorSearch = false;
     
     try {
       if (documentIds.length > 0 && documentIds[0]) {
-        console.log('🔍 Attempting vector search for relevant content...');
+        console.log('🔍 Trying vector search...');
         const { getRelevantContext } = await import('./vectorizationService');
         context = await getRelevantContext(message, documentIds, 5);
         
-        if (context && !context.includes('Error') && !context.includes('unavailable') && context.length > 100) {
+        if (context && context.length > 100 && !context.includes('Error')) {
           usingVectorSearch = true;
-          console.log(`✅ Vector search successful (${context.length} characters)`);
+          console.log(`✅ Vector search successful (${context.length} chars)`);
         } else {
-          throw new Error('Vector search returned insufficient results');
+          throw new Error('Vector search insufficient');
         }
       }
     } catch (vectorError) {
-      console.warn('⚠️ Vector search failed, using traditional document processing:', vectorError.message);
+      console.warn('⚠️ Vector search failed, using document content');
       
-      // Fall back to traditional document context
+      // Fall back to document content
       if (documents.length > 0) {
-        console.log('📝 Creating traditional document context...');
         const documentContexts = documents.map(doc => {
-          const docName = doc.originalName || doc.name || 'Unnamed document';
-          const docContent = doc.content || 'No content extracted';
-          // Limit content to avoid token limits that cause empty responses
-          const truncatedContent = docContent.length > 2000 
-            ? docContent.substring(0, 2000) + '...[truncated to avoid API limits]'
+          const docName = doc.originalName || doc.name || 'Document';
+          const docContent = doc.content || 'No content';
+          const truncated = docContent.length > 3000 
+            ? docContent.substring(0, 3000) + '...[truncated]'
             : docContent;
-          return `Document: ${docName}\n\nContent:\n${truncatedContent}\n`;
+          return `Document: ${docName}\n\nContent:\n${truncated}\n`;
         });
         
         context = documentContexts.join('\n---\n');
-        console.log(`📄 Created fallback context (${context.length} characters)`);
+        console.log(`📄 Document context created (${context.length} chars)`);
       }
     }
 
-    // Enhanced system prompt for the legal assistant
-    const systemPrompt = `You are an advanced legal document assistant powered by AI. Your job is to help users understand their legal documents, extract key information, and answer questions about the content with high accuracy.
+    // If no OpenAI, return fallback
+    if (!openai || !OPENAI_API_KEY) {
+      console.log('🚫 OpenAI not available');
+      return generateFallbackResponse(message, documents);
+    }
+
+    // System prompt
+    const systemPrompt = `You are a legal document assistant. Help users understand their legal documents and answer questions about the content.
       
       Guidelines:
       - Be clear, precise, and helpful
-      - Structure your responses with headers and bullet points when appropriate
-      - If there are specific clauses or sections to reference, cite them clearly
-      - Explain legal terminology in simple terms
-      - Always clarify that you're not providing legal advice, just information
-      - When appropriate, suggest what sections of a document might need further review by a legal professional
-      - If you find relevant information in the provided context, cite the specific document and section
+      - Use headers and bullet points when appropriate
+      - Cite specific sections when referencing documents
+      - Explain legal terms in simple language
+      - Always note that this is not legal advice
+      - Suggest consulting with attorneys for legal counsel
       
-      Tone:
-      - Professional but approachable
-      - Confident in explaining legal concepts
-      - Transparent about limitations
-      
-      ${usingVectorSearch ? 'Note: You have access to the most relevant sections of the documents based on semantic search.' : 'Note: You have access to traditional document content.'}`;
+      ${usingVectorSearch ? 'You have access to the most relevant document sections.' : 'You have access to document content.'}`;
     
-    // Create messages array for OpenAI
+    // Build messages
     const messages = [
       { role: 'system', content: systemPrompt },
     ];
     
-    // Add context if available
     if (context) {
       const contextMessage = usingVectorSearch 
-        ? `Here are the most relevant sections from the documents based on your question:\n\n${context}`
-        : `Here are the documents to reference:\n\n${context}`;
+        ? `Most relevant sections:\n\n${context}`
+        : `Document content:\n\n${context}`;
         
-      messages.push({
-        role: 'system',
-        content: contextMessage
-      });
-    } else if (documents.length > 0) {
-      messages.push({
-        role: 'system',
-        content: `The user has uploaded ${documents.length} document(s), but no specific relevant content was found for this query. Please provide a general response based on the question and suggest they try a more specific question.`
-      });
+      messages.push({ role: 'system', content: contextMessage });
     }
     
-    // Add the user's question
     messages.push({ role: 'user', content: message });
 
-    console.log('🔄 Sending request to bulletproof OpenAI...');
-    console.log('Messages structure:', messages.map(m => ({ role: m.role, contentLength: m.content.length })));
-    console.log(`Using ${usingVectorSearch ? 'VECTOR SEARCH' : 'TRADITIONAL'} context retrieval`);
+    console.log('🔄 Calling OpenAI...');
     
-    // Use bulletproof OpenAI API call
-    let aiResponse;
-    try {
-      aiResponse = await BulletproofOpenAI.resilientAPICall(messages, {
-        model: 'gpt-3.5-turbo', // Start with GPT-3.5 to avoid quota issues
-        maxTokens: 1000,
-        temperature: 0.3,
-        maxRetries: 3
-      });
-      
-      console.log(`✅ Received response from bulletproof OpenAI`);
-      console.log(`Response length: ${aiResponse.length} characters`);
-      
-    } catch (openaiError: any) {
-      console.error('❌ Bulletproof OpenAI also failed:', openaiError.message);
-      return generateFallbackResponse(message, documents, openaiError.message);
+    // Call OpenAI
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: messages as any,
+      temperature: 0.3,
+      max_tokens: 1000,
+    });
+
+    const aiResponse = response.choices[0]?.message?.content;
+    if (!aiResponse) {
+      throw new Error('No response from OpenAI');
     }
     
-    return formatAIResponse(aiResponse, usingVectorSearch);
+    console.log(`✅ Response received (${aiResponse.length} chars)`);
+    
+    // Add disclaimer
+    let finalResponse = aiResponse;
+    if (!aiResponse.includes("not legal advice")) {
+      finalResponse += "\n\n**⚖️ Disclaimer**: This information is for educational purposes only and does not constitute legal advice. Consult with a qualified attorney for legal counsel.";
+    }
+    
+    // Add method indicator
+    const methodNote = usingVectorSearch 
+      ? "\n\n*🔍 Response generated using semantic search of document content.*"
+      : "\n\n*📄 Response generated using document content analysis.*";
+    
+    console.log('======== END AI SERVICE ========\n');
+    return finalResponse + methodNote;
     
   } catch (error) {
-    console.error('❌ Error processing message:', error);
+    console.error('❌ AI service error:', error);
     return generateFallbackResponse(message, documents, error instanceof Error ? error.message : 'Unknown error');
   }
 };
 
 /**
- * Format AI response with appropriate disclaimers and structure
- */
-const formatAIResponse = (aiResponse: string, usingVectorSearch: boolean): string => {
-  // Add search method indicator for transparency
-  const searchMethod = usingVectorSearch 
-    ? "\n\n*🔍 This response was generated using advanced semantic search to find the most relevant sections of your documents.*"
-    : "\n\n*📄 This response was generated using traditional document processing.*";
-  
-  // Add disclaimer if not already included
-  let formattedResponse = aiResponse;
-  if (!aiResponse.includes("not legal advice") && !aiResponse.includes("not providing legal advice")) {
-    const disclaimer = "\n\n**⚖️ Legal Disclaimer**: This information is for educational purposes only and does not constitute legal advice. For legal counsel, please consult with a qualified attorney.";
-    formattedResponse = aiResponse + disclaimer;
-  }
-  
-  console.log('======== END BULLETPROOF AI SERVICE ========\n');
-  return formattedResponse + searchMethod;
-};
-
-/**
- * Generate a comprehensive fallback response when AI services fail
+ * Generate fallback response when AI fails
  */
 const generateFallbackResponse = (message: string, documents: any[] = [], errorDetails: string = ''): string => {
-  const docNames = documents.map(doc => doc.originalName || doc.name || 'Unnamed document').join(', ');
+  const docNames = documents.map(doc => doc.originalName || doc.name || 'Document').join(', ');
   
   return `Hello! I'm your Legal Document Assistant.
 
-I notice you've asked: "${message}"
+You asked: "${message}"
 
 ${documents.length > 0 
-  ? `I can see you've uploaded ${documents.length} document(s): ${docNames}. However, I'm currently unable to analyze these documents due to technical limitations with the AI service.` 
-  : `I don't see any documents uploaded yet. Please upload your documents for analysis.`}
+  ? `I can see you have ${documents.length} document(s): ${docNames}. However, I'm currently unable to analyze them due to technical limitations.` 
+  : `I don't see any documents uploaded. Please upload your legal documents first.`}
 
-**🔧 Current Status**: The AI analysis service is experiencing technical difficulties.
+**What you can do:**
+1. **Try again** - This may be a temporary issue
+2. **Upload documents** - Make sure your legal documents are uploaded
+3. **Be specific** - Ask about particular sections or terms
+4. **Manual review** - Review documents manually for immediate needs
 
-**📋 What you can do:**
-1. **Try again in a few minutes** - This may be a temporary issue
-2. **Upload documents if you haven't** - Ensure your legal documents are uploaded first
-3. **Be more specific** - Try asking about specific sections or terms
-4. **Manual review** - Consider reviewing the documents manually for immediate needs
+**When working, I can:**
+- Analyze legal document content
+- Extract key terms and dates
+- Identify risks and issues
+- Explain legal language simply
+- Provide document summaries
 
-**🚀 When operational, I can:**
-- Analyze legal document content with high accuracy
-- Extract key terms, dates, and obligations
-- Identify potential risks and issues
-- Explain complex legal language in simple terms
-- Provide document summaries and comparisons
+**⚖️ Disclaimer**: This is for educational purposes only, not legal advice. Consult with a qualified attorney for legal counsel.
 
-**⚖️ Legal Disclaimer**: This information is for educational purposes only and does not constitute legal advice. For legal counsel, please consult with a qualified attorney.
+${errorDetails ? `\n*Technical details: ${errorDetails}*` : ''}
 
-${errorDetails ? `\n**Technical Details**: ${errorDetails}` : ''}
-
-*Please try again shortly, or contact support if this issue persists.*`;
+Please try again shortly!`;
 };
 
 export default {

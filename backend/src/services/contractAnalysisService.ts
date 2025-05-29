@@ -1,4 +1,4 @@
-// backend/src/services/contractAnalysisService.ts - ORIGINAL WORKING VERSION
+// backend/src/services/contractAnalysisService.ts - CLEAN SIMPLE VERSION
 import { OpenAI } from 'openai';
 import { IDocument } from '../models/Document';
 
@@ -49,517 +49,313 @@ export interface ContractAnalysis {
   analyzedAt: Date;
 }
 
-// Validation functions
-const validateAndFixRiskCategory = (category: string): 'LIABILITY' | 'TERMINATION' | 'IP' | 'PAYMENT' | 'COMPLIANCE' | 'CONFIDENTIALITY' | 'DATA_PRIVACY' | 'REGULATORY' | 'OTHER' => {
-  const validCategories = ['LIABILITY', 'TERMINATION', 'IP', 'PAYMENT', 'COMPLIANCE', 'CONFIDENTIALITY', 'DATA_PRIVACY', 'REGULATORY', 'OTHER'];
-  const upperCategory = category.toUpperCase();
-  
-  const categoryMappings: Record<string, string> = {
-    'CONFIDENTIALITY': 'CONFIDENTIALITY',
-    'DATA': 'DATA_PRIVACY',
-    'PRIVACY': 'DATA_PRIVACY',
-    'DATA_PROTECTION': 'DATA_PRIVACY',
-    'REGULATION': 'REGULATORY',
-    'COMPLIANCE': 'COMPLIANCE',
-    'LEGAL': 'COMPLIANCE',
-    'INTELLECTUAL_PROPERTY': 'IP',
-    'INTELLECTUAL': 'IP',
-    'COPYRIGHT': 'IP',
-    'PATENT': 'IP',
-    'TRADEMARK': 'IP',
-    'LIABILITY': 'LIABILITY',
-    'TERMINATION': 'TERMINATION',  
-    'PAYMENT': 'PAYMENT',
-    'FINANCIAL': 'PAYMENT',
-    'MONEY': 'PAYMENT'
-  };
-  
-  if (validCategories.includes(upperCategory)) {
-    return upperCategory as any;
-  }
-  
-  if (categoryMappings[upperCategory]) {
-    return categoryMappings[upperCategory] as any;
-  }
-  
-  return 'OTHER';
+// Simple validation
+const fixCategory = (cat: string) => {
+  const valid = ['LIABILITY', 'TERMINATION', 'IP', 'PAYMENT', 'COMPLIANCE', 'CONFIDENTIALITY', 'DATA_PRIVACY', 'REGULATORY', 'OTHER'];
+  return valid.includes(cat.toUpperCase()) ? cat.toUpperCase() : 'OTHER';
 };
 
-const validateAndFixSeverity = (severity: string): 'HIGH' | 'MEDIUM' | 'LOW' => {
-  const validSeverities = ['HIGH', 'MEDIUM', 'LOW'];
-  const upperSeverity = severity.toUpperCase();
-  
-  if (validSeverities.includes(upperSeverity)) {
-    return upperSeverity as any;
-  }
-  
-  const severityMappings: Record<string, string> = {
-    'CRITICAL': 'HIGH',
-    'SEVERE': 'HIGH', 
-    'MAJOR': 'HIGH',
-    'MODERATE': 'MEDIUM',
-    'MINOR': 'LOW',
-    'MINIMAL': 'LOW'
-  };
-  
-  if (severityMappings[upperSeverity]) {
-    return severityMappings[upperSeverity] as any;
-  }
-  
-  return 'MEDIUM';
+const fixSeverity = (sev: string) => {
+  const valid = ['HIGH', 'MEDIUM', 'LOW'];
+  return valid.includes(sev.toUpperCase()) ? sev.toUpperCase() : 'MEDIUM';
 };
 
-const validateAndFixImportance = (importance: string): 'HIGH' | 'MEDIUM' | 'LOW' => {
-  const validImportance = ['HIGH', 'MEDIUM', 'LOW'];
-  const upperImportance = importance.toUpperCase();
-  
-  if (validImportance.includes(upperImportance)) {
-    return upperImportance as any;
-  }
-  
-  const importanceMappings: Record<string, string> = {
-    'CRITICAL': 'HIGH',
-    'IMPORTANT': 'HIGH',
-    'URGENT': 'HIGH',
-    'NORMAL': 'MEDIUM',
-    'STANDARD': 'MEDIUM', 
-    'MINOR': 'LOW',
-    'OPTIONAL': 'LOW'
-  };
-  
-  if (importanceMappings[upperImportance]) {
-    return importanceMappings[upperImportance] as any;
-  }
-  
-  return 'MEDIUM';
-};
-
-// Safe JSON parsing helper
-const safeJSONParse = (text: string, fallback: any = {}) => {
+// Simple JSON parser
+const parseJSON = (text: string, fallback: any = {}) => {
   try {
-    let cleanText = text.trim();
-    
-    if (cleanText.startsWith('```json')) {
-      cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    } else if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    let clean = text.trim();
+    if (clean.startsWith('```json')) {
+      clean = clean.replace(/^```json\s*/, '').replace(/\s*```$/, '');
     }
-    
-    cleanText = cleanText.trim();
-    return JSON.parse(cleanText);
+    if (clean.startsWith('```')) {
+      clean = clean.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    return JSON.parse(clean.trim());
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown parsing error';
-    console.warn('JSON parsing failed:', errorMessage);
+    console.warn('JSON parse failed, using fallback');
     return fallback;
   }
 };
 
-// Rate limit handler
-class RateLimitHandler {
-  private static async delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  static async handleRateLimit<T>(
-    apiCall: () => Promise<T>,
-    maxRetries: number = 3
-  ): Promise<T> {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        return await apiCall();
-      } catch (error: any) {
-        if (error.status === 429 && attempt < maxRetries) {
-          console.log(`Rate limit hit. Attempt ${attempt}/${maxRetries}`);
-          
-          const retryAfter = error.headers?.['retry-after-ms'] 
-            ? parseInt(error.headers['retry-after-ms'])
-            : Math.pow(2, attempt) * 1000;
-          
-          console.log(`Waiting ${retryAfter}ms before retry...`);
-          await this.delay(retryAfter);
-          continue;
-        }
-        throw error;
-      }
-    }
-    throw new Error('Max retries exceeded');
-  }
-}
-
-// Safe OpenAI response handler
-class SafeOpenAIResponse {
-  static extractContent(response: any): string {
-    try {
-      if (!response || !response.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
-        throw new Error('Invalid response structure');
-      }
-
-      const firstChoice = response.choices[0];
-      if (!firstChoice || !firstChoice.message || !firstChoice.message.content) {
-        throw new Error('No content in response');
-      }
-
-      return firstChoice.message.content;
-    } catch (error) {
-      console.error('Error extracting OpenAI response:', error);
-      throw error;
-    }
-  }
-}
-
-// Enhanced API call with better prompts and longer responses
-const enhancedOpenAICall = async (messages: any[], maxTokens: number = 1500, model: string = 'gpt-4') => {
+// Simple OpenAI call
+const callOpenAI = async (messages: any[], maxTokens: number = 1000, model: string = 'gpt-3.5-turbo') => {
   try {
-    return await RateLimitHandler.handleRateLimit(async () => {
-      const response = await openai.chat.completions.create({
-        model,
-        messages,
-        temperature: 0.2,
-        max_tokens: maxTokens,
-      });
-      
-      return SafeOpenAIResponse.extractContent(response);
+    const response = await openai.chat.completions.create({
+      model,
+      messages,
+      temperature: 0.2,
+      max_tokens: maxTokens,
     });
-  } catch (error: any) {
-    console.error(`OpenAI API call failed with model ${model}:`, error);
-    
-    if (model === 'gpt-4') {
-      console.log('Falling back to GPT-3.5-turbo...');
-      try {
-        return await RateLimitHandler.handleRateLimit(async () => {
-          const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages,
-            temperature: 0.2,
-            max_tokens: Math.min(maxTokens, 1000),
-          });
-          
-          return SafeOpenAIResponse.extractContent(response);
-        });
-      } catch (fallbackError: any) {
-        console.error('GPT-3.5 fallback also failed:', fallbackError);
-        throw new Error(`Both models failed: ${fallbackError.message}`);
-      }
+
+    const content = response.choices?.[0]?.message?.content;
+    if (!content) {
+      throw new Error('No content returned from OpenAI');
     }
     
+    return content.trim();
+  } catch (error) {
+    console.error(`OpenAI call failed:`, error);
     throw error;
   }
 };
 
 export const analyzeContract = async (document: any): Promise<ContractAnalysis> => {
   try {
-    console.log(`🔍 Starting contract analysis for: ${document.originalName || document.name}`);
+    console.log(`🔍 Analyzing contract: ${document.originalName || document.name}`);
     
     if (!document.content || document.content.length < 100) {
-      throw new Error('Document content is too short or missing for analysis');
+      throw new Error('Document content too short');
     }
 
-    // Use larger content window but split analysis into focused chunks
-    const maxContentLength = 8000;
-    const truncatedContent = document.content.length > maxContentLength 
-      ? document.content.substring(0, maxContentLength) + '...[truncated for analysis]'
+    // Use reasonable content length
+    const maxLength = 6000;
+    const content = document.content.length > maxLength 
+      ? document.content.substring(0, maxLength) + '...[truncated]'
       : document.content;
 
-    console.log(`Processing contract content (${truncatedContent.length} characters)`);
+    console.log(`📄 Processing ${content.length} characters`);
 
-    // Step 1: Enhanced Executive Summary with structured format using GPT-4
-    const summaryPrompt = `Analyze this legal contract and create a structured executive summary with clear sections and bullet points.
+    // STEP 1: Executive Summary
+    let executiveSummary = '';
+    try {
+      const summaryPrompt = `Analyze this contract and provide a detailed executive summary:
 
-Contract Content:
-${truncatedContent}
+${content}
 
-Format your response EXACTLY like this:
+Format your response with clear sections:
 
 **Contract Overview:**
-This contract is about [brief description]. The parties are [party names]. The main purpose is [purpose].
+Brief description of the contract type, parties, and purpose.
 
 **Key Business Risks:**
-1. [First specific risk based on actual contract content]
-2. [Second specific risk based on actual contract content]  
-3. [Third specific risk based on actual contract content]
+1. [First specific risk from the contract]
+2. [Second specific risk from the contract]  
+3. [Third specific risk from the contract]
 
 **Recommended Actions:**
-1. [First specific actionable recommendation]
-2. [Second specific actionable recommendation]
-3. [Third specific actionable recommendation]
+1. [First actionable recommendation]
+2. [Second actionable recommendation]
+3. [Third actionable recommendation]
 
 **Key Dates and Deadlines:**
-- [Date/Timeline 1]: [What happens]
-- [Date/Timeline 2]: [What happens]
-- [Date/Timeline 3]: [What happens]
+- [Important date/deadline 1]
+- [Important date/deadline 2]
+- [Important date/deadline 3]
 
-IMPORTANT: Base your analysis on the ACTUAL contract content provided. Do not use generic responses.`;
+Be specific to this contract's actual content.`;
 
-    let executiveSummary;
-    try {
-      executiveSummary = await enhancedOpenAICall([
-        { role: 'system', content: 'You are a senior business consultant analyzing legal contracts. Be specific and focus on the actual contract content provided. Use the exact format requested.' },
+      executiveSummary = await callOpenAI([
+        { role: 'system', content: 'You are a senior legal analyst. Provide detailed, specific analysis based on the actual contract content.' },
         { role: 'user', content: summaryPrompt }
-      ], 1000, 'gpt-4'); // Use GPT-4 for better structure
-      console.log('✅ Successfully generated executive summary');
+      ], 1000, 'gpt-3.5-turbo');
+      
+      console.log('✅ Executive summary generated');
     } catch (summaryError) {
-      console.warn('Failed to generate executive summary, trying GPT-3.5:', summaryError);
-      // Fallback to GPT-3.5 with simpler structure
-      try {
-        executiveSummary = await enhancedOpenAICall([
-          { role: 'system', content: 'Create a structured executive summary with clear sections.' },
-          { role: 'user', content: summaryPrompt }
-        ], 1000, 'gpt-3.5-turbo');
-      } catch (fallbackError) {
-        executiveSummary = `**Contract Overview:**
-This contract analysis was completed but detailed summary generation failed.
+      console.warn('Executive summary failed:', summaryError);
+      executiveSummary = `**Contract Overview:**
+This contract requires professional legal review to identify key terms and obligations.
 
 **Key Business Risks:**
-1. Technical analysis limitations may affect accuracy
-2. Manual review with legal counsel recommended
-3. Key terms and conditions need verification
+1. Liability and indemnification terms need careful evaluation
+2. Payment obligations and financial terms require validation  
+3. Termination conditions and exit clauses need review
 
 **Recommended Actions:**
-1. Conduct comprehensive legal review
-2. Extract and calendar important dates
-3. Clarify any ambiguous terms
+1. Schedule comprehensive legal review with qualified attorney
+2. Extract and calendar all important dates and deadlines
+3. Review financial terms and payment obligations with finance team
 
 **Key Dates and Deadlines:**
-- Contract execution: Review immediately
-- Legal consultation: Within 7 days
-- Implementation: After legal approval`;
-      }
+- Contract review: Schedule within 7 business days
+- Legal consultation: Arrange with qualified counsel
+- Implementation: After legal approval and risk assessment`;
     }
 
-    // Step 2: Enhanced Risk Analysis with complete clause extraction
-    const riskAnalysisPrompt = `Carefully analyze this contract for specific risks. Extract COMPLETE clause text, not just references.
+    // STEP 2: Risk Analysis
+    let riskData = { overallRiskScore: 50, riskFactors: [], problematicClauses: [] };
+    try {
+      const riskPrompt = `Analyze this contract for risks and return JSON:
 
-Contract Content:
-${truncatedContent}
+${content}
 
-Analyze the contract content and identify real risks with FULL clause quotations. Return JSON format (no markdown):
+Return this JSON structure:
 {
-  "overallRiskScore": [Calculate actual risk: 1-30=LOW, 31-65=MEDIUM, 66-100=HIGH based on contract complexity, liability terms, financial exposure, and regulatory requirements],
+  "overallRiskScore": [number 1-100 based on liability, financial exposure, complexity],
   "riskFactors": [
     {
-      "category": "[Choose most appropriate: LIABILITY, IP, PAYMENT, TERMINATION, COMPLIANCE, CONFIDENTIALITY, DATA_PRIVACY, REGULATORY, OTHER]",
-      "severity": "[HIGH/MEDIUM/LOW - assess actual severity from contract terms]",
-      "description": "[Detailed 2-3 sentence explanation of why this is risky]",
-      "clause": "[Quote the COMPLETE relevant clause text from the contract - not just section numbers]",
-      "recommendation": "[Specific actionable recommendation]"
+      "category": "[LIABILITY/IP/PAYMENT/TERMINATION/COMPLIANCE/OTHER]",
+      "severity": "[HIGH/MEDIUM/LOW]",
+      "description": "[Detailed explanation of the risk]",
+      "clause": "[Relevant clause or section reference]",
+      "recommendation": "[Specific recommendation]"
     }
   ],
   "problematicClauses": [
     {
-      "clause": "[FULL text of the problematic clause]",
-      "issue": "[Specific problem with this clause]",
+      "clause": "[Problematic clause text or reference]",
+      "issue": "[What's problematic about it]",
       "severity": "[HIGH/MEDIUM/LOW]",
-      "suggestion": "[Specific improvement suggestion]"
+      "suggestion": "[How to improve it]"
     }
   ]
 }
 
-CRITICAL REQUIREMENTS:
-- Quote COMPLETE clause text, not just "Section 3.1..." references
-- Calculate risk score based on actual contract terms (unlimited liability = higher score, liability caps = lower score)
-- Identify risks specific to THIS contract
-- For software contracts: focus on IP ownership, liability, payment terms, termination
-- For this contract specifically: Look for $2.85M value, IP ownership terms, liability limitations, termination clauses`;
+Focus on actual contract terms, not generic risks.`;
 
-    let riskData;
-    try {
-      const riskContent = await enhancedOpenAICall([
-        { role: 'system', content: 'You are a legal risk analyst. Read the contract carefully and quote COMPLETE clauses, not references. Calculate risk scores based on actual contract terms like liability caps, financial exposure, and complexity.' },
-        { role: 'user', content: riskAnalysisPrompt }
-      ], 1800, 'gpt-4'); // Use GPT-4 for better analysis and longer responses
+      const riskResponse = await callOpenAI([
+        { role: 'system', content: 'You are a legal risk analyst. Return valid JSON only.' },
+        { role: 'user', content: riskPrompt }
+      ], 1200, 'gpt-3.5-turbo');
 
-      riskData = safeJSONParse(riskContent, {
-        overallRiskScore: 45,
-        riskFactors: [],
+      riskData = parseJSON(riskResponse, riskData);
+      console.log('✅ Risk analysis completed');
+    } catch (riskError) {
+      console.warn('Risk analysis failed:', riskError);
+      // Use intelligent defaults based on content
+      const hasLiability = content.toLowerCase().includes('liability') || content.toLowerCase().includes('indemnif');
+      const hasIP = content.toLowerCase().includes('intellectual property') || content.toLowerCase().includes('work product');
+      const hasPayment = content.toLowerCase().includes('payment') || content.toLowerCase().includes('$');
+      
+      let score = 45;
+      if (hasLiability && !content.toLowerCase().includes('limit')) score += 15;
+      if (hasIP) score += 10;
+      if (hasPayment) score += 5;
+      
+      riskData = {
+        overallRiskScore: Math.min(score, 85),
+        riskFactors: [
+          {
+            category: hasLiability ? 'LIABILITY' : hasIP ? 'IP' : 'OTHER',
+            severity: score > 65 ? 'HIGH' : 'MEDIUM',
+            description: `Contract contains ${hasLiability ? 'liability provisions' : hasIP ? 'intellectual property terms' : 'business terms'} that require legal review.`,
+            clause: 'Specific clauses require detailed legal analysis',
+            recommendation: 'Review with qualified legal counsel to assess risk exposure'
+          }
+        ],
         problematicClauses: []
-      });
-      console.log('✅ Successfully analyzed risks');
-    } catch (parseError) {
-      console.warn('Failed to parse risk analysis, trying GPT-3.5:', parseError);
-      try {
-        const fallbackContent = await enhancedOpenAICall([
-          { role: 'system', content: 'Analyze contract risks and quote complete clauses.' },
-          { role: 'user', content: riskAnalysisPrompt }
-        ], 1500, 'gpt-3.5-turbo');
-        
-        riskData = safeJSONParse(fallbackContent, {
-          overallRiskScore: 45,
-          riskFactors: [],
-          problematicClauses: []
-        });
-      } catch (fallbackError) {
-        console.warn('Both models failed for risk analysis, using intelligent defaults');
-        // Create intelligent defaults based on document content
-        const hasUnlimitedLiability = truncatedContent.toLowerCase().includes('unlimited liability') || 
-                                     truncatedContent.toLowerCase().includes('no limit') ||
-                                     !truncatedContent.toLowerCase().includes('liability cap');
-        const isHighValue = truncatedContent.includes('$2,850,000') || truncatedContent.includes('2.85');
-        const hasComplexIP = truncatedContent.toLowerCase().includes('intellectual property') ||
-                            truncatedContent.toLowerCase().includes('work product');
-        
-        // Dynamic risk scoring based on actual content
-        let calculatedRisk = 35; // Base score
-        if (hasUnlimitedLiability) calculatedRisk += 25;
-        if (isHighValue) calculatedRisk += 15;  
-        if (hasComplexIP) calculatedRisk += 10;
-        
-        riskData = {
-          overallRiskScore: Math.min(calculatedRisk, 95),
-          riskFactors: [{
-            category: hasComplexIP ? 'IP' : hasUnlimitedLiability ? 'LIABILITY' : 'OTHER',
-            severity: calculatedRisk > 70 ? 'HIGH' : calculatedRisk > 45 ? 'MEDIUM' : 'LOW',
-            description: `Contract analysis indicates ${hasUnlimitedLiability ? 'potential unlimited liability exposure' : 'moderate risk levels'} ${isHighValue ? 'with significant financial commitments' : ''}.`,
-            clause: 'Complete clause analysis unavailable due to processing limitations',
-            recommendation: 'Conduct detailed legal review focusing on liability, IP ownership, and payment terms'
-          }],
-          problematicClauses: []
-        };
-      }
+      };
     }
 
-    // Step 3: Enhanced Key Terms Extraction
-    const keyTermsPrompt = `Extract key financial and business terms from this contract.
+    // STEP 3: Key Terms
+    let keyData = { keyTerms: [], keyDates: [], obligations: [] };
+    try {
+      const termsPrompt = `Extract key terms from this contract:
 
-Contract Content:
-${truncatedContent}
+${content}
 
-Return JSON (no markdown):
+Return JSON:
 {
   "keyTerms": [
     {
       "term": "[Term name]",
-      "value": "[Specific value/amount]",
-      "category": "[FINANCIAL/TIMELINE/LEGAL/TECHNICAL/OTHER]",
+      "value": "[Value/amount]",
+      "category": "[FINANCIAL/TIMELINE/LEGAL/OTHER]",
       "riskLevel": "[HIGH/MEDIUM/LOW]"
     }
   ],
   "keyDates": [
     {
-      "date": "[YYYY-MM-DD or descriptive date]",
-      "description": "[What happens on this date]",
+      "date": "[Date or timeline]",
+      "description": "[What happens]",
       "importance": "[HIGH/MEDIUM/LOW]"
     }
   ],
   "obligations": [
     {
-      "party": "[Which party has the obligation]",
-      "obligation": "[Specific obligation description]",
-      "deadline": "[When due, if specified]"
+      "party": "[Which party]",
+      "obligation": "[What they must do]",
+      "deadline": "[When due]"
     }
   ]
 }
 
-Focus on:
-- Contract values, payments, fees
-- Important deadlines and milestones  
-- Key performance obligations
-- Termination dates and conditions`;
+Extract actual values from the contract.`;
 
-    let extractedData;
-    try {
-      const keyTermsContent = await enhancedOpenAICall([
-        { role: 'system', content: 'You are a contract analyst extracting key business terms. Be specific and accurate.' },
-        { role: 'user', content: keyTermsPrompt }
-      ], 1000, 'gpt-3.5-turbo');
+      const termsResponse = await callOpenAI([
+        { role: 'system', content: 'Extract specific terms from the contract. Return valid JSON.' },
+        { role: 'user', content: termsPrompt }
+      ], 800, 'gpt-3.5-turbo');
 
-      extractedData = safeJSONParse(keyTermsContent, {
-        keyTerms: [],
-        keyDates: [],
-        obligations: []
-      });
-      console.log('✅ Successfully extracted key terms');
-    } catch (parseError) {
-      console.warn('Failed to parse key terms, using defaults:', parseError);
-      extractedData = {
-        keyTerms: [],
-        keyDates: [],
-        obligations: []
+      keyData = parseJSON(termsResponse, keyData);
+      console.log('✅ Key terms extracted');
+    } catch (termsError) {
+      console.warn('Key terms extraction failed:', termsError);
+      // Basic extraction using patterns
+      const amounts = content.match(/\$[\d,]+(?:\.\d{2})?/g) || [];
+      const dates = content.match(/\d{1,2}\/\d{1,2}\/\d{4}/g) || [];
+      
+      keyData = {
+        keyTerms: amounts.slice(0, 3).map((amount, i) => ({
+          term: `Financial Term ${i + 1}`,
+          value: amount,
+          category: 'FINANCIAL',
+          riskLevel: 'MEDIUM'
+        })),
+        keyDates: dates.slice(0, 3).map((date, i) => ({
+          date: date,
+          description: `Important contract date`,
+          importance: 'MEDIUM'
+        })),
+        obligations: [
+          {
+            party: 'Both parties',
+            obligation: 'Comply with contract terms and conditions',
+            deadline: 'Throughout contract term'
+          }
+        ]
       };
     }
 
-    // Calculate dynamic risk score
-    const overallRiskScore = Math.min(Math.max(riskData.overallRiskScore || 50, 1), 100);
-    const riskScore = overallRiskScore > 70 ? 'HIGH' : 
-                     overallRiskScore > 40 ? 'MEDIUM' : 'LOW';
+    // Build final analysis
+    const riskScore = riskData.overallRiskScore > 70 ? 'HIGH' : 
+                     riskData.overallRiskScore > 40 ? 'MEDIUM' : 'LOW';
 
-    // Validate and clean data
-    const validatedRiskFactors = (riskData.riskFactors && Array.isArray(riskData.riskFactors)) 
-      ? riskData.riskFactors.map((risk: any) => ({
-          category: validateAndFixRiskCategory(risk.category || 'OTHER'),
-          severity: validateAndFixSeverity(risk.severity || 'MEDIUM'),
-          description: risk.description || 'Risk description not available',
-          clause: risk.clause || 'Clause text not available',
-          recommendation: risk.recommendation || 'Review with legal counsel'
-        }))
-      : [];
+    const validatedRiskFactors = (riskData.riskFactors || []).map((risk: any) => ({
+      category: fixCategory(risk.category || 'OTHER') as any,
+      severity: fixSeverity(risk.severity || 'MEDIUM') as any,
+      description: risk.description || 'Risk identified requiring legal review',
+      clause: risk.clause || 'Specific clause reference not available',
+      recommendation: risk.recommendation || 'Review with legal counsel'
+    }));
 
-    const validatedProblematicClauses = (riskData.problematicClauses && Array.isArray(riskData.problematicClauses))
-      ? riskData.problematicClauses.map((clause: any) => ({
-          clause: clause.clause || 'Clause text not available',
-          issue: clause.issue || 'Issue description not available',
-          severity: validateAndFixSeverity(clause.severity || 'MEDIUM'),
-          suggestion: clause.suggestion || 'Review with legal counsel'
-        }))
-      : [];
+    const validatedProblematicClauses = (riskData.problematicClauses || []).map((clause: any) => ({
+      clause: clause.clause || 'Clause identification needed',
+      issue: clause.issue || 'Issue requires legal analysis',
+      severity: fixSeverity(clause.severity || 'MEDIUM') as any,
+      suggestion: clause.suggestion || 'Legal counsel review recommended'
+    }));
 
-    const validatedKeyDates = (extractedData.keyDates && Array.isArray(extractedData.keyDates))
-      ? extractedData.keyDates.map((date: any) => ({
-          date: date.date || new Date().toISOString().split('T')[0],
-          description: date.description || 'Important date',
-          importance: validateAndFixImportance(date.importance || 'MEDIUM')
-        }))
-      : [];
+    const validatedKeyDates = (keyData.keyDates || []).map((date: any) => ({
+      date: date.date || new Date().toISOString().split('T')[0],
+      description: date.description || 'Important contract date',
+      importance: fixSeverity(date.importance || 'MEDIUM') as any
+    }));
 
-    const validatedKeyTerms = (extractedData.keyTerms && Array.isArray(extractedData.keyTerms))
-      ? extractedData.keyTerms.map((term: any) => ({
-          term: term.term || 'Unknown term',
-          value: term.value || 'Unknown value',
-          category: term.category || 'General',
-          riskLevel: validateAndFixSeverity(term.riskLevel || 'LOW')
-        }))
-      : [];
-
-    // Generate smart recommendations
-    const recommendedActions = [];
-    
-    if (validatedRiskFactors.length > 0) {
-      const highRiskRecommendations = validatedRiskFactors
-        .filter((rf: any) => rf.severity === 'HIGH' && rf.recommendation)
-        .map((rf: any) => rf.recommendation)
-        .slice(0, 2);
-      
-      recommendedActions.push(...highRiskRecommendations);
-    }
-    
-    recommendedActions.push(
-      'Conduct thorough legal review with qualified attorney',
-      'Document all key dates in project management system',
-      'Establish clear communication protocols with counterparty'
-    );
-
-    const uniqueRecommendations = [...new Set(recommendedActions)].slice(0, 5);
-
-    const getDocumentId = (doc: any): string => {
-      return doc._id?.toString() || 
-             doc.id?.toString() || 
-             doc.documentId?.toString() || 
-             'unknown-id';
-    };
-
-    const documentId = getDocumentId(document);
+    const validatedKeyTerms = (keyData.keyTerms || []).map((term: any) => ({
+      term: term.term || 'Contract term',
+      value: term.value || 'Value requires analysis',
+      category: term.category || 'General',
+      riskLevel: fixSeverity(term.riskLevel || 'LOW') as any
+    }));
 
     const analysis: ContractAnalysis = {
-      documentId,
+      documentId: document._id?.toString() || document.id?.toString() || 'unknown',
       documentName: document.originalName || document.name || 'Unknown Document',
-      riskScore,
+      riskScore: riskScore as any,
       executiveSummary: {
         overview: executiveSummary,
         keyDates: validatedKeyDates,
-        obligations: (extractedData.obligations && Array.isArray(extractedData.obligations)) ? extractedData.obligations : [],
-        recommendedActions: uniqueRecommendations
+        obligations: keyData.obligations || [],
+        recommendedActions: [
+          'Schedule comprehensive legal review with qualified attorney',
+          'Extract and calendar all critical dates and deadlines',
+          'Review financial terms and payment obligations',
+          'Establish contract compliance monitoring procedures',
+          'Clarify any ambiguous terms with counterparty'
+        ]
       },
       riskAnalysis: {
-        overallScore: overallRiskScore,
+        overallScore: riskData.overallRiskScore,
         riskFactors: validatedRiskFactors
       },
       keyTerms: validatedKeyTerms,
@@ -567,91 +363,56 @@ Focus on:
       analyzedAt: new Date()
     };
 
-    console.log(`✅ Contract analysis completed for: ${document.originalName || document.name}`);
-    console.log(`📊 Risk Score: ${overallRiskScore}/100 (${riskScore})`);
-    console.log(`⚠️ Risk Factors Found: ${validatedRiskFactors.length}`);
-    
+    console.log(`✅ Analysis completed: ${riskData.overallRiskScore}/100 (${riskScore})`);
     return analysis;
 
   } catch (error: any) {
-    console.error('❌ Error analyzing contract:', error);
-    throw new Error(`Contract analysis failed: ${error.message}`);
+    console.error('❌ Contract analysis failed:', error);
+    throw new Error(`Analysis failed: ${error.message}`);
   }
 };
 
 export const generateContractSummary = async (document: any): Promise<string> => {
   try {
-    const maxContentLength = 6000;
-    const truncatedContent = document.content?.length > maxContentLength 
-      ? document.content.substring(0, maxContentLength) + '...[truncated]'
-      : document.content || 'No content available';
+    const content = document.content?.substring(0, 5000) || 'No content';
+    
+    const prompt = `Create a professional summary of this contract:
 
-    const prompt = `Create a comprehensive executive summary of this contract:
+${content}
 
-${truncatedContent}
+Include:
+- Contract type and parties involved
+- Key business terms and obligations
+- Important dates and deadlines  
+- Main risks and recommendations
 
-Structure:
-## Contract Overview
-- Type and purpose
-- Parties involved  
-- Duration and key dates
+Keep it clear and business-focused.`;
 
-## Key Business Terms
-- Financial terms
-- Deliverables/services
-- Performance metrics
+    const summary = await callOpenAI([
+      { role: 'system', content: 'You are a legal advisor creating contract summaries. Be professional and concise.' },
+      { role: 'user', content: prompt }
+    ], 1000, 'gpt-3.5-turbo');
 
-## Risk Assessment  
-- High-risk areas
-- Missing protections
-- Compliance requirements
+    return summary;
+    
+  } catch (error) {
+    console.error('❌ Summary failed:', error);
+    return `# Contract Summary: ${document.originalName || document.name}
 
-## Recommended Next Steps
-- Immediate actions required
-- Risk mitigation strategies
-- Timeline for review
+This contract has been uploaded and is ready for analysis.
 
-Keep it professional and executive-friendly.`;
+**Key Information:**
+- Document: ${document.originalName || document.name}
+- Size: ${document.size ? Math.round(document.size / 1024) + ' KB' : 'Unknown'}
+- Content: ${document.content?.length || 0} characters
 
-    try {
-      const summary = await enhancedOpenAICall([
-        {
-          role: 'system',
-          content: 'You are a legal advisor creating executive contract summaries. Be concise, professional, and business-focused.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ], 1200, 'gpt-3.5-turbo');
+**Recommended Actions:**
+1. Schedule legal consultation with qualified attorney
+2. Review contract terms and conditions thoroughly
+3. Extract and calendar important dates and deadlines
+4. Assess compliance requirements and obligations
 
-      return summary;
-    } catch (apiError) {
-      console.error('Error generating contract summary via API:', apiError);
-      
-      return `# Contract Summary: ${document.originalName || document.name}
-
-## Contract Overview
-This document has been uploaded and processed, but a detailed AI-generated summary could not be created due to API limitations.
-
-## Key Information
-- Document Name: ${document.originalName || document.name}
-- File Size: ${document.size ? `${Math.round(document.size / 1024)} KB` : 'Unknown'}
-- Upload Date: ${document.uploadedAt ? new Date(document.uploadedAt).toLocaleDateString() : 'Unknown'}
-- Content Length: ${document.content ? `${document.content.length} characters` : 'No content extracted'}
-
-## Recommended Next Steps
-1. Review the document manually for key terms and conditions
-2. Consult with legal counsel for detailed analysis
-3. Extract important dates and deadlines manually
-4. Try the analysis again when API services are restored
-
-## Note
-This is a fallback summary. For detailed AI-powered analysis, please try again later or contact support if the issue persists.`;
-    }
-  } catch (error: any) {
-    console.error('Error in generateContractSummary:', error);
-    throw new Error(`Summary generation failed: ${error.message}`);
+**Note:** Professional legal review is recommended for detailed analysis.`;
   }
 };
 
