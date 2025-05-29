@@ -49,26 +49,42 @@ export interface ContractAnalysis {
   analyzedAt: Date;
 }
 
-// Enhanced OpenAI response validator
+// Content sanitizer to avoid content filter issues
+const sanitizeContentForOpenAI = (content: string): string => {
+  console.log('🧹 Sanitizing content for OpenAI...');
+  
+  // Remove binary/non-printable characters that might trigger content filter
+  let cleaned = content.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ');
+  
+  // Remove common PDF artifacts that trigger content filters
+  cleaned = cleaned.replace(/\b(endstream|endobj|xref|trailer|startxref)\b/gi, '');
+  cleaned = cleaned.replace(/\b(CreationDate|ModDate|Producer|Title)\b\s*\([^)]*\)/gi, '');
+  cleaned = cleaned.replace(/\/[A-Za-z]+\s*\d+/g, ''); // Remove PDF commands like /Type 1
+  cleaned = cleaned.replace(/<<[^>]*>>/g, ''); // Remove PDF dictionary objects
+  cleaned = cleaned.replace(/\s+/g, ' '); // Normalize whitespace
+  
+  // Extract only meaningful text content
+  const sentences = cleaned.split(/[.!?]+/).filter(sentence => {
+    const trimmed = sentence.trim();
+    return trimmed.length > 10 && // Meaningful length
+           /[a-zA-Z]/.test(trimmed) && // Contains letters
+           !(/^[^a-zA-Z]*$/.test(trimmed)); // Not just special characters
+  });
+  
+  const sanitized = sentences.join('. ').trim();
+  console.log(`✅ Content sanitized: ${content.length} → ${sanitized.length} characters`);
+  
+  return sanitized;
+};
+
+// Enhanced OpenAI response validator with content filter handling
 class SafeOpenAIResponse {
   static extractContent(response: any): string {
     try {
-      console.log('🔍 Examining OpenAI response structure:', JSON.stringify(response, null, 2));
+      console.log('🔍 Examining OpenAI response...');
       
-      if (!response) {
-        throw new Error('Response is null or undefined');
-      }
-
-      if (!response.choices) {
-        throw new Error('Response has no choices array');
-      }
-
-      if (!Array.isArray(response.choices)) {
-        throw new Error('Response choices is not an array');
-      }
-
-      if (response.choices.length === 0) {
-        throw new Error('Response choices array is empty');
+      if (!response || !response.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
+        throw new Error('Invalid response structure');
       }
 
       const firstChoice = response.choices[0];
@@ -76,17 +92,21 @@ class SafeOpenAIResponse {
         throw new Error('First choice is null or undefined');
       }
 
-      if (!firstChoice.message) {
-        throw new Error('Choice has no message');
+      // Check for content filter specifically
+      if (firstChoice.finish_reason === 'content_filter') {
+        console.error('🚫 OpenAI Content Filter Triggered!');
+        console.error('This usually means the content contains text that OpenAI flagged as potentially inappropriate.');
+        console.error('Common causes: Binary data, special characters, or garbled PDF text.');
+        throw new Error('CONTENT_FILTER_TRIGGERED');
       }
 
-      if (!firstChoice.message.content) {
-        throw new Error('Message has no content');
+      if (!firstChoice.message || firstChoice.message.content === null || firstChoice.message.content === undefined) {
+        throw new Error(`No content in message. Finish reason: ${firstChoice.finish_reason}`);
       }
 
-      const content = firstChoice.message.content.trim();
+      const content = String(firstChoice.message.content).trim();
       if (!content) {
-        throw new Error('Content is empty after trimming');
+        throw new Error(`Empty content after trimming. Finish reason: ${firstChoice.finish_reason}`);
       }
 
       console.log('✅ Successfully extracted content, length:', content.length);
@@ -94,13 +114,12 @@ class SafeOpenAIResponse {
       
     } catch (error) {
       console.error('❌ Error extracting OpenAI response:', error);
-      console.error('Response object:', response);
       throw error;
     }
   }
 }
 
-// Enhanced rate limiter with better error handling
+// Enhanced rate limiter
 class RateLimitHandler {
   private static async delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -116,6 +135,11 @@ class RateLimitHandler {
         return await apiCall();
       } catch (error: any) {
         console.error(`❌ API attempt ${attempt} failed:`, error.message);
+        
+        // Don't retry content filter errors - they won't resolve with retries
+        if (error.message === 'CONTENT_FILTER_TRIGGERED') {
+          throw error;
+        }
         
         if (error.status === 429 && attempt < maxRetries) {
           const retryAfter = error.headers?.['retry-after-ms'] 
@@ -140,40 +164,6 @@ class RateLimitHandler {
   }
 }
 
-// Safe JSON parser with better error handling
-const safeJSONParse = (text: string, fallback: any = {}) => {
-  try {
-    console.log('🔍 Attempting to parse JSON, content preview:', text.substring(0, 200));
-    
-    let cleanText = text.trim();
-    
-    // Remove code block markers
-    if (cleanText.startsWith('```json')) {
-      cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    } else if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
-    }
-    
-    cleanText = cleanText.trim();
-    
-    // Check if it starts with expected JSON characters
-    if (!cleanText.startsWith('{') && !cleanText.startsWith('[')) {
-      console.warn('⚠️ Content does not start with JSON. First 100 chars:', cleanText.substring(0, 100));
-      return fallback;
-    }
-    
-    const parsed = JSON.parse(cleanText);
-    console.log('✅ Successfully parsed JSON');
-    return parsed;
-    
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown parsing error';
-    console.warn('❌ JSON parsing failed:', errorMessage);
-    console.warn('Content that failed to parse (first 500 chars):', text.substring(0, 500));
-    return fallback;
-  }
-};
-
 // Validation helpers
 const validateRiskCategory = (category: string): 'LIABILITY' | 'TERMINATION' | 'IP' | 'PAYMENT' | 'COMPLIANCE' | 'CONFIDENTIALITY' | 'DATA_PRIVACY' | 'REGULATORY' | 'OTHER' => {
   const validCategories = ['LIABILITY', 'TERMINATION', 'IP', 'PAYMENT', 'COMPLIANCE', 'CONFIDENTIALITY', 'DATA_PRIVACY', 'REGULATORY', 'OTHER'];
@@ -187,49 +177,31 @@ const validateSeverity = (severity: string): 'HIGH' | 'MEDIUM' | 'LOW' => {
   return validSeverities.includes(upperSeverity) ? upperSeverity as any : 'MEDIUM';
 };
 
-// Enhanced OpenAI API call with better error handling
-const enhancedOpenAICall = async (
+// Safe OpenAI API call with content filter handling
+const safeOpenAICall = async (
   messages: any[], 
   maxTokens: number = 1000, 
   model: string = 'gpt-3.5-turbo'
 ): Promise<string> => {
   try {
     console.log(`🤖 Making OpenAI API call with model: ${model}, max_tokens: ${maxTokens}`);
-    console.log('📝 Message count:', messages.length);
     
     return await RateLimitHandler.handleRateLimit(async () => {
       const response = await openai.chat.completions.create({
         model,
         messages,
-        temperature: 0.2,
+        temperature: 0.3,
         max_tokens: maxTokens,
       });
       
-      console.log('📨 Raw OpenAI response received');
       return SafeOpenAIResponse.extractContent(response);
     });
     
   } catch (error: any) {
-    console.error(`❌ OpenAI API call failed with model ${model}:`, error.message);
+    console.error(`❌ OpenAI API call failed:`, error.message);
     
-    // Try fallback to simpler model
-    if (model === 'gpt-4') {
-      console.log('🔄 Falling back to GPT-3.5-turbo...');
-      try {
-        return await RateLimitHandler.handleRateLimit(async () => {
-          const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages,
-            temperature: 0.2,
-            max_tokens: Math.min(maxTokens, 1000),
-          });
-          
-          return SafeOpenAIResponse.extractContent(response);
-        });
-      } catch (fallbackError: any) {
-        console.error('❌ GPT-3.5 fallback also failed:', fallbackError.message);
-        throw new Error(`Both GPT-4 and GPT-3.5 failed: ${fallbackError.message}`);
-      }
+    if (error.message === 'CONTENT_FILTER_TRIGGERED') {
+      throw new Error('Content was flagged by OpenAI safety filter. This usually indicates garbled or inappropriate text in the document.');
     }
     
     throw error;
@@ -244,106 +216,131 @@ export const analyzeContract = async (document: any): Promise<ContractAnalysis> 
       throw new Error('Document content is too short or missing for analysis');
     }
 
-    // Use reasonable content window
-    const maxContentLength = 6000; // Reduced to avoid token limits
-    const truncatedContent = document.content.length > maxContentLength 
-      ? document.content.substring(0, maxContentLength) + '...[truncated for analysis]'
-      : document.content;
+    // STEP 1: Clean and sanitize the content
+    console.log('🧹 Sanitizing document content...');
+    const sanitizedContent = sanitizeContentForOpenAI(document.content);
+    
+    if (sanitizedContent.length < 50) {
+      console.warn('⚠️ Sanitized content is very short, may indicate poor PDF extraction');
+    }
 
-    console.log(`Processing contract content (${truncatedContent.length} characters)`);
+    // Use smaller content window to avoid token limits and filter issues
+    const maxContentLength = 3000; // Reduced significantly
+    const truncatedContent = sanitizedContent.length > maxContentLength 
+      ? sanitizedContent.substring(0, maxContentLength) + '...[content truncated for analysis]'
+      : sanitizedContent;
 
-    // Step 1: Simple Executive Summary (no complex JSON parsing)
-    const summaryPrompt = `Analyze this legal contract and provide a clear executive summary.
+    console.log(`📄 Processing sanitized content (${truncatedContent.length} characters)`);
 
-Contract Content:
+    // STEP 2: Simple, safe executive summary
+    const summaryPrompt = `Please analyze this business contract and provide a brief professional summary.
+
+Contract text:
 ${truncatedContent}
 
-Provide a structured summary covering:
-1. What type of contract this is and who the parties are
-2. The main purpose and key business terms
-3. Top 3 business risks identified
-4. Top 3 recommended actions
+Please provide:
+1. Document type and main parties
+2. Key business purpose  
+3. Primary obligations
+4. Notable terms or conditions
 
-Keep it concise and professional. Do not use JSON format - use plain text with clear headings.`;
+Keep the response professional and concise.`;
 
-    let executiveSummary;
+    let executiveSummary = '';
     try {
-      executiveSummary = await enhancedOpenAICall([
+      console.log('📝 Generating executive summary...');
+      executiveSummary = await safeOpenAICall([
         { 
           role: 'system', 
-          content: 'You are a senior business consultant analyzing legal contracts. Be specific and concise. Use plain text formatting, not JSON.' 
+          content: 'You are a professional business analyst. Provide clear, factual analysis of business contracts. Avoid speculation and focus on observable facts from the document.'
         },
         { role: 'user', content: summaryPrompt }
-      ], 800, 'gpt-3.5-turbo'); // Start with GPT-3.5 for reliability
-      
-      console.log('✅ Successfully generated executive summary');
-    } catch (summaryError) {
-      console.warn('❌ Failed to generate executive summary:', summaryError);
-      executiveSummary = `Contract Analysis Summary
-      
-This contract has been uploaded and processed, but detailed AI analysis is temporarily unavailable.
-
-Key Information:
-- Document: ${document.originalName || document.name}
-- Content Length: ${document.content?.length || 0} characters
-- Analysis Date: ${new Date().toLocaleDateString()}
-
-Recommended Actions:
-1. Review the contract manually for key terms and conditions
-2. Consult with legal counsel for detailed analysis
-3. Extract important dates and deadlines
-4. Identify liability and payment terms`;
-    }
-
-    // Step 2: Simple Risk Analysis (avoid complex JSON)
-    const riskPrompt = `Analyze this contract for business risks. Keep it simple and clear.
-
-Contract Content:
-${truncatedContent}
-
-Identify:
-1. Overall risk level (LOW, MEDIUM, or HIGH)
-2. Main risk areas (liability, payments, termination, etc.)
-3. Specific problematic clauses if any
-
-Provide a clear, structured response. Do not use complex JSON - use simple bullet points.`;
-
-    let riskAnalysis;
-    let overallRiskScore = 50; // Default medium risk
-    let riskScore: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM';
-    
-    try {
-      riskAnalysis = await enhancedOpenAICall([
-        { 
-          role: 'system', 
-          content: 'You are a legal risk analyst. Provide clear, structured risk analysis using bullet points, not JSON.' 
-        },
-        { role: 'user', content: riskPrompt }
       ], 600, 'gpt-3.5-turbo');
       
-      console.log('✅ Successfully analyzed risks');
+      console.log('✅ Successfully generated executive summary');
+    } catch (summaryError: any) {
+      console.warn('❌ Failed to generate executive summary:', summaryError.message);
       
-      // Try to extract risk level from response
-      const lowerResponse = riskAnalysis.toLowerCase();
-      if (lowerResponse.includes('high risk') || lowerResponse.includes('risk level: high')) {
-        overallRiskScore = 75;
-        riskScore = 'HIGH';
-      } else if (lowerResponse.includes('low risk') || lowerResponse.includes('risk level: low')) {
-        overallRiskScore = 25;
-        riskScore = 'LOW';
+      // Check if it's a content filter issue
+      if (summaryError.message.includes('Content was flagged')) {
+        executiveSummary = `⚠️ Content Analysis Blocked
+
+The document content triggered OpenAI's safety filter, which typically indicates:
+- Garbled or corrupted text from PDF extraction
+- Binary data mixed with text content
+- Special characters that appear inappropriate to AI safety systems
+
+Document Information:
+- Name: ${document.originalName || document.name}
+- Size: ${document.size ? `${Math.round(document.size / 1024)} KB` : 'Unknown'}
+- Content Length: ${document.content?.length || 0} characters
+
+Recommended Actions:
+1. Try re-uploading the document in a different format (Word, plain text)
+2. Check if the PDF has selectable text (not a scanned image)
+3. Contact support if the issue persists with clean documents`;
+      } else {
+        executiveSummary = `Contract Analysis Summary
+
+Document: ${document.originalName || document.name}
+Analysis Date: ${new Date().toLocaleDateString()}
+
+The document has been processed but detailed AI analysis is currently unavailable due to technical limitations.
+
+Recommended Actions:
+1. Review the contract manually for key terms
+2. Consult with legal counsel for detailed analysis
+3. Extract important dates and deadlines manually
+4. Contact support if this issue persists`;
       }
-      
-    } catch (riskError) {
-      console.warn('❌ Failed to analyze risks:', riskError);
-      riskAnalysis = 'Risk analysis temporarily unavailable. Manual review recommended.';
     }
 
-    // Create safe analysis object with defaults
+    // STEP 3: Risk assessment (simplified to avoid filter issues)
+    let riskScore: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM';
+    let overallRiskScore = 50;
+    let riskAnalysis = 'Risk analysis temporarily unavailable due to content processing limitations.';
+
+    // Try a simple, safe risk analysis
+    try {
+      const simpleRiskPrompt = `Based on this contract excerpt, what is the overall business risk level?
+
+Contract excerpt:
+${truncatedContent.substring(0, 1500)} // Even smaller excerpt
+
+Please respond with just:
+RISK LEVEL: [LOW/MEDIUM/HIGH]
+REASON: [brief explanation]`;
+
+      console.log('📊 Performing basic risk assessment...');
+      const riskResponse = await safeOpenAICall([
+        { 
+          role: 'system', 
+          content: 'You are a risk analyst. Provide a simple risk assessment based on contract complexity and standard business terms.'
+        },
+        { role: 'user', content: simpleRiskPrompt }
+      ], 300, 'gpt-3.5-turbo');
+      
+      // Extract risk level from response
+      const lowerResponse = riskResponse.toLowerCase();
+      if (lowerResponse.includes('risk level: high')) {
+        riskScore = 'HIGH';
+        overallRiskScore = 75;
+      } else if (lowerResponse.includes('risk level: low')) {
+        riskScore = 'LOW';
+        overallRiskScore = 25;
+      }
+      
+      riskAnalysis = riskResponse;
+      console.log('✅ Basic risk assessment completed');
+      
+    } catch (riskError: any) {
+      console.warn('❌ Risk assessment failed:', riskError.message);
+      // Keep default values
+    }
+
+    // Create safe analysis result
     const getDocumentId = (doc: any): string => {
-      return doc._id?.toString() || 
-             doc.id?.toString() || 
-             doc.documentId?.toString() || 
-             'unknown-id';
+      return doc._id?.toString() || doc.id?.toString() || 'unknown-id';
     };
 
     const analysis: ContractAnalysis = {
@@ -351,14 +348,15 @@ Provide a clear, structured response. Do not use complex JSON - use simple bulle
       documentName: document.originalName || document.name || 'Unknown Document',
       riskScore,
       executiveSummary: {
-        overview: executiveSummary || 'Analysis completed but summary unavailable',
-        keyDates: [], // Simple empty array to avoid complexity
+        overview: executiveSummary,
+        keyDates: [],
         obligations: [],
         recommendedActions: [
-          'Review contract with legal counsel',
-          'Identify key dates and deadlines',
-          'Clarify any ambiguous terms',
-          'Assess compliance requirements'
+          'Review contract with qualified legal counsel',
+          'Identify and calendar key dates and deadlines',
+          'Clarify any ambiguous terms with counterparty',
+          'Assess compliance requirements and obligations',
+          'Consider contract amendment if high-risk areas identified'
         ]
       },
       riskAnalysis: {
@@ -366,12 +364,12 @@ Provide a clear, structured response. Do not use complex JSON - use simple bulle
         riskFactors: [{
           category: 'OTHER',
           severity: 'MEDIUM',
-          description: riskAnalysis || 'Risk analysis completed but details unavailable',
-          clause: 'See full contract for specific clauses',
-          recommendation: 'Conduct detailed legal review'
+          description: riskAnalysis,
+          clause: 'See full contract for specific clause analysis',
+          recommendation: 'Conduct comprehensive legal review with qualified attorney'
         }]
       },
-      keyTerms: [], // Simple empty array
+      keyTerms: [],
       problematicClauses: [],
       analyzedAt: new Date()
     };
@@ -384,24 +382,29 @@ Provide a clear, structured response. Do not use complex JSON - use simple bulle
   } catch (error: any) {
     console.error('❌ Error analyzing contract:', error);
     
-    // Return safe fallback analysis
+    // Create safe fallback analysis
     const getDocumentId = (doc: any): string => {
       return doc._id?.toString() || doc.id?.toString() || 'unknown-id';
     };
+
+    const isContentFilterError = error.message?.includes('Content was flagged') || 
+                                error.message?.includes('CONTENT_FILTER_TRIGGERED');
 
     return {
       documentId: getDocumentId(document),
       documentName: document.originalName || document.name || 'Unknown Document',
       riskScore: 'MEDIUM',
       executiveSummary: {
-        overview: `Contract analysis failed due to technical issue: ${error.message}. Manual review required.`,
+        overview: isContentFilterError 
+          ? `⚠️ Analysis Blocked: The document content triggered safety filters, likely due to garbled PDF text extraction. Try re-uploading in a different format or ensure the PDF has selectable text.`
+          : `Analysis failed due to: ${error.message}. Manual review required.`,
         keyDates: [],
         obligations: [],
         recommendedActions: [
-          'Conduct manual contract review',
-          'Consult with legal counsel',
-          'Extract key terms manually',
-          'Try analysis again later'
+          isContentFilterError ? 'Re-upload document in Word or clean PDF format' : 'Conduct manual contract review',
+          'Consult with legal counsel for detailed analysis',
+          'Extract key terms and dates manually',
+          'Contact support if technical issues persist'
         ]
       },
       riskAnalysis: {
@@ -409,9 +412,11 @@ Provide a clear, structured response. Do not use complex JSON - use simple bulle
         riskFactors: [{
           category: 'OTHER',
           severity: 'MEDIUM',
-          description: 'Automated analysis failed - manual review required',
+          description: isContentFilterError 
+            ? 'Content filter triggered - document may contain garbled text from poor PDF extraction'
+            : 'Automated analysis failed - manual review required',
           clause: 'Full contract review needed',
-          recommendation: 'Consult with legal professional'
+          recommendation: 'Consult with legal professional for comprehensive analysis'
         }]
       },
       keyTerms: [],
@@ -423,65 +428,80 @@ Provide a clear, structured response. Do not use complex JSON - use simple bulle
 
 export const generateContractSummary = async (document: any): Promise<string> => {
   try {
-    const maxContentLength = 5000;
-    const truncatedContent = document.content?.length > maxContentLength 
-      ? document.content.substring(0, maxContentLength) + '...[truncated]'
-      : document.content || 'No content available';
+    console.log('📄 Generating contract summary...');
+    
+    // Sanitize content first
+    const sanitizedContent = sanitizeContentForOpenAI(document.content || '');
+    const maxContentLength = 2000; // Keep it small
+    const truncatedContent = sanitizedContent.length > maxContentLength 
+      ? sanitizedContent.substring(0, maxContentLength) + '...[truncated]'
+      : sanitizedContent;
 
-    const prompt = `Create a professional executive summary of this contract:
+    if (truncatedContent.length < 50) {
+      throw new Error('Insufficient content for summary generation');
+    }
+
+    const prompt = `Please create a brief professional summary of this business document:
 
 ${truncatedContent}
 
-Format as a clear, readable summary with these sections:
-- Contract Overview
-- Key Business Terms  
-- Main Obligations
-- Important Dates
-- Risk Areas
-- Recommended Actions
+Include:
+- Document type and purpose
+- Key parties (if identifiable)
+- Main business terms
+- Important obligations or conditions
 
-Keep it concise and executive-friendly.`;
+Keep the summary concise and professional.`;
 
     try {
-      const summary = await enhancedOpenAICall([
+      const summary = await safeOpenAICall([
         {
           role: 'system',
-          content: 'You are a legal advisor creating executive contract summaries. Be concise and professional.'
+          content: 'You are a professional document analyst. Create clear, factual summaries of business documents.'
         },
         {
           role: 'user',
           content: prompt
         }
-      ], 1200, 'gpt-3.5-turbo');
+      ], 800, 'gpt-3.5-turbo');
 
       return summary;
       
-    } catch (apiError) {
-      console.error('❌ Error generating contract summary via API:', apiError);
+    } catch (apiError: any) {
+      console.error('❌ Summary generation failed:', apiError.message);
+      
+      const isContentFilterError = apiError.message?.includes('Content was flagged');
       
       return `# Contract Summary: ${document.originalName || document.name}
 
-## Contract Overview
-This document has been uploaded and processed successfully.
-
-## Key Information
-- Document Name: ${document.originalName || document.name}
-- File Size: ${document.size ? `${Math.round(document.size / 1024)} KB` : 'Unknown'}
-- Content Length: ${document.content ? `${document.content.length} characters` : 'No content extracted'}
-- Processing Date: ${new Date().toLocaleDateString()}
-
 ## Status
-Basic processing completed. Detailed AI analysis temporarily unavailable.
+${isContentFilterError 
+  ? '⚠️ **Content Filter Issue**: The document content triggered AI safety filters, likely due to garbled text from PDF extraction.' 
+  : '❌ **Analysis Unavailable**: Detailed AI summary could not be generated due to technical limitations.'}
 
-## Recommended Next Steps
-1. Review the document manually for key terms
-2. Consult with legal counsel for detailed analysis
-3. Extract important dates and deadlines manually
-4. Try the AI analysis again later
+## Document Information
+- **Name**: ${document.originalName || document.name}
+- **Size**: ${document.size ? `${Math.round(document.size / 1024)} KB` : 'Unknown'}
+- **Content**: ${document.content ? `${document.content.length} characters extracted` : 'No content extracted'}
+- **Date Processed**: ${new Date().toLocaleDateString()}
 
-## Note
-This is a basic summary. For detailed AI-powered analysis, please try again or contact support if issues persist.`;
+## Recommended Actions
+${isContentFilterError 
+  ? `1. **Re-upload** the document in Word format (.docx) or as a clean, selectable PDF
+2. **Verify** the PDF has selectable text (not a scanned image)
+3. **Check** for document corruption or unusual formatting
+4. **Contact support** if clean documents still trigger this issue`
+  : `1. **Manual Review**: Examine the document directly for key terms and conditions
+2. **Legal Consultation**: Consult with qualified legal counsel for detailed analysis
+3. **Key Dates**: Extract important deadlines and dates manually
+4. **Retry**: Try the analysis again later when technical issues are resolved`}
+
+## Technical Notes
+${isContentFilterError 
+  ? 'Content filters are designed to prevent analysis of inappropriate material. For legal documents, this usually indicates text extraction issues rather than actual content problems.'
+  : 'This is a technical limitation that may be resolved by re-uploading the document or trying again later.'}`;
     }
+    
   } catch (error: any) {
     console.error('❌ Error in generateContractSummary:', error);
     throw new Error(`Summary generation failed: ${error.message}`);
