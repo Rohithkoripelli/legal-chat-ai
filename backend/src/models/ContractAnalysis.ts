@@ -1,9 +1,10 @@
-// backend/src/models/ContractAnalysis.ts
+// backend/src/models/ContractAnalysis.ts - UPDATED WITH userId
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IContractAnalysis extends Document {
   documentId: string;
   documentName: string;
+  userId: string; // ADD THIS FIELD
   riskScore: 'LOW' | 'MEDIUM' | 'HIGH';
   executiveSummary: {
     overview: string;
@@ -123,6 +124,11 @@ const RiskAnalysisSchema = new Schema({
 const ContractAnalysisSchema = new Schema<IContractAnalysis>({
   documentId: { type: String, required: true },
   documentName: { type: String, required: true },
+  userId: { // ADD THIS FIELD
+    type: String, 
+    required: true,
+    index: true // For fast user-specific queries
+  },
   riskScore: { 
     type: String, 
     enum: ['LOW', 'MEDIUM', 'HIGH'], 
@@ -141,5 +147,8 @@ const ContractAnalysisSchema = new Schema<IContractAnalysis>({
 ContractAnalysisSchema.index({ documentId: 1 });
 ContractAnalysisSchema.index({ riskScore: 1 });
 ContractAnalysisSchema.index({ analyzedAt: -1 });
+ContractAnalysisSchema.index({ userId: 1 }); // ADD INDEX FOR USER QUERIES
+ContractAnalysisSchema.index({ userId: 1, riskScore: 1 }); // COMPOUND INDEX FOR DASHBOARD
+ContractAnalysisSchema.index({ userId: 1, analyzedAt: -1 }); // COMPOUND INDEX FOR RECENT ANALYSES
 
 export default mongoose.model<IContractAnalysis>('ContractAnalysis', ContractAnalysisSchema);

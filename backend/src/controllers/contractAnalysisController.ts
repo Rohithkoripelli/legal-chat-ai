@@ -44,7 +44,7 @@ export const analyzeContractEndpoint = async (req: Request, res: Response) => {
     }
 
     console.log('🤖 Performing AI-powered contract analysis...');
-    const analysis = await analyzeContract(document);
+    const analysis = await analyzeContract(document, userId);
 
     // ADD USER ID TO ANALYSIS
     const analysisWithUser = {

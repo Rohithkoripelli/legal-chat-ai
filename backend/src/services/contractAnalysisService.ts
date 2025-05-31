@@ -1,4 +1,4 @@
-// backend/src/services/contractAnalysisService.ts - Full Featured Version
+// backend/src/services/contractAnalysisService.ts - UPDATED WITH userId
 import { OpenAI } from 'openai';
 import { IDocument } from '../models/Document';
 
@@ -9,6 +9,7 @@ const openai = new OpenAI({
 export interface ContractAnalysis {
   documentId: string;
   documentName: string;
+  userId: string; // ADD THIS FIELD
   riskScore: 'LOW' | 'MEDIUM' | 'HIGH';
   executiveSummary: {
     overview: string;
@@ -205,12 +206,17 @@ const safeOpenAICall = async (messages: any[], maxTokens: number = 1000, model: 
   }
 };
 
-export const analyzeContract = async (document: any): Promise<ContractAnalysis> => {
+// UPDATED: Add userId parameter to analyzeContract function
+export const analyzeContract = async (document: any, userId: string): Promise<ContractAnalysis> => {
   try {
-    console.log(`🔍 Starting comprehensive contract analysis for: ${document.originalName || document.name}`);
+    console.log(`🔍 Starting comprehensive contract analysis for: ${document.originalName || document.name} (User: ${userId})`);
     
     if (!document.content || document.content.length < 100) {
       throw new Error('Document content is too short or missing for analysis');
+    }
+
+    if (!userId) {
+      throw new Error('User ID is required for contract analysis');
     }
 
     // Sanitize and prepare content
@@ -220,7 +226,7 @@ export const analyzeContract = async (document: any): Promise<ContractAnalysis> 
       ? sanitizedContent.substring(0, maxContentLength) + '...[content truncated for analysis]'
       : sanitizedContent;
 
-    console.log(`📄 Processing content (${truncatedContent.length} characters)`);
+    console.log(`📄 Processing content (${truncatedContent.length} characters) for user: ${userId}`);
 
     // STEP 1: Executive Summary
     const summaryPrompt = `Analyze this legal contract and provide a detailed summary.
@@ -467,10 +473,11 @@ Calculate risk score (1-100) based on:
       return doc._id?.toString() || doc.id?.toString() || 'unknown-id';
     };
 
-    // Build final analysis
+    // Build final analysis WITH USER ID
     const analysis: ContractAnalysis = {
       documentId: getDocumentId(document),
       documentName: document.originalName || document.name || 'Unknown Document',
+      userId, // CRITICAL: Include userId
       riskScore,
       executiveSummary: {
         overview: executiveSummary,
@@ -487,7 +494,7 @@ Calculate risk score (1-100) based on:
       analyzedAt: new Date()
     };
 
-    console.log(`✅ Comprehensive contract analysis completed`);
+    console.log(`✅ Comprehensive contract analysis completed for user: ${userId}`);
     console.log(`📊 Risk Score: ${overallRiskScore}/100 (${riskScore})`);
     console.log(`📋 Key Terms: ${validatedKeyTerms.length}`);
     console.log(`📅 Key Dates: ${validatedKeyDates.length}`);
@@ -507,6 +514,7 @@ Calculate risk score (1-100) based on:
     return {
       documentId: getDocumentId(document),
       documentName: document.originalName || document.name || 'Unknown Document',
+      userId, // INCLUDE userId even in fallback
       riskScore: 'MEDIUM' as const,
       executiveSummary: {
         overview: `Analysis failed: ${error.message}. Manual review required.`,
