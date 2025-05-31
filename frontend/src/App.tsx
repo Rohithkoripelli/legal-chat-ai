@@ -1,6 +1,7 @@
 // frontend/src/App.tsx
 import React, { useState, useRef } from 'react';
 import { FileText, MessageSquare, Upload, File, X, AlertCircle, Check, Download, Trash2, RefreshCw, AlertTriangle, BarChart3, ClipboardList, Plus } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react'; // ADD THIS LINE
 import { useClerkAuth } from './hooks/useClerk';
 import LandingPage from './components/auth/LandingPage';
 import UserButton from './components/auth/UserButton';
@@ -639,6 +640,9 @@ function App() {
             </div>
           </footer>
         )}
+
+        {/* ADD VERCEL ANALYTICS COMPONENT AT THE END - THIS IS THE KEY ADDITION */}
+        <Analytics />
       </div>
     </ChatProvider>
   );
