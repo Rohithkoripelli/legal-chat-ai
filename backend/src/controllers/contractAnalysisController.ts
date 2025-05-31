@@ -7,17 +7,34 @@ import { analyzeContract } from '../services/contractAnalysisService';
 export const analyzeContractEndpoint = async (req: Request, res: Response) => {
   try {
     const { documentId } = req.params;
-    console.log(`🔍 Starting contract analysis for document: ${documentId}`);
+    const userId = req.userId;
+    
+    console.log(`🔍 Starting contract analysis for document: ${documentId} by user: ${userId}`);
 
-    const existingAnalysis = await ContractAnalysis.findOne({ documentId });
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    // CHECK: Find existing analysis for this user's document
+    const existingAnalysis = await ContractAnalysis.findOne({ 
+      documentId,
+      userId // FILTER BY USER
+    });
+    
     if (existingAnalysis) {
-      console.log('✅ Returning existing analysis');
+      console.log('✅ Returning existing analysis for user:', userId);
       return res.json(existingAnalysis);
     }
 
-    const document = await Document.findById(documentId);
+    // SECURITY CHECK: Verify document ownership
+    const document = await Document.findOne({ 
+      _id: documentId, 
+      userId // ONLY USER'S DOCUMENTS
+    });
+    
     if (!document) {
-      return res.status(404).json({ error: 'Document not found' });
+      console.log('❌ Document not found or access denied for user:', userId);
+      return res.status(404).json({ error: 'Document not found or access denied' });
     }
 
     if (!document.content || document.content.length < 50) {
@@ -29,11 +46,17 @@ export const analyzeContractEndpoint = async (req: Request, res: Response) => {
     console.log('🤖 Performing AI-powered contract analysis...');
     const analysis = await analyzeContract(document);
 
-    const contractAnalysis = new ContractAnalysis(analysis);
-    await contractAnalysis.save();
-    console.log('💾 Analysis saved to database');
+    // ADD USER ID TO ANALYSIS
+    const analysisWithUser = {
+      ...analysis,
+      userId // CRITICAL: Associate analysis with user
+    };
 
-    res.json(analysis);
+    const contractAnalysis = new ContractAnalysis(analysisWithUser);
+    await contractAnalysis.save();
+    console.log('💾 Analysis saved to database for user:', userId);
+
+    res.json(analysisWithUser);
   } catch (error) {
     console.error('❌ Error in contract analysis:', error);
     res.status(500).json({ 
@@ -46,39 +69,63 @@ export const analyzeContractEndpoint = async (req: Request, res: Response) => {
 export const getContractAnalysis = async (req: Request, res: Response) => {
   try {
     const { documentId } = req.params;
-    const analysis = await ContractAnalysis.findOne({ documentId });
-    if (!analysis) {
-      return res.status(404).json({ error: 'Analysis not found' });
+    const userId = req.userId;
+    
+    console.log(`📄 Fetching contract analysis for document: ${documentId} by user: ${userId}`);
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
     }
+
+    // SECURITY CHECK: Only return user's analysis
+    const analysis = await ContractAnalysis.findOne({ 
+      documentId,
+      userId // FILTER BY USER
+    });
+    
+    if (!analysis) {
+      console.log('❌ Analysis not found or access denied for user:', userId);
+      return res.status(404).json({ error: 'Analysis not found or access denied' });
+    }
+
+    console.log('✅ Contract analysis found for user:', userId);
     res.json(analysis);
   } catch (error) {
-    console.error('Error fetching contract analysis:', error);
+    console.error('❌ Error fetching contract analysis:', error);
     res.status(500).json({ error: 'Failed to fetch analysis' });
   }
 };
 
 export const getRiskDashboard = async (req: Request, res: Response) => {
   try {
-    console.log('📊 Generating risk dashboard...');
+    const userId = req.userId;
+    console.log('📊 Generating risk dashboard for user:', userId);
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
     
-    const allAnalyses = await ContractAnalysis.find({});
+    // CRITICAL SECURITY FIX: Only get user's analyses
+    const userAnalyses = await ContractAnalysis.find({ userId });
+    console.log(`📄 Found ${userAnalyses.length} analyses for user: ${userId}`);
     
-    const totalContracts = allAnalyses.length;
-    const highRiskCount = allAnalyses.filter(a => a.riskScore === 'HIGH').length;
-    const mediumRiskCount = allAnalyses.filter(a => a.riskScore === 'MEDIUM').length;
-    const lowRiskCount = allAnalyses.filter(a => a.riskScore === 'LOW').length;
+    const totalContracts = userAnalyses.length;
+    const highRiskCount = userAnalyses.filter(a => a.riskScore === 'HIGH').length;
+    const mediumRiskCount = userAnalyses.filter(a => a.riskScore === 'MEDIUM').length;
+    const lowRiskCount = userAnalyses.filter(a => a.riskScore === 'LOW').length;
     
-    const recentHighRisk = allAnalyses
+    const recentHighRisk = userAnalyses
       .filter(a => a.riskScore === 'HIGH')
       .sort((a, b) => new Date(b.analyzedAt).getTime() - new Date(a.analyzedAt).getTime())
       .slice(0, 5);
     
-    const averageRiskScore = allAnalyses.length > 0 
-      ? allAnalyses.reduce((sum, a) => sum + a.riskAnalysis.overallScore, 0) / allAnalyses.length
+    const averageRiskScore = userAnalyses.length > 0 
+      ? userAnalyses.reduce((sum, a) => sum + a.riskAnalysis.overallScore, 0) / userAnalyses.length
       : 0;
     
+    // Calculate risk factors from user's analyses only
     const riskFactors: { [key: string]: number } = {};
-    allAnalyses.forEach(analysis => {
+    userAnalyses.forEach(analysis => {
       analysis.riskAnalysis.riskFactors.forEach(factor => {
         riskFactors[factor.category] = (riskFactors[factor.category] || 0) + 1;
       });
@@ -88,6 +135,21 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
       .sort(([,a], [,b]) => b - a)
       .slice(0, 5)
       .map(([category, count]) => ({ category, count }));
+
+    // Calculate trends from user's data only
+    const now = new Date();
+    const monthAgo = new Date();
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+
+    const thisMonth = userAnalyses.filter(a => 
+      new Date(a.analyzedAt) > monthAgo
+    ).length;
+    
+    const lastMonth = userAnalyses.filter(a => 
+      new Date(a.analyzedAt) > twoMonthsAgo && new Date(a.analyzedAt) <= monthAgo
+    ).length;
 
     const dashboard = {
       summary: {
@@ -114,24 +176,25 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
       })),
       topRiskFactors,
       trends: {
-        thisMonth: allAnalyses.filter(a => {
-          const monthAgo = new Date();
-          monthAgo.setMonth(monthAgo.getMonth() - 1);
-          return new Date(a.analyzedAt) > monthAgo;
-        }).length,
-        lastMonth: allAnalyses.filter(a => {
-          const twoMonthsAgo = new Date();
-          twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-          const monthAgo = new Date();
-          monthAgo.setMonth(monthAgo.getMonth() - 1);
-          return new Date(a.analyzedAt) > twoMonthsAgo && new Date(a.analyzedAt) <= monthAgo;
-        }).length
+        thisMonth,
+        lastMonth
       }
     };
 
+    console.log('✅ Risk dashboard generated for user:', userId);
+    console.log('📊 Dashboard stats:', {
+      totalContracts,
+      highRiskCount,
+      mediumRiskCount,
+      lowRiskCount
+    });
+
     res.json(dashboard);
   } catch (error) {
-    console.error('Error generating risk dashboard:', error);
-    res.status(500).json({ error: 'Failed to generate risk dashboard' });
+    console.error('❌ Error generating risk dashboard:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate risk dashboard',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };

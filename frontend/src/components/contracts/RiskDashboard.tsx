@@ -1,5 +1,6 @@
-// frontend/src/components/contracts/RiskDashboard.tsx
+// frontend/src/components/contracts/RiskDashboard.tsx - UPDATED WITH AUTH
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import { AlertTriangle, CheckCircle, AlertCircle, TrendingUp, Calendar, FileText } from 'lucide-react';
 
 interface RiskDashboardData {
@@ -38,31 +39,82 @@ interface RiskDashboardData {
 }
 
 const RiskDashboard: React.FC = () => {
+  const { getToken, isSignedIn } = useAuth(); // ADD AUTH HOOK
   const [dashboardData, setDashboardData] = useState<RiskDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (isSignedIn) {
+      fetchDashboardData();
+    }
+  }, [isSignedIn]);
 
   const fetchDashboardData = async () => {
+    if (!isSignedIn) {
+      setError('Please log in to view risk dashboard');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('https://legal-chat-ai.onrender.com/api/contracts/dashboard');
-      if (!response.ok) throw new Error('Failed to fetch dashboard data');
+      setLoading(true);
+      setError(null);
+      
+      // GET AUTH TOKEN
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token - please log in again');
+      }
+
+      console.log('🔍 Fetching risk dashboard data for authenticated user');
+      
+      // MAKE AUTHENTICATED REQUEST
+      const response = await fetch('https://legal-chat-ai.onrender.com/api/contracts/dashboard', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please log in again');
+        }
+        throw new Error(`Failed to fetch dashboard data: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log('✅ Risk dashboard data loaded successfully');
       setDashboardData(data);
     } catch (err) {
+      console.error('❌ Error fetching dashboard data:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
   };
 
+  // SHOW AUTH REQUIRED MESSAGE IF NOT SIGNED IN
+  if (!isSignedIn) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Authentication Required</h3>
+          <p className="text-gray-600">Please log in to view your risk dashboard.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="text-gray-600">Loading your risk dashboard...</span>
+        </div>
       </div>
     );
   }
@@ -75,13 +127,27 @@ const RiskDashboard: React.FC = () => {
           <div>
             <h3 className="text-red-800 font-medium">Error Loading Dashboard</h3>
             <p className="text-red-700 text-sm mt-1">{error}</p>
+            <button 
+              onClick={fetchDashboardData}
+              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!dashboardData) return null;
+  if (!dashboardData) {
+    return (
+      <div className="text-center py-12">
+        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No Risk Data Available</h3>
+        <p className="text-gray-600">Upload and analyze contracts to see your risk dashboard.</p>
+      </div>
+    );
+  }
 
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
@@ -109,13 +175,17 @@ const RiskDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Risk Dashboard</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Your Risk Dashboard</h2>
+          <p className="text-gray-600 text-sm mt-1">Personal contract risk analysis overview</p>
+        </div>
         <button 
           onClick={fetchDashboardData}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          disabled={loading}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
         >
           <TrendingUp className="h-4 w-4" />
-          <span>Refresh</span>
+          <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
         </button>
       </div>
 
@@ -124,7 +194,7 @@ const RiskDashboard: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Contracts</p>
+              <p className="text-sm font-medium text-gray-600">Your Contracts</p>
               <p className="text-3xl font-bold text-gray-900">{dashboardData.summary.totalContracts}</p>
             </div>
             <FileText className="h-8 w-8 text-gray-400" />
@@ -164,7 +234,7 @@ const RiskDashboard: React.FC = () => {
 
       {/* Risk Distribution Chart */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Risk Distribution</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Risk Distribution</h3>
         <div className="space-y-4">
           {[
             { label: 'High Risk', count: dashboardData.riskDistribution.high, color: 'bg-red-500' },
@@ -196,7 +266,7 @@ const RiskDashboard: React.FC = () => {
       {/* Recent High Risk Contracts */}
       {dashboardData.recentHighRisk.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent High-Risk Contracts</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Recent High-Risk Contracts</h3>
           <div className="space-y-4">
             {dashboardData.recentHighRisk.map((contract) => (
               <div key={contract.documentId} className="border border-red-200 rounded-lg p-4 bg-red-50">
@@ -238,7 +308,7 @@ const RiskDashboard: React.FC = () => {
 
       {/* Top Risk Factors */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Most Common Risk Factors</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Most Common Risk Factors</h3>
         <div className="space-y-3">
           {dashboardData.topRiskFactors.map((factor) => (
             <div key={factor.category} className="flex items-center justify-between">
@@ -251,7 +321,7 @@ const RiskDashboard: React.FC = () => {
 
       {/* Trends */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Analysis Trends</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Analysis Trends</h3>
         <div className="flex items-center space-x-6">
           <div>
             <p className="text-sm text-gray-600">This Month</p>
