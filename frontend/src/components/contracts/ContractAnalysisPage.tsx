@@ -1,5 +1,6 @@
-// frontend/src/components/contracts/ContractAnalysisPage.tsx
+// frontend/src/components/contracts/ContractAnalysisPage.tsx - UPDATED WITH AUTH
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import { AlertTriangle, CheckCircle, AlertCircle, FileText, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft } from 'lucide-react';
 
 interface ContractAnalysis {
@@ -51,29 +52,59 @@ interface ContractAnalysisPageProps {
 }
 
 const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId, onBack }) => {
+  const { getToken, isSignedIn } = useAuth(); // ADD AUTH HOOK
   const [analysis, setAnalysis] = useState<ContractAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (documentId) {
+    if (documentId && isSignedIn) {
       fetchAnalysis();
     }
-  }, [documentId]);
+  }, [documentId, isSignedIn]);
 
   const fetchAnalysis = async () => {
+    if (!isSignedIn) {
+      setError('Please log in to view contract analysis');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analysis/${documentId}`);
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token - please log in again');
+      }
+
+      console.log('🔍 Fetching contract analysis for document:', documentId);
+
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analysis/${documentId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
       if (response.status === 404) {
         // No analysis exists, trigger new analysis
+        console.log('📄 No existing analysis found, starting new analysis...');
         await startAnalysis();
         return;
       }
-      if (!response.ok) throw new Error('Failed to fetch analysis');
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please log in again');
+        }
+        throw new Error(`Failed to fetch analysis: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('✅ Contract analysis loaded successfully');
       setAnalysis(data);
     } catch (err) {
+      console.error('❌ Error fetching analysis:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
@@ -81,16 +112,45 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
   };
 
   const startAnalysis = async () => {
+    if (!isSignedIn) {
+      setError('Please log in to analyze contracts');
+      return;
+    }
+
     try {
       setAnalyzing(true);
       setError(null);
+
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token - please log in again');
+      }
+
+      console.log('🤖 Starting new contract analysis for document:', documentId);
+
       const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analyze/${documentId}`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
-      if (!response.ok) throw new Error('Analysis failed');
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please log in again');
+        }
+        if (response.status === 404) {
+          throw new Error('Document not found or access denied');
+        }
+        throw new Error(`Analysis failed: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('✅ Contract analysis completed successfully');
       setAnalysis(data);
     } catch (err) {
+      console.error('❌ Error starting analysis:', err);
       setError(err instanceof Error ? err.message : 'Analysis failed');
     } finally {
       setAnalyzing(false);
@@ -99,15 +159,43 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
   };
 
   const refreshAnalysis = async () => {
+    if (!isSignedIn) {
+      setError('Please log in to refresh analysis');
+      return;
+    }
+
     try {
       setAnalyzing(true);
-      const response = await fetch(`http://legal-chat-ai.onrender.com/api/contracts/analysis/${documentId}/refresh`, {
-        method: 'POST'
+      setError(null);
+
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token - please log in again');
+      }
+
+      console.log('🔄 Refreshing contract analysis...');
+
+      // For refresh, we'll re-run the analysis
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/contracts/analyze/${documentId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
-      if (!response.ok) throw new Error('Refresh failed');
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please log in again');
+        }
+        throw new Error(`Refresh failed: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('✅ Contract analysis refreshed successfully');
       setAnalysis(data);
     } catch (err) {
+      console.error('❌ Error refreshing analysis:', err);
       setError(err instanceof Error ? err.message : 'Refresh failed');
     } finally {
       setAnalyzing(false);
@@ -132,6 +220,27 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
     }
   };
 
+  // AUTH CHECK - Show auth required message if not signed in
+  if (!isSignedIn) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Authentication Required</h3>
+            <p className="text-gray-600">Please log in to analyze contracts.</p>
+            <button 
+              onClick={onBack}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading || analyzing) {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -139,10 +248,10 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {analyzing ? 'Analyzing Contract...' : 'Loading Analysis...'}
+              {analyzing ? 'Analyzing Your Contract...' : 'Loading Analysis...'}
             </h3>
             <p className="text-gray-600">
-              {analyzing ? 'This may take 30-60 seconds. AI is examining the contract for risks and key terms.' : 'Please wait while we load the analysis.'}
+              {analyzing ? 'This may take 30-60 seconds. AI is examining your contract for risks and key terms.' : 'Please wait while we load your analysis.'}
             </p>
           </div>
         </div>
@@ -159,12 +268,20 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
             <div>
               <h3 className="text-red-800 font-medium">Analysis Error</h3>
               <p className="text-red-700 text-sm mt-1">{error}</p>
-              <button 
-                onClick={startAnalysis}
-                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Try Again
-              </button>
+              <div className="flex space-x-3 mt-3">
+                <button 
+                  onClick={startAnalysis}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                  Try Again
+                </button>
+                <button 
+                  onClick={onBack}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                >
+                  Go Back
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -181,13 +298,13 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
         <div className="flex items-center space-x-4">
           <button 
             onClick={onBack}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Back</span>
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Contract Analysis</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Your Contract Analysis</h1>
             <p className="text-gray-600 mt-1">{analysis.documentName}</p>
           </div>
         </div>
@@ -199,10 +316,10 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
           <button 
             onClick={refreshAnalysis}
             disabled={analyzing}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`h-4 w-4 ${analyzing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
+            <span>{analyzing ? 'Refreshing...' : 'Refresh'}</span>
           </button>
         </div>
       </div>
