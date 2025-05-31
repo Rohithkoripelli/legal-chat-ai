@@ -1,4 +1,4 @@
-// backend/src/services/documentGenerationService.ts - FIXED VERSION
+// backend/src/services/documentGenerationService.ts - COMPLETE FIXED VERSION
 import { OpenAI } from 'openai';
 import dotenv from 'dotenv';
 
@@ -73,6 +73,16 @@ export const generateProfessionalDocument = async (
   try {
     console.log(`🤖 Starting document generation: ${request.templateName}`);
     console.log(`📊 Form data keys: ${Object.keys(request.formData).join(', ')}`);
+    
+    // DEBUG: Check if job responsibilities are in the form data
+    if (request.formData.job_responsibilities) {
+      console.log('📝 Job responsibilities found:', request.formData.job_responsibilities.substring(0, 100) + '...');
+      console.log('📏 Job responsibilities length:', request.formData.job_responsibilities.length);
+    } else {
+      console.log('❌ Job responsibilities NOT found in form data');
+      console.log('🔍 Available form data keys:', Object.keys(request.formData));
+    }
+    
     console.log(`🔑 OpenAI available: ${!!openai}`);
     console.log(`🔑 API Key exists: ${!!process.env.OPENAI_API_KEY}`);
     
@@ -153,7 +163,7 @@ const generateAIEnhancedDocument = async (request: DocumentGenerationRequest): P
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.1, // Low temperature for consistent, professional output
-        max_tokens: 2000,
+        max_tokens: 2500, // Increased for longer documents
       });
     });
 
@@ -197,7 +207,8 @@ Requirements:
 - Include legal disclaimers where appropriate
 - Make it comprehensive and realistic
 - Use proper business letter format
-- Include all standard clauses for this document type`;
+- Include all standard clauses for this document type
+- NEVER use placeholder text - always use the actual information provided`;
 
   switch (templateType) {
     case 'employment-agreement':
@@ -207,8 +218,9 @@ For Employment Agreements specifically:
 - Start with company letterhead format
 - Include a warm, welcoming tone while remaining professional
 - Structure with clear sections: Position Details, Compensation, Benefits, Responsibilities, Terms & Conditions
-- Include detailed job responsibilities (be specific based on the job title)
-- Add comprehensive benefits information
+- CRITICAL: Include the EXACT job responsibilities provided in detail - do not use placeholder text like "(Here list the job responsibilities)"
+- If job responsibilities are provided, list them in a professional format with proper numbering or bullets
+- Add comprehensive benefits information exactly as provided
 - Include standard employment clauses (confidentiality, IP assignment, termination, etc.)
 - End with acceptance signature section
 - Use phrases like "We are delighted to extend an offer of employment"
@@ -241,33 +253,48 @@ For Non-Disclosure Agreements specifically:
   }
 };
 
-// Create detailed user prompt with form data
+// Create detailed user prompt with form data - FIXED TO HANDLE JOB RESPONSIBILITIES PROPERLY
 const createUserPrompt = (request: DocumentGenerationRequest, today: string): string => {
-  // Format form data for AI prompt (exclude logo data)
+  // FIXED: Better formatting for form data, especially multi-line text like job responsibilities
   const formDataForAI = Object.entries(request.formData)
     .filter(([key]) => key !== 'company_logo')
     .map(([key, value]) => {
+      const fieldName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
       if (typeof value === 'object' && value?.street) {
         // Address formatting
-        return `${key}: ${value.street}, ${value.city}, ${value.state} ${value.zip}, ${value.country}`;
+        return `${fieldName}: ${value.street}, ${value.city}, ${value.state} ${value.zip}, ${value.country}`;
       } else if (Array.isArray(value)) {
-        // Array formatting
-        return `${key}: ${value.join(', ')}`;
+        // Array formatting  
+        return `${fieldName}: ${value.join(', ')}`;
       } else if (typeof value === 'boolean') {
-        return `${key}: ${value ? 'Yes' : 'No'}`;
+        return `${fieldName}: ${value ? 'Yes' : 'No'}`;
+      } else if (key === 'job_responsibilities' && value) {
+        // FIXED: Special handling for job responsibilities to preserve formatting
+        return `${fieldName}:\n${value}`;
+      } else if (typeof value === 'string' && value.includes('\n')) {
+        // FIXED: Handle any multi-line text fields properly
+        return `${fieldName}:\n${value}`;
       }
-      return `${key}: ${value}`;
+      return `${fieldName}: ${value || 'Not specified'}`;
     })
-    .join('\n');
+    .join('\n\n');
 
   return `Create a professional ${request.templateName} dated ${today} with the following information:
 
 ${formDataForAI}
 
-Make this document comprehensive, realistic, and professionally formatted. Include all standard legal clauses and terms appropriate for this type of document. The document should look like it came from a real company's legal or HR department.`;
+IMPORTANT INSTRUCTIONS:
+1. Use ALL the information provided above - do not use placeholder text
+2. If job responsibilities are listed, include them in full detail in the RESPONSIBILITIES section
+3. Format job responsibilities as a numbered list for clarity
+4. Make the document comprehensive and professional
+5. Include proper legal clauses and signature sections
+
+Make this document look like it came from a real company's legal or HR department.`;
 };
 
-// Enhanced fallback template (used when AI fails) - SAME AS YOUR EXISTING CODE
+// Enhanced fallback template - FIXED TO HANDLE JOB RESPONSIBILITIES PROPERLY
 const generateEnhancedTemplate = (request: DocumentGenerationRequest): string => {
   const today = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -280,14 +307,20 @@ const generateEnhancedTemplate = (request: DocumentGenerationRequest): string =>
     return `${addr.street || '[Street]'}, ${addr.city || '[City]'}, ${addr.state || '[State]'} ${addr.zip || '[ZIP]'}, ${addr.country || '[Country]'}`;
   };
 
+  // FIXED: Better formatting for multi-line text like job responsibilities
   const formatMultiLineText = (text: string, useNumbers: boolean = false): string => {
     if (!text) return '';
     
-    return text
-      .split('\n')
+    // Handle both line breaks and manual numbering
+    const lines = text
+      .split(/\n|\\n/) // Handle both actual newlines and escaped newlines
       .filter((line: string) => line.trim().length > 0)
+      .map((line: string) => line.trim());
+    
+    return lines
       .map((line: string, index: number) => {
-        const cleanLine = line.trim().replace(/^\d+\.\s*/, '');
+        // Remove existing numbering if present
+        const cleanLine = line.replace(/^\d+\.\s*/, '').replace(/^[•\-\*]\s*/, '');
         if (useNumbers) {
           return `${index + 1}. ${cleanLine}`;
         } else {
@@ -310,6 +343,7 @@ const generateEnhancedTemplate = (request: DocumentGenerationRequest): string =>
         ? request.formData.benefits.join(', ')
         : 'Health insurance, paid time off, and other benefits as per company policy';
 
+      // FIXED: Better handling of job responsibilities
       const jobResponsibilities = request.formData.job_responsibilities 
         ? formatMultiLineText(request.formData.job_responsibilities, true)
         : '1. Perform duties as assigned by supervisor\n2. Maintain professional standards\n3. Collaborate effectively with team members\n4. Complete projects within deadlines\n5. Participate in meetings and training as required';
