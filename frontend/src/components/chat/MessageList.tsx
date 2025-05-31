@@ -1,11 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-
-interface Message {
-  id?: string;
-  text: string;
-  isUser: boolean;
-  timestamp?: Date;
-}
+import { Message } from '../../types'; // Use your existing types
 
 interface MessageListProps {
   messages: Message[];

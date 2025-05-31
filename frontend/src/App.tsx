@@ -1,13 +1,10 @@
-// frontend/src/App.tsx
+// frontend/src/App.tsx - UPDATED WITH AUTHENTICATION
 import React, { useState, useRef } from 'react';
 import { FileText, MessageSquare, Upload, File, X, AlertCircle, Check, Download, Trash2, RefreshCw, AlertTriangle, BarChart3, ClipboardList, Plus } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/react'; // ADD THIS LINE
+import { Analytics } from '@vercel/analytics/react';
 import { useClerkAuth } from './hooks/useClerk';
 import LandingPage from './components/auth/LandingPage';
 import UserButton from './components/auth/UserButton';
-import AILegalDocumentAnalysisPage from './pages/AILegalDocumentAnalysisPage';
-import LegalAIAssistantPage from './pages/LegalAIAssistantPage';
-import ContractAnalysisAIPage from './pages/ContractAnalysisAIPage';
 import HeaderAuthButtons from './components/auth/HeaderAuthButtons';
 import MessageList from './components/chat/MessageList';
 import MessageInput from './components/chat/MessageInput';
@@ -23,7 +20,7 @@ import DocumentTest from './components/test/DocumentTest';
 
 type Page = 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
-// Modern File Upload Component
+// Modern File Upload Component - UPDATED WITH AUTH ERROR HANDLING
 const ModernFileUpload: React.FC<{ onUploadSuccess: () => void }> = ({ onUploadSuccess }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -31,6 +28,7 @@ const ModernFileUpload: React.FC<{ onUploadSuccess: () => void }> = ({ onUploadS
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadDocument } = useDocuments(); // Use the protected hook
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -81,26 +79,8 @@ const ModernFileUpload: React.FC<{ onUploadSuccess: () => void }> = ({ onUploadS
     setUploadSuccess(null);
 
     try {
-      const uploadPromises = selectedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append('document', file);
-
-        console.log('Uploading file:', file.name);
-        const response = await fetch('https://legal-chat-ai.onrender.com/api/documents/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        console.log('Upload response status:', response.status);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-          throw new Error(errorData.error || `Failed to upload ${file.name}`);
-        }
-
-        return await response.json();
-      });
-
+      // Use the protected upload method
+      const uploadPromises = selectedFiles.map(file => uploadDocument(file));
       await Promise.all(uploadPromises);
       
       setUploadSuccess(`Successfully uploaded ${selectedFiles.length} file(s)!`);
@@ -263,9 +243,19 @@ const ModernFileUpload: React.FC<{ onUploadSuccess: () => void }> = ({ onUploadS
   );
 };
 
-// Modern Documents Page
+// Modern Documents Page - UPDATED WITH AUTH
 const ModernDocumentsPage: React.FC = () => {
-  const { documents, loading, error, deleteDocument, downloadDocument, refreshDocuments } = useDocuments();
+  const { documents, loading, error, deleteDocument, downloadDocument, refreshDocuments, isAuthenticated } = useDocuments();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-12">
+        <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Authentication Required</h3>
+        <p className="text-gray-600">Please log in to access your documents.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -304,7 +294,7 @@ const ModernDocumentsPage: React.FC = () => {
             <div className="flex items-center justify-center py-12">
               <div className="flex items-center space-x-3">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="text-gray-600">Loading documents...</span>
+                <span className="text-gray-600">Loading your documents...</span>
               </div>
             </div>
           ) : error ? (
@@ -343,9 +333,9 @@ const ModernDocumentsPage: React.FC = () => {
   );
 };
 
-// Modern Chat Page
+// Modern Chat Page - UPDATED WITH AUTH
 const ModernChatPage: React.FC = () => {
-  const { messages, isLoading, error, sendMessage } = useChat();
+  const { messages, isLoading, error, sendMessage, isAuthenticated } = useChat();
 
   const handleSendMessage = async (message: string) => {
     try {
@@ -354,6 +344,18 @@ const ModernChatPage: React.FC = () => {
       console.error('Failed to send message:', error);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm h-[700px] flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Authentication Required</h3>
+          <p className="text-gray-600">Please log in to use the chat feature.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm h-[700px] flex flex-col overflow-hidden">
@@ -368,7 +370,7 @@ const ModernChatPage: React.FC = () => {
         <div className="bg-red-50 border-b border-red-200 p-4">
           <div className="flex items-center space-x-3">
             <AlertCircle className="h-5 w-5 text-red-600" />
-            <span className="text-red-800 font-medium">Failed to initialize chat session</span>
+            <span className="text-red-800 font-medium">{error}</span>
           </div>
         </div>
       )}
@@ -422,6 +424,44 @@ function App() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading Legal AI...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show authentication page if not signed in
+  if (!isSignedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <header className="bg-white shadow-lg border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex justify-between items-center h-20">
+              {/* Left side - Logo and Brand */}
+              <div className="flex items-center space-x-3 flex-shrink-0">
+                <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <FileText className="h-7 w-7 text-white" />
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="text-2xl font-bold text-gray-900">Legal Chat AI</h1>
+                  <p className="text-sm text-gray-600">Document Analysis Assistant</p>
+                </div>
+                <div className="sm:hidden">
+                  <h1 className="text-xl font-bold text-gray-900">Legal AI</h1>
+                </div>
+              </div>
+              
+              {/* Right side - Auth Buttons */}
+              <div className="flex-shrink-0">
+                <HeaderAuthButtons />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="min-h-screen">
+          <LandingPage />
+        </main>
+
+        <Analytics />
       </div>
     );
   }
@@ -495,7 +535,7 @@ function App() {
   return (
     <ChatProvider>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-        {/* Header - Always shown */}
+        {/* Header - Always shown for authenticated users */}
         <header className="bg-white shadow-lg border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-between items-center h-20">
@@ -508,105 +548,98 @@ function App() {
                   <h1 className="text-2xl font-bold text-gray-900">Legal Chat AI</h1>
                   <p className="text-sm text-gray-600">Document Analysis Assistant</p>
                 </div>
-                {/* Mobile logo text */}
                 <div className="sm:hidden">
                   <h1 className="text-xl font-bold text-gray-900">Legal AI</h1>
                 </div>
               </div>
               
-              {/* Center - Navigation Menu (only show when signed in) */}
-              {isSignedIn && (
-                <nav className="flex-1 flex justify-center mx-8">
-                  <div className="flex space-x-1">
+              {/* Center - Navigation Menu */}
+              <nav className="flex-1 flex justify-center mx-8">
+                <div className="flex space-x-1">
+                  <button
+                    onClick={() => setCurrentPage('documents')}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 'documents'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <FileText size={16} />
+                    <span className="hidden md:inline">Documents</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentPage('chat')}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 'chat'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <MessageSquare size={16} />
+                    <span className="hidden md:inline">Chat</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setCurrentPage('contracts');
+                      setSelectedDocumentId(null);
+                    }}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 'contracts'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <AlertTriangle size={16} />
+                    <span className="hidden md:inline">Risk Analysis</span>
+                    <span className="md:hidden">Risk</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentPage('dashboard')}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 'dashboard'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <BarChart3 size={16} />
+                    <span className="hidden lg:inline">Dashboard</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentPage('create-document')}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      currentPage === 'create-document'
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <ClipboardList size={16} />
+                    <span className="hidden lg:inline">Create Document</span>
+                    <span className="lg:hidden">Create</span>
+                  </button>
+                  
+                  {/* Keep test button only in development mode */}
+                  {process.env.NODE_ENV === 'development' && (
                     <button
-                      onClick={() => setCurrentPage('documents')}
+                      onClick={() => setCurrentPage('test')}
                       className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        currentPage === 'documents'
+                        currentPage === 'test'
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
                           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                       }`}
                     >
-                      <FileText size={16} />
-                      <span className="hidden md:inline">Documents</span>
+                      <span>Test</span>
                     </button>
-                    
-                    <button
-                      onClick={() => setCurrentPage('chat')}
-                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        currentPage === 'chat'
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <MessageSquare size={16} />
-                      <span className="hidden md:inline">Chat</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setCurrentPage('contracts');
-                        setSelectedDocumentId(null);
-                      }}
-                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        currentPage === 'contracts'
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <AlertTriangle size={16} />
-                      <span className="hidden md:inline">Risk Analysis</span>
-                      <span className="md:hidden">Risk</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setCurrentPage('dashboard')}
-                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        currentPage === 'dashboard'
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <BarChart3 size={16} />
-                      <span className="hidden lg:inline">Dashboard</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setCurrentPage('create-document')}
-                      className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        currentPage === 'create-document'
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <ClipboardList size={16} />
-                      <span className="hidden lg:inline">Create Document</span>
-                      <span className="lg:hidden">Create</span>
-                    </button>
-                    
-                    {/* Keep test button only in development mode */}
-                    {process.env.NODE_ENV === 'development' && (
-                      <button
-                        onClick={() => setCurrentPage('test')}
-                        className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          currentPage === 'test'
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                        }`}
-                      >
-                        <span>Test</span>
-                      </button>
-                    )}
-                  </div>
-                </nav>
-              )}
+                  )}
+                </div>
+              </nav>
               
-              {/* Right side - Auth Buttons or User Button */}
+              {/* Right side - User Button */}
               <div className="flex-shrink-0">
-                {isSignedIn ? (
-                  <UserButton />
-                ) : (
-                  <HeaderAuthButtons />
-                )}
+                <UserButton />
               </div>
             </div>
           </div>
@@ -614,37 +647,30 @@ function App() {
 
         {/* Main Content */}
         <main className="min-h-screen">
-          {isSignedIn ? (
-            renderPage()
-          ) : (
-            <LandingPage />
-          )}
+          {renderPage()}
         </main>
 
-        {/* Clean Footer - Only shows when signed in */}
-        {isSignedIn && (
-          <footer className="bg-white border-t border-gray-200 mt-20">
-            <div className="max-w-7xl mx-auto px-6 py-12">
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-2 mb-4">
-                  <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-white" />
-                  </div>
-                  <span className="text-lg font-semibold text-gray-900">Legal Chat AI</span>
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 mt-20">
+          <div className="max-w-7xl mx-auto px-6 py-12">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-gray-600 mb-4">Intelligent Document Analysis Assistant</p>
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
-                  <p className="text-sm text-yellow-800">
-                    ⚖️ <strong>Important:</strong> This tool is for informational purposes only and does not constitute legal advice. 
-                    Always consult with a qualified attorney for legal matters.
-                  </p>
-                </div>
+                <span className="text-lg font-semibold text-gray-900">Legal Chat AI</span>
+              </div>
+              <p className="text-gray-600 mb-4">Intelligent Document Analysis Assistant</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
+                <p className="text-sm text-yellow-800">
+                  ⚖️ <strong>Important:</strong> This tool is for informational purposes only and does not constitute legal advice. 
+                  Always consult with a qualified attorney for legal matters.
+                </p>
               </div>
             </div>
-          </footer>
-        )}
+          </div>
+        </footer>
 
-        {/* ADD VERCEL ANALYTICS COMPONENT AT THE END - THIS IS THE KEY ADDITION */}
         <Analytics />
       </div>
     </ChatProvider>

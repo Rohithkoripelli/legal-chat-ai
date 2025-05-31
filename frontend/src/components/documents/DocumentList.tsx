@@ -1,13 +1,6 @@
 import React from 'react';
 import { FileText, Trash2, Download, AlertCircle } from 'lucide-react';
-
-interface Document {
-  id: string;
-  name: string;
-  size: number;
-  uploadedAt: Date;
-  type: string;
-}
+import { Document } from '../../types'; // Use your existing types
 
 interface DocumentListProps {
   documents: Document[];

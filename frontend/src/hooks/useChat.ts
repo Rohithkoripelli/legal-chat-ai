@@ -1,99 +1,146 @@
-// frontend/src/hooks/useChat.ts - Fixed to include documents
 import { useState, useCallback } from 'react';
-
-const API_BASE_URL = 'https://legal-chat-ai.onrender.com';
+import { useAuth } from '@clerk/clerk-react';
+import { Message } from '../types'; // Use your existing types
 
 export const useChat = () => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const { getToken, isSignedIn } = useAuth();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const sendMessage = useCallback(async ({ message }: { message: string }) => {
+    if (!isSignedIn) {
+      setError('Please log in to use chat functionality');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     // Add user message first (preserve existing functionality)
-    setMessages(prev => [...prev, {
+    const userMessage: Message = {
       id: Date.now(),
       text: message,
       isUser: true,
       timestamp: new Date()
-    }]);
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
 
     try {
-      // NEW: Fetch available documents to include with the message
+      // Get authentication token
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token - please log in again');
+      }
+
+      console.log('🔑 Got auth token for chat request');
+
+      // Fetch user's available documents for chat context
       let documentIds: string[] = [];
       try {
-        console.log('🔍 Fetching available documents for chat context...');
-        const documentsResponse = await fetch(`${API_BASE_URL}/api/documents`);
+        console.log('🔍 Fetching user documents for chat context...');
+        const documentsResponse = await fetch(`https://legal-chat-ai.onrender.com/api/documents`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
         
         if (documentsResponse.ok) {
           const documents = await documentsResponse.json();
-          documentIds = documents.map((doc: any) => doc.id);
-          console.log(`📄 Found ${documentIds.length} documents to include in chat:`, documentIds);
+          documentIds = documents.map((doc: any) => doc.id || doc._id);
+          console.log(`📄 Found ${documentIds.length} documents for chat context:`, documentIds);
         } else {
-          console.warn('⚠️ Could not fetch documents:', documentsResponse.status);
+          console.warn('⚠️ Could not fetch documents for chat context:', documentsResponse.status);
         }
       } catch (docError) {
         console.warn('⚠️ Error fetching documents for chat:', docError);
         // Continue without documents - don't fail the chat
       }
 
-      // Send message with document context (ENHANCED - was missing before)
-      console.log('📤 Sending message to chat API:', {
-        message: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
-        documentCount: documentIds.length
-      });
-
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      // Send message with document context and authentication
+      console.log('📤 Sending authenticated message to chat API');
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // CRITICAL: Auth header
+        },
         body: JSON.stringify({ 
           message,
-          documentIds // NEW: Include document IDs so AI has context
+          documentIds // Include user's document IDs for context
         }),
       });
 
+      console.log('📡 Chat response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.status === 401) {
+          throw new Error('Authentication failed - please log in again');
+        }
+        throw new Error(`Chat request failed: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('✅ Chat response received');
       
-      // Add AI response (preserve existing functionality)
-      setMessages(prev => [...prev, {
+      // Add AI response
+      const aiMessage: Message = {
         id: Date.now() + 1,
-        text: data.response || 'No response',
+        text: data.response || 'No response received',
         isUser: false,
         timestamp: new Date()
-      }]);
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
 
-      console.log('✅ Chat message sent successfully');
+      console.log('✅ Chat message exchange completed successfully');
 
     } catch (err) {
       console.error('❌ Error sending chat message:', err);
-      setError('Failed to send message');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setError(errorMessage);
       
       // Add error message to chat (preserve existing UX)
-      setMessages(prev => [...prev, {
+      const errorResponse: Message = {
         id: Date.now() + 1,
-        text: 'Sorry, I encountered an error processing your message. Please try again.',
+        text: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
         isUser: false,
         timestamp: new Date()
-      }]);
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
     } finally {
       setIsLoading(false);
     }
+  }, [getToken, isSignedIn]);
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setError(null);
   }, []);
 
-  // Preserve all existing return values and functionality
+  const initializeSession = useCallback(() => {
+    // Placeholder for session initialization
+    if (!isSignedIn) {
+      setError('Please log in to start a chat session');
+      return;
+    }
+    
+    console.log('🔄 Chat session initialized for authenticated user');
+    setError(null);
+  }, [isSignedIn]);
+
+  // Return interface compatible with existing components
   return {
     messages,
     isLoading,
     error,
     sendMessage,
-    clearMessages: () => setMessages([]),
-    initializeSession: () => {},
-    currentSession: null
+    clearMessages,
+    initializeSession,
+    currentSession: null, // Placeholder for future session management
+    isAuthenticated: isSignedIn
   };
 };

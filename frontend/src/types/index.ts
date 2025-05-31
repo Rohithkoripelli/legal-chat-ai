@@ -1,6 +1,7 @@
+// frontend/src/types/index.ts - UPDATED with authentication support
 // Message type for chat
 export interface Message {
-  id: string;
+  id: string | number; // Allow both string and number for compatibility
   text: string;  // Content of the message
   isUser: boolean;  // Whether the message is from the user or AI
   timestamp: Date;
@@ -23,6 +24,7 @@ export interface Document {
   uploadedAt: Date;
   content?: string;
   extractionWarning?: boolean; // Indicates PDF extraction issues
+  userId?: string; // NEW: User ID for document ownership
 }
 
 // Chat session
@@ -33,6 +35,7 @@ export interface ChatSession {
   createdAt: string;
   updatedAt: string;
   isActive: boolean;
+  userId?: string; // NEW: User ID for session ownership
 }
 
 // API response
@@ -71,6 +74,7 @@ export interface DocumentState {
   loading: boolean;
   error: string | null;
   selectedDocuments: string[];
+  isAuthenticated?: boolean; // NEW: Authentication status
 }
 
 // Search result for documents
@@ -86,4 +90,47 @@ export interface MessageWithContext {
   isUser: boolean;
   documentIds?: string[];
   extractionWarnings?: boolean;
+}
+
+// NEW: Authentication types
+export interface AuthUser {
+  id: string;
+  email: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+// NEW: Chat context type for useChat hook compatibility
+export interface ChatContextType {
+  messages: Message[];
+  isLoading: boolean;
+  error: string | null;
+  sendMessage: (params: { message: string }) => Promise<void>;
+  clearMessages: () => void;
+  isAuthenticated?: boolean;
+}
+
+// NEW: Document context type for useDocuments hook compatibility
+export interface DocumentContextType {
+  documents: Document[];
+  loading: boolean;
+  error: string | null;
+  uploadDocument: (file: File) => Promise<void>;
+  deleteDocument: (id: string) => Promise<void>;
+  downloadDocument: (id: string) => Promise<void>;
+  refreshDocuments: () => Promise<void>;
+  isAuthenticated: boolean;
+}
+
+// NEW: Authentication error types
+export interface AuthError {
+  type: 'AUTHENTICATION_FAILED' | 'TOKEN_EXPIRED' | 'UNAUTHORIZED';
+  message: string;
+}
+
+// NEW: Protected API request options
+export interface ProtectedApiOptions extends RequestInit {
+  requireAuth?: boolean;
+  retryOnAuthFailure?: boolean;
 }
