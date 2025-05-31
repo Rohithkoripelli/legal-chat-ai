@@ -101,7 +101,7 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
   const refreshAnalysis = async () => {
     try {
       setAnalyzing(true);
-      const response = await fetch(`http://localhost:3001/api/contracts/analysis/${documentId}/refresh`, {
+      const response = await fetch(`http://legal-chat-ai.onrender.com/api/contracts/analysis/${documentId}/refresh`, {
         method: 'POST'
       });
       if (!response.ok) throw new Error('Refresh failed');
