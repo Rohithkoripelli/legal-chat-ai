@@ -1439,7 +1439,8 @@ const generateAIDocument = async (template: DocumentTemplate, data: FormData): P
   try {
     console.log('🤖 Generating AI-powered document...');
     
-    const response = await fetch('http://https://legal-chat-ai.onrender.com/api/generate-document', {
+    // FIXED: Removed duplicate https:// from URL
+    const response = await fetch('https://legal-chat-ai.onrender.com/api/generate-document', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1453,7 +1454,9 @@ const generateAIDocument = async (template: DocumentTemplate, data: FormData): P
     });
 
     if (!response.ok) {
-      throw new Error(`API call failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`API call failed: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
