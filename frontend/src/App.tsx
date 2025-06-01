@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { FileText, MessageSquare, Upload, File, X, AlertCircle, Check, Download, Trash2, RefreshCw, AlertTriangle, BarChart3, ClipboardList, Plus } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { useClerkAuth } from './hooks/useClerk';
+import { Message } from './types';
 import LandingPage from './components/auth/LandingPage';
 import UserButton from './components/auth/UserButton';
 import HeaderAuthButtons from './components/auth/HeaderAuthButtons';
