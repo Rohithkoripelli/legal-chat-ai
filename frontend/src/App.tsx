@@ -1,4 +1,4 @@
-// frontend/src/App.tsx - CLEANED VERSION
+// frontend/src/App.tsx - FREEMIUM VERSION
 import React, { useState } from 'react';
 import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
@@ -16,8 +16,80 @@ import { ChatProvider } from './contexts/ChatContext';
 // Import your enhanced pages
 import DocumentsPage from './pages/DocumentPage';
 import ChatPage from './pages/ChatPage';
+import GuestDocumentsPage from './pages/GuestDocumentsPage'; // NEW IMPORT
 
 type Page = 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
+
+// Feature Navigation Bar Component
+const FeatureNavigationBar: React.FC<{
+  currentPage: Page;
+  setCurrentPage: (page: Page) => void;
+  isSignedIn: boolean;
+}> = ({ currentPage, setCurrentPage, isSignedIn }) => {
+  const features = [
+    {
+      id: 'documents' as Page,
+      label: 'Documents',
+      icon: <FileText className="h-5 w-5" />,
+      description: 'Upload and analyze legal documents'
+    },
+    {
+      id: 'chat' as Page,
+      label: 'Chat',
+      icon: <MessageSquare className="h-5 w-5" />,
+      description: 'Chat with AI about your documents'
+    },
+    {
+      id: 'contracts' as Page,
+      label: 'Risk Analysis',
+      icon: <AlertTriangle className="h-5 w-5" />,
+      description: 'Comprehensive risk assessment'
+    },
+    {
+      id: 'dashboard' as Page,
+      label: 'Dashboard',
+      icon: <BarChart3 className="h-5 w-5" />,
+      description: 'Analytics and insights'
+    },
+    {
+      id: 'create-document' as Page,
+      label: 'Create Document',
+      icon: <ClipboardList className="h-5 w-5" />,
+      description: 'Generate new legal documents'
+    }
+  ];
+
+  return (
+    <div className="bg-white border-b border-gray-200 sticky top-20 z-40 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center space-x-1 overflow-x-auto">
+          {features.map((feature) => (
+            <button
+              key={feature.id}
+              onClick={() => setCurrentPage(feature.id)}
+              className={`
+                flex items-center space-x-2 px-6 py-4 rounded-t-lg transition-all duration-200 whitespace-nowrap
+                ${currentPage === feature.id 
+                  ? 'bg-blue-600 text-white shadow-lg transform -translate-y-1' 
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                }
+              `}
+              title={feature.description}
+            >
+              {feature.icon}
+              <span className="font-medium">{feature.label}</span>
+              {!isSignedIn && feature.id !== 'documents' && feature.id !== 'chat' && (
+                <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded-full ml-2">
+                  Pro
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Main App Component with Authentication
 function App() {
@@ -37,11 +109,116 @@ function App() {
     );
   }
 
-  // Show authentication page if not signed in
+  // UPDATED: Always show the app, but with different functionality for guests
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'documents':
+        // Show guest version for non-authenticated users
+        return isSignedIn ? 
+          <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} /> :
+          <GuestDocumentsPage />;
+      
+      case 'chat':
+        return <ChatPage />;
+      
+      case 'contracts':
+        if (!isSignedIn) {
+          // Show upgrade prompt for guests
+          return (
+            <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+                <AlertTriangle className="h-16 w-16 text-yellow-500 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Risk Analysis - Premium Feature
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Advanced risk analysis and contract scoring requires a free account. 
+                  Sign up to unlock comprehensive legal document risk assessment.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <HeaderAuthButtons />
+                </div>
+              </div>
+            </div>
+          );
+        }
+        if (selectedDocumentId) {
+          return (
+            <ContractAnalysisPage 
+              documentId={selectedDocumentId}
+              onBack={() => setSelectedDocumentId(null)}
+            />
+          );
+        }
+        return <DocumentSelectionForAnalysis onSelectDocument={setSelectedDocumentId} />;
+      
+      case 'dashboard':
+        if (!isSignedIn) {
+          return (
+            <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+                <BarChart3 className="h-16 w-16 text-blue-500 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Analytics Dashboard - Premium Feature
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  View detailed analytics, document insights, and usage statistics with a free account.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <HeaderAuthButtons />
+                </div>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <RiskDashboard />
+          </div>
+        );
+      
+      case 'create-document':
+        if (!isSignedIn) {
+          return (
+            <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+                <ClipboardList className="h-16 w-16 text-green-500 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Document Generator - Premium Feature
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Create professional legal documents with AI assistance. Sign up for free to access our document generator.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <HeaderAuthButtons />
+                </div>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <CreateDocumentPage />
+          </div>
+        );
+      
+      case 'test':
+        return isSignedIn ? <DocumentTest /> : null;
+      
+      default:
+        return isSignedIn ? 
+          <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} /> :
+          <GuestDocumentsPage />;
+    }
+  };
+
+  // UPDATED: Show different layouts for authenticated vs guest users
   if (!isSignedIn) {
+    // Guest user layout with landing page integration
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-        <header className="bg-white shadow-lg border-b border-gray-200">
+        {/* Header for guests */}
+        <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-between items-center h-20">
               {/* Left side - Logo and Brand */}
@@ -58,6 +235,13 @@ function App() {
                 </div>
               </div>
               
+              {/* Center - Navigation for larger screens */}
+              <nav className="hidden md:flex items-center space-x-8">
+                <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
+                <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">How It Works</a>
+                <a href="#faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
+              </nav>
+              
               {/* Right side - Auth Buttons */}
               <div className="flex-shrink-0">
                 <HeaderAuthButtons />
@@ -66,8 +250,17 @@ function App() {
           </div>
         </header>
 
+        {/* Feature Navigation Bar */}
+        <FeatureNavigationBar 
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          isSignedIn={isSignedIn ?? false}
+        />
+
+        {/* Main Content */}
         <main className="min-h-screen">
-          <LandingPage />
+          {currentPage === 'documents' && <LandingPage />}
+          {currentPage !== 'documents' && renderPage()}
         </main>
 
         <Analytics />
@@ -75,47 +268,12 @@ function App() {
     );
   }
 
-  // SIMPLIFIED RENDER PAGE FUNCTION
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'documents':
-        return <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} />;
-      case 'chat':
-        return <ChatPage />;
-      case 'contracts':
-        if (selectedDocumentId) {
-          return (
-            <ContractAnalysisPage 
-              documentId={selectedDocumentId}
-              onBack={() => setSelectedDocumentId(null)}
-            />
-          );
-        }
-        return <DocumentSelectionForAnalysis onSelectDocument={setSelectedDocumentId} />;
-      case 'dashboard':
-        return (
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <RiskDashboard />
-          </div>
-        );
-      case 'create-document':
-        return (
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <CreateDocumentPage />
-          </div>
-        );
-      case 'test':
-        return <DocumentTest />;
-      default:
-        return <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} />;
-    }
-  };
-
+  // Authenticated user layout (existing layout)
   return (
     <ChatProvider>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         {/* Header - Always shown for authenticated users */}
-        <header className="bg-white shadow-lg border-b border-gray-200">
+        <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-between items-center h-20">
               {/* Left side - Logo and Brand */}
