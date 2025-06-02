@@ -1,13 +1,14 @@
-// src/pages/DocumentPage.tsx - Enhanced with comprehensive SEO content
+// src/pages/DocumentPage.tsx - Using your existing hooks and components
 import React, { useState, useEffect } from 'react';
 import { Upload, FileText, MessageSquare, Brain, Shield, CheckCircle, ArrowRight, Trash2, Download, Eye, AlertCircle, Zap, Clock, Star, Users } from 'lucide-react';
 import DocumentUpload from '../components/documents/DocumentUpload';
 import DocumentList from '../components/documents/DocumentList';
 import { useDocuments } from '../hooks/useDocuments';
+import { useAuth } from '@clerk/clerk-react';
 
 const DocumentsPage: React.FC = () => {
-  const { documents, loading, error, deleteDocument, downloadDocument, uploadDocument } = useDocuments();
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const { isSignedIn } = useAuth();
+  const { documents, loading, error, deleteDocument, downloadDocument, refreshDocuments } = useDocuments();
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
   // Clear success message after 3 seconds
@@ -20,14 +21,8 @@ const DocumentsPage: React.FC = () => {
 
   const handleUploadSuccess = () => {
     setUploadSuccess('Document uploaded successfully! You can now analyze it with AI chat.');
-    setUploadError(null);
     // Refresh documents list
-    window.location.reload();
-  };
-
-  const handleUploadError = (error: string) => {
-    setUploadError(error);
-    setUploadSuccess(null);
+    refreshDocuments();
   };
 
   return (
@@ -44,10 +39,19 @@ const DocumentsPage: React.FC = () => {
         </p>
         
         {/* Document Stats */}
-        <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-          <FileText className="w-4 h-4 mr-2" />
-          {documents.length} document{documents.length !== 1 ? 's' : ''} uploaded • Ready for AI analysis
-        </div>
+        {isSignedIn && (
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+            <FileText className="w-4 h-4 mr-2" />
+            {documents.length} document{documents.length !== 1 ? 's' : ''} uploaded • Ready for AI analysis
+          </div>
+        )}
+        
+        {!isSignedIn && (
+          <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            Sign in to upload and analyze legal documents
+          </div>
+        )}
       </header>
 
       {/* SEO-RICH BENEFITS SECTION */}
@@ -93,7 +97,7 @@ const DocumentsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* UPLOAD SUCCESS/ERROR MESSAGES */}
+      {/* SUCCESS MESSAGE */}
       {uploadSuccess && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center space-x-2">
@@ -103,58 +107,114 @@ const DocumentsPage: React.FC = () => {
         </div>
       )}
 
-      {uploadError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <span className="text-red-800 font-medium">{uploadError}</span>
+      {/* AUTHENTICATION CHECK */}
+      {!isSignedIn ? (
+        <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-8 mb-12 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-6">
+            <AlertCircle className="h-8 w-8 text-yellow-600" />
           </div>
-        </div>
-      )}
-
-      {/* MAIN UPLOAD SECTION */}
-      <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
-            <Upload className="h-8 w-8 text-white" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Upload Your Legal Documents for AI Analysis
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Sign In Required for Document Upload
           </h2>
           <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-            Upload contracts, NDAs, agreements, or any legal document. 
-            Our AI will analyze them instantly for risks, key terms, and compliance issues.
+            To upload and analyze your legal documents with AI, please sign in to your account. 
+            Your documents will be securely stored and processed with enterprise-grade encryption.
           </p>
-        </div>
-        
-        {/* Document Upload Component */}
-        <DocumentUpload 
-          onUploadSuccess={handleUploadSuccess}
-        />
-
-        {/* Supported Formats */}
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-3 text-center">Supported Legal Document Formats</h3>
-          <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-700">
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-red-600" />
-              <span>PDF Documents</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-blue-600" />
-              <span>Word (.doc, .docx)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-gray-600" />
-              <span>Text Files (.txt)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-orange-600" />
-              <span>RTF Documents</span>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => window.location.href = '/sign-in'}
+              className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Sign In to Upload Documents
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </button>
+            <button
+              onClick={() => window.location.href = '/sign-up'}
+              className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
+            >
+              Create Free Account
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <>
+          {/* MAIN UPLOAD SECTION */}
+          <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
+                <Upload className="h-8 w-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Upload Your Legal Documents for AI Analysis
+              </h2>
+              <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+                Upload contracts, NDAs, agreements, or any legal document. 
+                Our AI will analyze them instantly for risks, key terms, and compliance issues.
+              </p>
+            </div>
+            
+            {/* Document Upload Component */}
+            <DocumentUpload onUploadSuccess={handleUploadSuccess} />
+
+            {/* Supported Formats */}
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="font-semibold text-gray-900 mb-3 text-center">Supported Legal Document Formats</h3>
+              <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-700">
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4 text-red-600" />
+                  <span>PDF Documents</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  <span>Word (.doc, .docx)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4 text-gray-600" />
+                  <span>Text Files (.txt)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4 text-orange-600" />
+                  <span>RTF Documents</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* UPLOADED DOCUMENTS SECTION */}
+          <section className="bg-white rounded-xl shadow-lg border border-gray-200 mb-12">
+            <div className="p-8 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Uploaded Legal Documents</h2>
+                  <p className="text-gray-600">
+                    Manage your uploaded documents and analyze them with AI chat
+                  </p>
+                </div>
+                {documents.length > 0 && (
+                  <button
+                    onClick={() => window.location.href = '/chat'}
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Analyze with AI Chat
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="p-8">
+              <DocumentList
+                documents={documents}
+                loading={loading}
+                error={error}
+                onDeleteDocument={deleteDocument}
+                onDownloadDocument={downloadDocument}
+                onRetry={refreshDocuments}
+              />
+            </div>
+          </section>
+        </>
+      )}
 
       {/* DOCUMENT WORKFLOW SECTION */}
       <section className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-8 mb-12">
@@ -202,40 +262,6 @@ const DocumentsPage: React.FC = () => {
               Receive comprehensive analysis, risk assessment, and recommendations
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* UPLOADED DOCUMENTS SECTION */}
-      <section className="bg-white rounded-xl shadow-lg border border-gray-200 mb-12">
-        <div className="p-8 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Uploaded Legal Documents</h2>
-              <p className="text-gray-600">
-                Manage your uploaded documents and analyze them with AI chat
-              </p>
-            </div>
-            {documents.length > 0 && (
-              <button
-                onClick={() => window.location.href = '/chat'}
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Analyze with AI Chat
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="p-8">
-          <DocumentList
-            documents={documents}
-            loading={loading}
-            error={error}
-            onDeleteDocument={deleteDocument}
-            onDownloadDocument={downloadDocument}
-            onRetry={() => window.location.reload()}
-          />
         </div>
       </section>
 
@@ -289,7 +315,7 @@ const DocumentsPage: React.FC = () => {
                 <span className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                   <span className="text-green-600 text-sm">✓</span>
                 </span>
-                Completely free - no hidden costs
+                Secure, authenticated access
               </li>
               <li className="flex items-center text-gray-700">
                 <span className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
@@ -333,7 +359,7 @@ const DocumentsPage: React.FC = () => {
               </h3>
               <p className="text-gray-700">
                 We use enterprise-grade security with AES-256 encryption, secure data transmission, 
-                and GDPR compliance. Your documents are processed securely and can be deleted anytime.
+                and authentication. Your documents are tied to your account and can be deleted anytime.
               </p>
             </div>
             
@@ -351,11 +377,11 @@ const DocumentsPage: React.FC = () => {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Is legal document AI analysis really free?
+                Do I need to create an account to use the service?
               </h3>
               <p className="text-gray-700">
-                Yes, our legal document AI analysis is completely free with no subscription fees, 
-                hidden costs, or usage limits. We believe legal technology should be accessible to everyone.
+                Yes, you need to sign in to upload and analyze documents. This ensures your documents 
+                are securely stored and only accessible to you. Account creation is free and takes seconds.
               </p>
             </div>
             
@@ -502,24 +528,47 @@ const DocumentsPage: React.FC = () => {
           Ready to Analyze Your Legal Documents with AI?
         </h2>
         <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-          Upload your contracts, NDAs, and legal documents now for instant AI analysis. 
-          Join thousands of users who trust our platform for fast, accurate legal document review.
+          {isSignedIn 
+            ? "Upload your contracts, NDAs, and legal documents now for instant AI analysis."
+            : "Sign up for free and start analyzing your legal documents with professional AI insights."
+          }
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            <Upload className="h-5 w-5 mr-2" />
-            Upload Documents Now
-          </button>
-          <button
-            onClick={() => window.location.href = '/chat'}
-            className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
-          >
-            <MessageSquare className="h-5 w-5 mr-2" />
-            Start AI Chat Analysis
-          </button>
+          {isSignedIn ? (
+            <>
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                <Upload className="h-5 w-5 mr-2" />
+                Upload Documents Now
+              </button>
+              <button
+                onClick={() => window.location.href = '/chat'}
+                className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
+              >
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Start AI Chat Analysis
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => window.location.href = '/sign-up'}
+                className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                <Users className="h-5 w-5 mr-2" />
+                Create Free Account
+              </button>
+              <button
+                onClick={() => window.location.href = '/sign-in'}
+                className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
+              >
+                Sign In to Upload
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </button>
+            </>
+          )}
         </div>
       </section>
 
