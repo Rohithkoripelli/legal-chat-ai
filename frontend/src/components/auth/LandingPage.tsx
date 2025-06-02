@@ -1,111 +1,8 @@
 import React, { useState } from 'react';
 import { DocumentHead } from '../SEO/DocumentHead';
-import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle, Upload, Brain } from 'lucide-react';
+import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle } from 'lucide-react';
 
-// Feature Navigation Bar Component
-const FeatureNavigationBar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('documents');
-
-  const features = [
-    {
-      id: 'documents',
-      label: 'Documents',
-      icon: <FileText className="h-5 w-5" />,
-      href: '/documents',
-      description: 'Upload and analyze legal documents'
-    },
-    {
-      id: 'chat',
-      label: 'Chat',
-      icon: <MessageSquare className="h-5 w-5" />,
-      href: '/chat',
-      description: 'Chat with AI about your documents'
-    },
-    {
-      id: 'risk-analysis',
-      label: 'Risk Analysis',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      href: '/risk-analysis',
-      description: 'Comprehensive risk assessment'
-    },
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: <BarChart3 className="h-5 w-5" />,
-      href: '/dashboard',
-      description: 'Analytics and insights'
-    },
-    {
-      id: 'create-document',
-      label: 'Create Document',
-      icon: <FileText className="h-5 w-5" />,
-      href: '/create-document',
-      description: 'Generate new legal documents'
-    }
-  ];
-
-  return (
-    <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center space-x-1 overflow-x-auto">
-          {features.map((feature) => (
-            <button
-              key={feature.id}
-              onClick={() => {
-                setActiveTab(feature.id);
-                window.location.href = feature.href;
-              }}
-              className={`
-                flex items-center space-x-2 px-6 py-4 rounded-t-lg transition-all duration-200 whitespace-nowrap
-                ${activeTab === feature.id 
-                  ? 'bg-blue-600 text-white shadow-lg transform -translate-y-1' 
-                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                }
-              `}
-            >
-              {feature.icon}
-              <span className="font-medium">{feature.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Updated Header Component (No Sign In)
-const LandingPageHeader: React.FC = () => {
-  return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <FileText className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Legal Chat AI</h1>
-              <p className="text-sm text-gray-600">Document Analysis Assistant</p>
-            </div>
-          </div>
-
-          {/* Navigation - No Sign In buttons */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
-            <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">How It Works</a>
-            <a href="#faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
-            <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-              Create Free Account
-            </button>
-          </nav>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-// Privacy Policy Component (keeping existing)
+// Privacy Policy Component
 const PrivacyPolicyPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12">
@@ -963,7 +860,7 @@ const TermsOfServicePage: React.FC = () => {
   );
 };
 
-// Footer Component (keeping existing)
+// Footer Component with Links
 const FooterWithLegalLinks: React.FC<{
   onPrivacyClick: () => void;
   onAboutClick: () => void;
@@ -998,10 +895,10 @@ const FooterWithLegalLinks: React.FC<{
           <div>
             <h3 className="font-semibold text-gray-900 mb-4">Platform</h3>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li><button onClick={() => window.location.href = '/documents'} className="hover:text-blue-600 transition-colors">Document Analysis</button></li>
-              <li><button onClick={() => window.location.href = '/chat'} className="hover:text-blue-600 transition-colors">AI Chat Assistant</button></li>
-              <li><button onClick={() => window.location.href = '/risk-analysis'} className="hover:text-blue-600 transition-colors">Risk Assessment</button></li>
-              <li><button onClick={() => window.location.href = '/create-document'} className="hover:text-blue-600 transition-colors">Document Generator</button></li>
+              <li><button className="hover:text-blue-600 transition-colors">Document Analysis</button></li>
+              <li><button className="hover:text-blue-600 transition-colors">AI Chat Assistant</button></li>
+              <li><button className="hover:text-blue-600 transition-colors">Risk Assessment</button></li>
+              <li><button className="hover:text-blue-600 transition-colors">Document Generator</button></li>
             </ul>
           </div>
 
@@ -1056,64 +953,6 @@ const FooterWithLegalLinks: React.FC<{
         </div>
       </div>
     </footer>
-  );
-};
-
-// Try Demo Section Component
-const TryDemoSection: React.FC = () => {
-  return (
-    <section id="try-demo" className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Try AI Legal Analysis - No Sign-Up Required
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Upload a sample document and experience our AI in action. Completely free with instant results.
-          </p>
-          
-          {/* Demo Features */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-              <Upload className="h-8 w-8 text-white mx-auto mb-3" />
-              <h3 className="font-semibold text-white mb-2">Upload Document</h3>
-              <p className="text-sm text-blue-100">PDF, Word, or text files</p>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-              <Brain className="h-8 w-8 text-white mx-auto mb-3" />
-              <h3 className="font-semibold text-white mb-2">AI Analysis</h3>
-              <p className="text-sm text-blue-100">Instant risk assessment</p>
-            </div>
-            <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-              <MessageSquare className="h-8 w-8 text-white mx-auto mb-3" />
-              <h3 className="font-semibold text-white mb-2">Chat with AI</h3>
-              <p className="text-sm text-blue-100">Ask questions & get insights</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center shadow-lg"
-              onClick={() => window.location.href = '/documents'}
-            >
-              <FileText className="w-5 h-5 mr-2" />
-              Try Document Analysis Now
-            </button>
-            <button 
-              className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600 inline-flex items-center justify-center shadow-lg"
-              onClick={() => window.location.href = '/chat'}
-            >
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Start AI Chat
-            </button>
-          </div>
-
-          <p className="text-sm text-blue-200 mt-6">
-            🎉 <strong>Limited Time:</strong> Get 3 free document analyses per day - no registration required!
-          </p>
-        </div>
-      </div>
-    </section>
   );
 };
 
@@ -1176,7 +1015,7 @@ const LandingPage: React.FC = () => {
   // Main landing page
   return (
     <>
-      {/* SEO META DATA */}
+      {/* IMPROVED SEO META DATA */}
       <DocumentHead
         title="AI Legal Document Analysis | Free Contract Review & Chat | LegalChatAI"
         description="Free AI-powered legal document analysis and chat. Upload contracts, NDAs, agreements and get instant insights. 80% faster than manual review. No signup required."
@@ -1211,13 +1050,7 @@ const LandingPage: React.FC = () => {
       </script>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        {/* Header */}
-        <LandingPageHeader />
-
-        {/* Feature Navigation Bar */}
-        <FeatureNavigationBar />
-
-        {/* Hero Section */}
+        {/* Hero Section - OPTIMIZED H1 */}
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-8">
@@ -1243,44 +1076,31 @@ const LandingPage: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
                 <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">3 Free Analyses Daily</span>
-              </div>
-              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">No Sign-Up Required</span>
-              </div>
-              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">Instant Results</span>
+                <span className="text-sm font-medium text-gray-700">Legal AI Chat Assistant</span>
               </div>
             </div>
 
-            {/* Updated CTA Buttons */}
+            {/* CTA Buttons with KEYWORDS */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
-                className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center shadow-lg"
-                onClick={() => window.location.href = '/documents'}
+                className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center"
+                onClick={() => window.location.href = '/chat'}
               >
-                <FileText className="w-5 h-5 mr-2" />
-                Upload & Analyze Documents
+                Start Free AI Document Analysis
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
               <button 
-                className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center shadow-lg"
-                onClick={() => window.location.href = '/chat'}
+                className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors"
+                onClick={() => window.location.href = '/create-document'}
               >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Start AI Chat Now
+                AI Legal Document Generator
               </button>
             </div>
           </div>
         </div>
 
-        {/* Try Demo Section */}
-        <TryDemoSection />
-
         {/* BENEFITS SECTION WITH TARGET KEYWORDS */}
-        <section id="features" className="max-w-7xl mx-auto px-6 py-20">
+        <section className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Why Choose Our AI Legal Document Analysis Platform?
@@ -1390,53 +1210,6 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section id="how-it-works" className="bg-gray-50 py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                How Our AI Legal Analysis Works
-              </h2>
-              <p className="text-lg text-gray-600">Simple 3-step process to get professional legal insights</p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
-                  <span className="text-2xl font-bold text-blue-600">1</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Upload Documents</h3>
-                <p className="text-gray-600">
-                  Upload your contracts, NDAs, or legal documents in any supported format. 
-                  No sign-up required - start immediately.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                  <span className="text-2xl font-bold text-green-600">2</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">AI Analysis</h3>
-                <p className="text-gray-600">
-                  Our AI processes and analyzes your documents for key information, risks, 
-                  and compliance issues in seconds.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
-                  <span className="text-2xl font-bold text-purple-600">3</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Get Insights</h3>
-                <p className="text-gray-600">
-                  Chat with AI about your documents and receive instant insights, 
-                  explanations, and professional guidance.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* COMPARISON SECTION - HIGH CONVERTING */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">
           <div className="max-w-7xl mx-auto px-6">
@@ -1511,7 +1284,7 @@ const LandingPage: React.FC = () => {
                 <div className="mt-8 text-center">
                   <button 
                     className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-                    onClick={() => window.location.href = '/documents'}
+                    onClick={() => window.location.href = '/chat'}
                   >
                     Try Free AI Analysis Now
                   </button>
@@ -1522,7 +1295,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* FAQ Section with TARGET KEYWORDS */}
-        <section id="faq" className="max-w-7xl mx-auto px-6 py-20">
+        <section className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions About AI Legal Document Analysis
@@ -1652,16 +1425,16 @@ const LandingPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => window.location.href = '/chat'}
               >
                 Start Free AI Legal Analysis
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
               <button 
                 className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
-                onClick={() => window.location.href = '/chat'}
+                onClick={() => window.location.href = '/create-document'}
               >
-                Try AI Chat Now
+                Generate Legal Documents
               </button>
             </div>
           </div>
