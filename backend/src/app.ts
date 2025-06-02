@@ -1,4 +1,4 @@
-// backend/src/app.ts - Updated to include freemium features (preserving all existing functionality)
+// backend/src/app.ts - Updated to include freemium features + keep-alive service (preserving all existing functionality)
 
 import express from 'express';
 import cors from 'cors';
@@ -16,6 +16,9 @@ import contractRoutes from './routes/contractRoutes';
 
 // Import NEW guest routes for freemium features
 import guestDocumentRoutes from './routes/guestDocumentRoutes';
+
+// NEW: Import keep-alive service
+import KeepAliveService from './services/keepAlive';
 
 // Load environment variables
 dotenv.config();
@@ -79,14 +82,33 @@ app.use('/api/test', corsMiddleware, testRoutes);
 app.use('/api/generate-document', corsMiddleware, documentGenerationRoutes);
 app.use('/api/contracts', corsMiddleware, contractRoutes);
 
-// ENHANCED HEALTH CHECK - showing new freemium features
+// ENHANCED HEALTH CHECK - showing new freemium features + keep-alive status
 app.get('/api/health', corsMiddleware, (req, res) => {
-  res.json({ 
+  // NEW: Get keep-alive status
+  const keepAlive = KeepAliveService.getInstance();
+  const keepAliveStatus = keepAlive.getStatus();
+  
+  // Check if this is a keep-alive ping
+  const isKeepAlivePing = req.headers['x-keep-alive'] === 'true';
+  
+  const healthData = {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     openai: process.env.OPENAI_API_KEY ? 'configured' : 'not configured',
+    // NEW: Keep-alive status
+    environment: process.env.NODE_ENV || 'development',
+    platform: process.env.RENDER ? 'Render' : 'Other',
+    keepAlive: {
+      active: keepAliveStatus.isActive,
+      pings: keepAliveStatus.pingCount,
+      isInternalPing: isKeepAlivePing
+    },
+    memory: {
+      used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB',
+      total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + ' MB'
+    },
     services: {
       chat: 'available',
       documents: 'available',
@@ -103,10 +125,16 @@ app.get('/api/health', corsMiddleware, (req, res) => {
         storage: 'temporary (24hrs)'
       }
     }
-  });
+  };
+  
+  if (isKeepAlivePing) {
+    console.log(`🏓 Keep-alive health check received (ping #${keepAliveStatus.pingCount})`);
+  }
+  
+  res.json(healthData);
 });
 
-// ENHANCED ERROR HANDLING - with freemium context
+// ENHANCED ERROR HANDLING - with freemium context (keeping your existing setup)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
   
@@ -142,7 +170,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-// ENHANCED 404 HANDLER - showing available endpoints
+// ENHANCED 404 HANDLER - showing available endpoints (keeping your existing setup)
 app.use('*', (req, res) => {
   res.status(404).json({ 
     error: 'Route not found',
@@ -174,10 +202,20 @@ app.use('*', (req, res) => {
 
 const PORT = Number(process.env.PORT) || 3001;
 
-app.listen(PORT, '0.0.0.0', () => {
+// START SERVER WITH KEEP-ALIVE SERVICE
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Legal Chat AI Backend running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Server URL: http://localhost:${PORT}`);
+  
+  // NEW: Log platform information
+  if (process.env.RENDER) {
+    console.log('☁️  Running on Render platform');
+    console.log(`🔗 Service URL: ${process.env.RENDER_SERVICE_URL || 'Not set'}`);
+  } else {
+    console.log('🏠 Running in local/other environment');
+  }
+  
   console.log(`
 🆕 NEW FREEMIUM FEATURES:
    🎯 Guest Chat: http://localhost:${PORT}/api/chat/guest
@@ -191,6 +229,46 @@ app.listen(PORT, '0.0.0.0', () => {
    🧪 Test: http://localhost:${PORT}/api/test
    ❤️ Health: http://localhost:${PORT}/api/health
   `);
+  
+  // NEW: Start keep-alive service AFTER server is running
+  if (process.env.NODE_ENV === 'production' && process.env.RENDER) {
+    console.log('🚀 Initializing keep-alive service for Render...');
+    const keepAlive = KeepAliveService.getInstance();
+    
+    // Start keep-alive service after a short delay to ensure server is fully ready
+    setTimeout(() => {
+      keepAlive.start();
+    }, 30000); // Start after 30 seconds
+  } else {
+    console.log('🏠 Keep-alive service disabled (not running on Render production)');
+  }
+});
+
+// NEW: Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  
+  // Stop keep-alive service
+  const keepAlive = KeepAliveService.getInstance();
+  keepAlive.stop();
+  
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 SIGINT received, shutting down gracefully...');
+  
+  // Stop keep-alive service
+  const keepAlive = KeepAliveService.getInstance();
+  keepAlive.stop();
+  
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });
 
 export default app;
