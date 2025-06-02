@@ -1,4 +1,4 @@
-// backend/src/routes/guestDocumentRoutes.ts - New file for guest document handling
+// backend/src/routes/guestDocumentRoutes.ts - FIXED with vectorization
 import express, { Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -75,6 +75,30 @@ const extractTextFromBuffer = (buffer: Buffer, filename: string): string => {
   }
 };
 
+// VECTORIZE GUEST DOCUMENT - NEW FUNCTION
+const vectorizeGuestDocument = async (documentId: string, documentName: string, content: string): Promise<boolean> => {
+  try {
+    console.log(`🔄 Vectorizing guest document: ${documentName} (${documentId})`);
+    
+    // Import vectorization service
+    const { vectorizeDocument } = await import('../services/vectorizationService');
+    
+    // Vectorize the document content
+    const success = await vectorizeDocument(documentId, documentName, content);
+    
+    if (success) {
+      console.log(`✅ Successfully vectorized guest document: ${documentName}`);
+    } else {
+      console.warn(`⚠️ Failed to vectorize guest document: ${documentName}`);
+    }
+    
+    return success;
+  } catch (error) {
+    console.error(`❌ Error vectorizing guest document ${documentName}:`, error);
+    return false;
+  }
+};
+
 // POST /api/guest/documents/upload - Upload document for guest users
 router.post('/upload', guestUpload.array('documents', 3), async (req: Request, res: Response) => {
   try {
@@ -94,9 +118,9 @@ router.post('/upload', guestUpload.array('documents', 3), async (req: Request, r
       // Extract text content
       const textContent = extractTextFromBuffer(file.buffer, file.originalname);
       
-      // Create guest document object
+      // Create guest document object with a consistent ID format
       const guestDoc: GuestDocumentResponse = {
-        id: `guest-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `guest-doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: file.originalname,
         size: file.size,
         type: file.mimetype,
@@ -106,6 +130,19 @@ router.post('/upload', guestUpload.array('documents', 3), async (req: Request, r
       
       // Store in memory (for session-based access)
       guestDocumentStorage.set(guestDoc.id, guestDoc);
+      
+      // **NEW: VECTORIZE THE GUEST DOCUMENT**
+      if (textContent.length > 50 && !textContent.includes('⚠️ Text extraction for')) { 
+        // Only vectorize if we have meaningful content
+        try {
+          console.log(`🔄 Starting vectorization for guest document: ${guestDoc.name}`);
+          await vectorizeGuestDocument(guestDoc.id, guestDoc.name, textContent);
+        } catch (vectorError) {
+          console.warn(`⚠️ Vectorization failed for guest document ${guestDoc.name}, but upload will continue:`, vectorError);
+        }
+      } else {
+        console.log(`⚠️ Skipping vectorization for ${guestDoc.name} - insufficient content or unsupported format`);
+      }
       
       uploadedDocuments.push({
         id: guestDoc.id,
@@ -165,9 +202,9 @@ router.post('/upload-base64', async (req: Request<{}, {}, GuestUploadBody>, res:
     const buffer = Buffer.from(fileContent.split(',')[1] || fileContent, 'base64');
     const textContent = extractTextFromBuffer(buffer, fileName);
     
-    // Create guest document
+    // Create guest document with consistent ID format
     const guestDoc: GuestDocumentResponse = {
-      id: `guest-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `guest-doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: fileName,
       size: fileSize,
       type: fileType,
@@ -177,6 +214,19 @@ router.post('/upload-base64', async (req: Request<{}, {}, GuestUploadBody>, res:
     
     // Store in memory
     guestDocumentStorage.set(guestDoc.id, guestDoc);
+    
+    // **NEW: VECTORIZE THE GUEST DOCUMENT**
+    if (textContent.length > 50 && !textContent.includes('⚠️ Text extraction for')) { 
+        // Only vectorize if we have meaningful content
+      try {
+        console.log(`🔄 Starting vectorization for guest document: ${guestDoc.name}`);
+        await vectorizeGuestDocument(guestDoc.id, guestDoc.name, textContent);
+      } catch (vectorError) {
+        console.warn(`⚠️ Vectorization failed for guest document ${guestDoc.name}, but upload will continue:`, vectorError);
+      }
+    } else {
+      console.log(`⚠️ Skipping vectorization for ${guestDoc.name} - insufficient content or unsupported format`);
+    }
     
     console.log(`✅ Guest base64 document processed: ${fileName}`);
     
@@ -238,6 +288,7 @@ router.get('/test', (req: Request, res: Response) => {
       '5MB max file size',
       'Temporary session storage',
       'Basic text extraction',
+      'AI vectorization for chat',
       'No signup required'
     ],
     limitations: [
@@ -250,15 +301,24 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
-// Clean up old guest documents periodically (simple cleanup)
-setInterval(() => {
+// Clean up old guest documents AND their vectors periodically
+setInterval(async () => {
   const now = Date.now();
   const maxAge = 24 * 60 * 60 * 1000; // 24 hours
   
   for (const [id, doc] of guestDocumentStorage.entries()) {
     if (now - new Date(doc.uploadedAt).getTime() > maxAge) {
+      // Delete from memory storage
       guestDocumentStorage.delete(id);
-      console.log(`🧹 Cleaned up expired guest document: ${id}`);
+      
+      // Delete vectors from Pinecone
+      try {
+        const { deleteDocumentVectors } = await import('../services/vectorizationService');
+        await deleteDocumentVectors(id);
+        console.log(`🧹 Cleaned up expired guest document and vectors: ${id}`);
+      } catch (error) {
+        console.warn(`⚠️ Failed to clean up vectors for guest document ${id}:`, error);
+      }
     }
   }
 }, 60 * 60 * 1000); // Run every hour

@@ -1,4 +1,4 @@
-// src/pages/GuestDocumentsPage.tsx - Free document upload for guests
+// src/pages/GuestDocumentsPage.tsx - FIXED with backend API integration
 import React, { useState, useEffect } from 'react';
 import { Upload, FileText, MessageSquare, Brain, Shield, CheckCircle, ArrowRight, Trash2, Download, Eye, AlertCircle, Zap, Clock, Star, Users } from 'lucide-react';
 
@@ -12,7 +12,7 @@ interface GuestDocument {
   content: string;
 }
 
-// Simple file upload component for guests
+// FIXED: File upload component that calls backend API
 const GuestFileUpload: React.FC<{
   onUploadSuccess: (document: GuestDocument) => void;
 }> = ({ onUploadSuccess }) => {
@@ -20,6 +20,8 @@ const GuestFileUpload: React.FC<{
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -55,19 +57,7 @@ const GuestFileUpload: React.FC<{
     setSelectedFiles(files => files.filter((_, i) => i !== index));
   };
 
-  const processFileContent = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        // For demo purposes, just use the text content
-        // In production, you'd use proper text extraction libraries
-        resolve(content.substring(0, 5000)); // Limit content for free users
-      };
-      reader.readAsText(file);
-    });
-  };
-
+  // FIXED: Upload files to backend API instead of processing locally
   const uploadFiles = async () => {
     if (selectedFiles.length === 0) return;
 
@@ -76,29 +66,54 @@ const GuestFileUpload: React.FC<{
     setUploadSuccess(null);
 
     try {
-      // Process files locally for guest users
-      for (const file of selectedFiles) {
-        const content = await processFileContent(file);
-        const guestDoc: GuestDocument = {
-          id: `guest-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          uploadedAt: new Date(),
-          content: content
-        };
-        
-        onUploadSuccess(guestDoc);
-      }
+      console.log('📤 Starting guest document upload to backend...');
       
-      setUploadSuccess(`Successfully uploaded ${selectedFiles.length} file(s) for free analysis!`);
+      // Create FormData for file upload
+      const formData = new FormData();
+      selectedFiles.forEach(file => {
+        formData.append('documents', file);
+      });
+
+      // Call backend API
+      const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('📡 Backend upload response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to upload files`);
+      }
+
+      const result = await response.json();
+      console.log('✅ Backend upload successful:', result);
+      
+      // Process uploaded documents
+      const uploadedDocs: GuestDocument[] = result.documents.map((doc: any) => ({
+        id: doc.id,
+        name: doc.name,
+        size: doc.size,
+        type: doc.type,
+        uploadedAt: new Date(doc.uploadedAt),
+        content: doc.content
+      }));
+
+      // Notify parent and store in session
+      uploadedDocs.forEach(doc => {
+        onUploadSuccess(doc);
+      });
+      
+      setUploadSuccess(`Successfully uploaded ${uploadedDocs.length} file(s) for free AI analysis! Documents are now vectorized and ready for chat.`);
       setSelectedFiles([]);
       
-      // Clear success message after 3 seconds
-      setTimeout(() => setUploadSuccess(null), 3000);
+      // Clear success message after 5 seconds
+      setTimeout(() => setUploadSuccess(null), 5000);
+      
     } catch (error) {
-      console.error('Upload error:', error);
-      setUploadError('Upload failed. Please try again.');
+      console.error('❌ Backend upload error:', error);
+      setUploadError(error instanceof Error ? error.message : 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -123,10 +138,10 @@ const GuestFileUpload: React.FC<{
         <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <p className="text-gray-600 mb-2">Drag and drop files here or click to select files</p>
         <p className="text-sm text-gray-500">
-          Free: Up to 3 documents • PDF, Word (.doc, .docx), Text (.txt)
+          Free: Up to 3 documents • PDF, Word (.doc, .docx), Text (.txt), RTF
         </p>
         <p className="text-xs text-blue-600 mt-2">
-          ✨ Sign up for unlimited uploads, permanent storage, and premium features!
+          ✨ Documents will be processed with AI and ready for instant chat analysis!
         </p>
         <input
           id="guest-file-input"
@@ -165,15 +180,15 @@ const GuestFileUpload: React.FC<{
             <button
               onClick={uploadFiles}
               disabled={uploading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2 font-medium"
             >
               {uploading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  <span>Processing...</span>
+                  <span>Processing & Vectorizing...</span>
                 </>
               ) : (
-                <span>Upload for Free Analysis</span>
+                <span>Upload for Free AI Analysis</span>
               )}
             </button>
           </div>
@@ -183,14 +198,20 @@ const GuestFileUpload: React.FC<{
       {uploadError && (
         <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
           <AlertCircle className="h-5 w-5" />
-          <span>{uploadError}</span>
+          <div>
+            <p className="font-medium">Upload Failed</p>
+            <p className="text-sm">{uploadError}</p>
+          </div>
         </div>
       )}
 
       {uploadSuccess && (
         <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
           <CheckCircle className="h-5 w-5" />
-          <span>{uploadSuccess}</span>
+          <div>
+            <p className="font-medium">Upload Successful!</p>
+            <p className="text-sm">{uploadSuccess}</p>
+          </div>
         </div>
       )}
     </div>
@@ -243,7 +264,7 @@ const GuestDocumentList: React.FC<{
                   <span>Size: {formatFileSize(document.size)}</span>
                   <span>Type: {document.type}</span>
                   <span>Uploaded: {document.uploadedAt.toLocaleString()}</span>
-                  <span className="text-blue-600 font-medium">✨ Free temporary storage</span>
+                  <span className="text-green-600 font-medium">✅ Vectorized & Ready for AI Chat</span>
                 </div>
               </div>
             </div>
@@ -267,18 +288,41 @@ const GuestDocumentList: React.FC<{
         </div>
       ))}
       
+      {/* Action buttons for uploaded documents */}
+      {documents.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-2">
+                🎯 Ready for AI Analysis ({documents.length} documents)
+              </h3>
+              <p className="text-blue-800 text-sm">
+                Your documents have been processed and vectorized. You can now chat with AI about them!
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToChat}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 font-medium"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Start AI Chat</span>
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Upgrade prompt */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-blue-900 mb-2">Want More Features?</h3>
-            <p className="text-blue-800 text-sm mb-3">
+            <h3 className="font-semibold text-green-900 mb-2">🚀 Want Unlimited Features?</h3>
+            <p className="text-green-800 text-sm mb-3">
               Sign up for permanent storage, unlimited uploads, advanced analytics, and premium features!
             </p>
           </div>
           <button
             onClick={() => window.location.href = '/sign-up'}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
           >
             <Users className="h-4 w-4" />
             <span>Upgrade Free</span>
@@ -316,7 +360,7 @@ const GuestDocumentsPage: React.FC = () => {
 
   const handleUploadSuccess = (document: GuestDocument) => {
     setGuestDocuments(prev => [...prev, document]);
-    setUploadSuccess('Document uploaded successfully! You can now analyze it with AI chat.');
+    setUploadSuccess('Document uploaded and vectorized successfully! You can now analyze it with AI chat.');
   };
 
   const handleDeleteDocument = (id: string) => {
@@ -345,7 +389,7 @@ const GuestDocumentsPage: React.FC = () => {
           Free Legal Document Upload & AI Analysis - No Signup Required
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-          Upload your contracts, NDAs, and legal documents for instant free AI analysis. 
+          Upload your contracts, NDAs, and legal documents for instant free AI analysis with advanced vectorization. 
           No registration required! Get professional insights, risk assessment, and contract review 
           with our advanced legal AI assistant - completely free to try.
         </p>
@@ -353,7 +397,7 @@ const GuestDocumentsPage: React.FC = () => {
         {/* Document Stats */}
         <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
           <FileText className="w-4 h-4 mr-2" />
-          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} uploaded • Ready for free AI analysis
+          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} uploaded • Vectorized & ready for AI chat
         </div>
       </header>
 
@@ -365,7 +409,7 @@ const GuestDocumentsPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold text-blue-900 mb-2">No Signup Required</h3>
           <p className="text-blue-800 text-sm">
-            Upload and analyze legal documents instantly without creating an account
+            Upload and analyze legal documents instantly with AI vectorization
           </p>
         </div>
         
@@ -373,9 +417,9 @@ const GuestDocumentsPage: React.FC = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg mb-4">
             <Brain className="h-6 w-6 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-green-900 mb-2">Free AI Analysis</h3>
+          <h3 className="text-lg font-semibold text-green-900 mb-2">Advanced Vector Search</h3>
           <p className="text-green-800 text-sm">
-            Advanced AI analyzes legal documents for risks, terms, and compliance - free
+            AI vectorizes documents for precise semantic search and analysis
           </p>
         </div>
         
@@ -395,7 +439,7 @@ const GuestDocumentsPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold text-orange-900 mb-2">AI Chat Assistant</h3>
           <p className="text-orange-800 text-sm">
-            Chat with AI about your documents for detailed legal insights
+            Chat with AI about your documents using vector-powered search
           </p>
         </div>
       </section>
@@ -421,7 +465,7 @@ const GuestDocumentsPage: React.FC = () => {
           </h2>
           <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
             No signup required! Upload contracts, NDAs, agreements, or any legal document. 
-            Our AI will analyze them instantly for risks, key terms, and compliance issues.
+            Our AI will vectorize and analyze them instantly for risks, key terms, and compliance issues.
           </p>
         </div>
         
@@ -434,7 +478,7 @@ const GuestDocumentsPage: React.FC = () => {
             <h3 className="font-semibold text-green-900 mb-3">✨ Free Features (No Signup)</h3>
             <ul className="text-sm text-green-800 space-y-1">
               <li>• Upload up to 3 documents</li>
-              <li>• AI document analysis</li>
+              <li>• AI vectorization & analysis</li>
               <li>• Chat with AI assistant</li>
               <li>• Risk assessment</li>
               <li>• Temporary session storage</li>
@@ -497,7 +541,7 @@ const GuestDocumentsPage: React.FC = () => {
           Ready to Analyze Your Legal Documents with Free AI?
         </h2>
         <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-          No signup required! Upload your contracts, NDAs, and legal documents now for instant AI analysis, 
+          No signup required! Upload your contracts, NDAs, and legal documents now for instant AI vectorization and analysis, 
           or create a free account for unlimited uploads and premium features.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

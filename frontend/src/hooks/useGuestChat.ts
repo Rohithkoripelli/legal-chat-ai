@@ -1,4 +1,4 @@
-// src/hooks/useGuestChat.ts - Complete free chat functionality for guests
+// src/hooks/useGuestChat.ts - FIXED to properly handle guest document IDs
 import { useState, useCallback } from 'react';
 
 export interface GuestMessage {
@@ -12,6 +12,8 @@ interface GuestDocument {
   id: string;
   name: string;
   content: string;
+  type: string;
+  size: number;
   uploadedAt: Date;
 }
 
@@ -50,15 +52,25 @@ export const useGuestChat = () => {
       }
 
       console.log('🔍 Found guest documents:', documents.length);
+      if (documents.length > 0) {
+        console.log('📋 Guest document IDs:', documents.map(doc => doc.id));
+        console.log('📋 Guest document names:', documents.map(doc => doc.name));
+      }
 
-      // Prepare document context for the AI
+      // FIXED: Prepare document context with proper IDs and full structure
       const documentContext = documents.map(doc => ({
+        id: doc.id,           // CRITICAL: Include the actual document ID
         name: doc.name,
-        content: doc.content.substring(0, 2000) // Limit content for free users
+        content: doc.content.substring(0, 2000), // Limit content for free users
+        type: doc.type,
+        size: doc.size,
+        uploadedAt: typeof doc.uploadedAt === 'string' ? doc.uploadedAt : doc.uploadedAt.toISOString()
       }));
 
       // Send message to the backend without authentication
-      console.log('📤 Sending guest message to chat API');
+      console.log('📤 Sending guest message to chat API with document context');
+      console.log('📋 Sending document IDs:', documentContext.map(doc => doc.id));
+      
       const response = await fetch(`${API_BASE_URL}/api/chat/guest`, {
         method: 'POST',
         headers: { 
@@ -66,7 +78,7 @@ export const useGuestChat = () => {
         },
         body: JSON.stringify({ 
           message,
-          documents: documentContext // Send document context instead of IDs
+          documents: documentContext // Send full document context with IDs
         }),
       });
 
@@ -155,6 +167,35 @@ export const useGuestChat = () => {
     setError(null);
   }, []);
 
+  // FIXED: Add function to properly store guest documents
+  const addGuestDocument = useCallback((document: GuestDocument) => {
+    try {
+      const storedDocs = sessionStorage.getItem('guestDocuments');
+      let documents: GuestDocument[] = storedDocs ? JSON.parse(storedDocs) : [];
+      
+      // Add new document
+      documents.push(document);
+      
+      // Store back to session storage
+      sessionStorage.setItem('guestDocuments', JSON.stringify(documents));
+      
+      console.log('✅ Guest document added to session storage:', document.id);
+    } catch (error) {
+      console.error('❌ Error storing guest document:', error);
+    }
+  }, []);
+
+  // FIXED: Add function to get current guest documents
+  const getGuestDocuments = useCallback((): GuestDocument[] => {
+    try {
+      const storedDocs = sessionStorage.getItem('guestDocuments');
+      return storedDocs ? JSON.parse(storedDocs) : [];
+    } catch (error) {
+      console.error('❌ Error getting guest documents:', error);
+      return [];
+    }
+  }, []);
+
   // Return interface compatible with existing components
   return {
     messages,
@@ -162,6 +203,8 @@ export const useGuestChat = () => {
     error,
     sendMessage,
     clearMessages,
+    addGuestDocument,
+    getGuestDocuments,
     isAuthenticated: false // Always false for guest users
   };
 };

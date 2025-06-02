@@ -11,8 +11,12 @@ interface AuthenticatedRequest extends Request {
 }
 
 interface GuestDocument {
+  id: string;        // FIXED: Use id instead of just name
   name: string;
   content: string;
+  type?: string;
+  size?: number;
+  uploadedAt?: string;
 }
 
 interface GuestChatBody {
@@ -28,26 +32,40 @@ interface AuthenticatedChatBody {
 // GUEST CHAT ENDPOINT - NO AUTH REQUIRED (place before auth middleware)
 router.post('/guest', async (req: Request<{}, {}, GuestChatBody>, res: Response) => {
   try {
-    console.log('📩 Guest chat request received');
+    console.log('🎯 GUEST POST /api/chat/guest');
     const { message, documents = [] } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    console.log('📩 Guest chat request received');
     console.log(`📩 Guest message: "${message}"`);
     console.log(`📄 Guest documents: ${documents.length} provided`);
 
-    // Create simplified document objects for guest users
-    const guestDocuments = documents.map((doc, index) => ({
-      _id: `guest-doc-${index}`,
-      name: doc.name || `Document ${index + 1}`,
-      originalName: doc.name || `Document ${index + 1}`,
-      content: doc.content || '',
-      type: 'guest-document',
-      size: doc.content?.length || 0,
-      uploadedAt: new Date()
-    }));
+    // FIXED: Create guest document objects with proper IDs for vectorization
+    const guestDocuments = documents.map((doc, index) => {
+      // Use the actual document ID if provided, otherwise create consistent fallback
+      const documentId = doc.id || `guest-doc-${index}`;
+      
+      console.log(`📋 Processing guest document: ${doc.name} with ID: ${documentId}`);
+      
+      return {
+        _id: documentId,  // Use the actual guest document ID
+        id: documentId,   // Also set id field for compatibility
+        name: doc.name || `Document ${index + 1}`,
+        originalName: doc.name || `Document ${index + 1}`,
+        content: doc.content || '',
+        type: doc.type || 'guest-document',
+        size: doc.size || doc.content?.length || 0,
+        uploadedAt: new Date(doc.uploadedAt || new Date())
+      };
+    });
+
+    // Log the document IDs being used for vectorization
+    if (guestDocuments.length > 0) {
+      console.log('📋 Guest document IDs for vector search:', guestDocuments.map(doc => doc._id));
+    }
 
     // Process message with AI (same service as authenticated users)
     console.log('🤖 Processing guest message with AI...');
