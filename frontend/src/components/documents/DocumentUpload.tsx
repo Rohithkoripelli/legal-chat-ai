@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Upload, File, X, AlertCircle } from 'lucide-react';
+import { useDocuments } from '../../hooks/useDocuments'; // Use your auth-enabled hook
 
 interface FileUploadProps {
   onUploadSuccess: () => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
+  const { uploadDocument } = useDocuments(); // Use the authenticated upload function
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -54,26 +56,18 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
     setUploadSuccess(null);
 
     try {
+      console.log(`📤 Uploading ${selectedFiles.length} files with authentication...`);
+      
+      // Upload files one by one using the authenticated hook
       const uploadPromises = selectedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append('document', file);
-
-        const response = await fetch('https://legal-chat-ai.onrender.com/api/documents/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Failed to upload ${file.name}`);
-        }
-
-        return await response.json();
+        console.log(`📄 Uploading: ${file.name}`);
+        return await uploadDocument(file); // This includes auth headers!
       });
 
-      const results = await Promise.all(uploadPromises);
+      await Promise.all(uploadPromises);
       
-      setUploadSuccess(`Successfully uploaded ${results.length} file(s)!`);
+      console.log('✅ All files uploaded successfully');
+      setUploadSuccess(`Successfully uploaded ${selectedFiles.length} file(s)!`);
       setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -83,7 +77,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess }) => {
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(null), 3000);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('❌ Upload error:', error);
       setUploadError(error instanceof Error ? error.message : 'Upload failed');
     } finally {
       setUploading(false);
