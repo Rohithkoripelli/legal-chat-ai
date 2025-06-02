@@ -6,7 +6,11 @@ import DocumentList from '../components/documents/DocumentList';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '@clerk/clerk-react';
 
-const DocumentsPage: React.FC = () => {
+interface DocumentsPageProps {
+  onNavigateToChat?: () => void;
+}
+
+const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
   const { isSignedIn } = useAuth();
   const { documents, loading, error, deleteDocument, downloadDocument, refreshDocuments } = useDocuments();
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
@@ -192,7 +196,7 @@ const DocumentsPage: React.FC = () => {
                 </div>
                 {documents.length > 0 && (
                   <button
-                    onClick={() => window.location.href = '/chat'}
+                    onClick={() => onNavigateToChat ? onNavigateToChat() : window.location.href = '/chat'}
                     className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     <MessageSquare className="h-4 w-4 mr-2" />
@@ -544,7 +548,7 @@ const DocumentsPage: React.FC = () => {
                 Upload Documents Now
               </button>
               <button
-                onClick={() => window.location.href = '/chat'}
+                onClick={() => onNavigateToChat ? onNavigateToChat() : window.location.href = '/chat'}
                 className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
               >
                 <MessageSquare className="h-5 w-5 mr-2" />

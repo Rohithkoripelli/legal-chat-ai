@@ -79,7 +79,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'documents':
-        return <DocumentsPage />;
+        return <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} />;
       case 'chat':
         return <ChatPage />;
       case 'contracts':
@@ -107,7 +107,7 @@ function App() {
       case 'test':
         return <DocumentTest />;
       default:
-        return <DocumentsPage />;
+        return <DocumentsPage onNavigateToChat={() => setCurrentPage('chat')} />;
     }
   };
 
