@@ -1,4 +1,4 @@
-// backend/src/app.ts - Updated to include document generation routes
+// backend/src/app.ts - Updated to include freemium features (preserving all existing functionality)
 
 import express from 'express';
 import cors from 'cors';
@@ -7,21 +7,22 @@ import path from 'path';
 import mongoose from 'mongoose';
 import { corsMiddleware } from './cors-middleware';
 
-// Import routes
-// In backend/src/app.ts - Add this with the other route imports
+// Import existing routes (keeping all your existing functionality)
 import chatRoutes from './routes/chatRoutes';
 import documentRoutes from './routes/documentRoutes';
 import testRoutes from './routes/testRoutes';
 import documentGenerationRoutes from './routes/documentGenerationRoutes';
-import contractRoutes from './routes/contractRoutes'; // Add this line
+import contractRoutes from './routes/contractRoutes';
 
+// Import NEW guest routes for freemium features
+import guestDocumentRoutes from './routes/guestDocumentRoutes';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
-// ENHANCED CORS SETUP - THIS IS THE FIX
+// ENHANCED CORS SETUP - KEEPING YOUR EXISTING SETUP
 app.use(cors({
   origin: '*',
   credentials: true,
@@ -35,20 +36,22 @@ app.options('*', cors());
 // Use custom CORS middleware
 app.use(corsMiddleware);
 
-// Log requests
+// Log requests (enhanced to show guest vs auth)
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
+  const isGuestEndpoint = req.originalUrl.includes('/guest') || req.originalUrl.includes('/api/chat/guest');
+  const logPrefix = isGuestEndpoint ? '🎯 GUEST' : '🔐 AUTH';
+  console.log(`${logPrefix} ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Standard middleware
+// Standard middleware (keeping your existing setup)
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Serve static files from uploads directory
+// Serve static files from uploads directory (keeping existing)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Database connection
+// Database connection (keeping your existing setup)
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/legal-ai';
@@ -63,14 +66,20 @@ const connectDB = async () => {
 // Connect to database
 connectDB();
 
-// Routes - apply CORS to each route
-app.use('/api/chat', corsMiddleware, chatRoutes);
+// ROUTES CONFIGURATION
+// ==================
+
+// 🎯 GUEST ROUTES - NO AUTHENTICATION REQUIRED (place BEFORE authenticated routes)
+app.use('/api/guest/documents', corsMiddleware, guestDocumentRoutes);
+
+// 🔐 AUTHENTICATED ROUTES - ALL YOUR EXISTING ROUTES (keeping exactly as they were)
+app.use('/api/chat', corsMiddleware, chatRoutes); // This now includes guest chat at /api/chat/guest
 app.use('/api/documents', corsMiddleware, documentRoutes);
 app.use('/api/test', corsMiddleware, testRoutes);
 app.use('/api/generate-document', corsMiddleware, documentGenerationRoutes);
-app.use('/api/contracts', corsMiddleware, contractRoutes); // Add this line
+app.use('/api/contracts', corsMiddleware, contractRoutes);
 
-// Health check endpoint
+// ENHANCED HEALTH CHECK - showing new freemium features
 app.get('/api/health', corsMiddleware, (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -81,41 +90,107 @@ app.get('/api/health', corsMiddleware, (req, res) => {
     services: {
       chat: 'available',
       documents: 'available',
-      documentGeneration: 'available'
+      documentGeneration: 'available',
+      contracts: 'available'
+    },
+    // NEW: Freemium features
+    freemiumFeatures: {
+      guestChat: 'available',
+      guestUpload: 'available',
+      limitations: {
+        maxFiles: 3,
+        maxSizePerFile: '5MB',
+        storage: 'temporary (24hrs)'
+      }
     }
   });
 });
 
-// Error handling middleware
+// ENHANCED ERROR HANDLING - with freemium context
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
   
+  const isGuestEndpoint = req.originalUrl.includes('/guest');
+  
   if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({ error: 'File too large. Maximum size is 10MB.' });
+    return res.status(400).json({ 
+      error: 'File too large', 
+      maxSize: isGuestEndpoint ? '5MB for free users' : '10MB for premium users',
+      suggestion: isGuestEndpoint ? 'Create a free account for larger uploads!' : 'Please use a smaller file'
+    });
   }
   
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-    return res.status(400).json({ error: 'Invalid file type. Only PDF, Word, Text, and RTF files are allowed.' });
+    return res.status(400).json({ 
+      error: 'Invalid file type. Only PDF, Word, Text, and RTF files are allowed.',
+      suggestion: isGuestEndpoint ? 'Create a free account for additional format support!' : 'Please check your file format'
+    });
+  }
+
+  if (err.code === 'LIMIT_FILE_COUNT') {
+    return res.status(400).json({
+      error: 'Too many files',
+      maxFiles: isGuestEndpoint ? '3 files for free users' : '10 files for premium users',
+      suggestion: isGuestEndpoint ? 'Create a free account for unlimited uploads!' : 'Please upload fewer files'
+    });
   }
   
   res.status(500).json({ 
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    suggestion: isGuestEndpoint ? 'For better reliability, consider creating a free account!' : 'Please try again or contact support'
   });
 });
 
-// 404 handler
+// ENHANCED 404 HANDLER - showing available endpoints
 app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ 
+    error: 'Route not found',
+    path: req.originalUrl,
+    availableEndpoints: {
+      // NEW: Guest endpoints (freemium)
+      guest: {
+        chat: '/api/chat/guest',
+        chatTest: '/api/chat/guest/test',
+        documents: '/api/guest/documents/test',
+        upload: '/api/guest/documents/upload'
+      },
+      // Existing authenticated endpoints
+      authenticated: {
+        chat: '/api/chat',
+        chatTest: '/api/chat/test',
+        documents: '/api/documents',
+        upload: '/api/documents/upload',
+        generateDocument: '/api/generate-document',
+        contracts: '/api/contracts',
+        test: '/api/test'
+      },
+      general: {
+        health: '/api/health'
+      }
+    }
+  });
 });
 
 const PORT = Number(process.env.PORT) || 3001;
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Legal Chat AI Backend running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Server URL: http://localhost:${PORT}`);
+  console.log(`
+🆕 NEW FREEMIUM FEATURES:
+   🎯 Guest Chat: http://localhost:${PORT}/api/chat/guest
+   📤 Guest Upload: http://localhost:${PORT}/api/guest/documents/upload
+   
+🔐 EXISTING FEATURES (ALL PRESERVED):
+   💬 Auth Chat: http://localhost:${PORT}/api/chat
+   📄 Auth Documents: http://localhost:${PORT}/api/documents
+   🏗️ Document Generation: http://localhost:${PORT}/api/generate-document
+   📊 Contracts: http://localhost:${PORT}/api/contracts
+   🧪 Test: http://localhost:${PORT}/api/test
+   ❤️ Health: http://localhost:${PORT}/api/health
+  `);
 });
-
 
 export default app;

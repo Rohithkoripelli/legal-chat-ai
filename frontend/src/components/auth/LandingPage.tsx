@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DocumentHead } from '../SEO/DocumentHead';
-import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle } from 'lucide-react';
+import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle, Crown } from 'lucide-react';
 
 // Privacy Policy Component
 const PrivacyPolicyPage: React.FC = () => {
@@ -1012,7 +1012,7 @@ const LandingPage: React.FC = () => {
     );
   }
 
-  // Main landing page
+  // Main landing page with all the freemium updates
   return (
     <>
       {/* IMPROVED SEO META DATA */}
@@ -1065,35 +1065,43 @@ const LandingPage: React.FC = () => {
               Free Contract Review & Chat
             </h1>
             
-            {/* OPTIMIZED H2 WITH LSI KEYWORDS */}
+            {/* UPDATED H2 WITH FREEMIUM MESSAGING */}
             <h2 className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
               Upload contracts, NDAs, and legal documents for instant <strong>AI-powered analysis</strong>. 
               Get clause explanations, risk assessments, and legal insights 80% faster than manual review. 
-              <strong>No signup required</strong> - start your free legal document analysis now.
+              <strong>Try it free - no signup required</strong> or create a free account for premium features.
             </h2>
             
-            {/* Hero Features with KEYWORDS */}
+            {/* UPDATED Hero Features with FREEMIUM */}
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
                 <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">Legal AI Chat Assistant</span>
+                <span className="text-sm font-medium text-gray-700">Try Free - No Signup</span>
+              </div>
+              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+                <CheckCircle className="w-5 h-5 text-blue-500 mr-2" />
+                <span className="text-sm font-medium text-gray-700">Instant AI Analysis</span>
+              </div>
+              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+                <CheckCircle className="w-5 h-5 text-purple-500 mr-2" />
+                <span className="text-sm font-medium text-gray-700">Free Account = Premium Features</span>
               </div>
             </div>
 
-            {/* CTA Buttons with KEYWORDS */}
+            {/* UPDATED CTA Buttons with FREEMIUM */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center"
-                onClick={() => window.location.href = '/chat'}
+                onClick={() => window.location.href = '/documents'}
               >
-                Start Free AI Document Analysis
+                Try Free - No Signup Required
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
               <button 
                 className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors"
-                onClick={() => window.location.href = '/create-document'}
+                onClick={() => window.location.href = '/sign-up'}
               >
-                AI Legal Document Generator
+                Create Free Account
               </button>
             </div>
           </div>
@@ -1284,12 +1292,116 @@ const LandingPage: React.FC = () => {
                 <div className="mt-8 text-center">
                   <button 
                     className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-                    onClick={() => window.location.href = '/chat'}
+                    onClick={() => window.location.href = '/documents'}
                   >
                     Try Free AI Analysis Now
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* NEW FREEMIUM BENEFITS SECTION */}
+        <section className="max-w-7xl mx-auto px-6 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Try Free or Upgrade - Your Choice!
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Start with our free features, then upgrade to unlock the full power of AI legal analysis
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Free Features */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-8 border-2 border-green-200">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-full text-sm font-medium mb-4">
+                  <Star className="w-4 h-4 mr-2" />
+                  Free - No Signup Required
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Try It Free</h3>
+                <p className="text-gray-600">Perfect for testing our AI capabilities</p>
+              </div>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                  Upload up to 3 documents
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                  AI document analysis
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                  Chat with AI assistant
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                  Risk assessment
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                  Session-based storage
+                </li>
+              </ul>
+              
+              <button
+                onClick={() => window.location.href = '/documents'}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              >
+                Try Free Now
+              </button>
+            </div>
+
+            {/* Premium Features */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 border-2 border-blue-200 relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Most Popular
+                </span>
+              </div>
+              
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium mb-4">
+                  <Crown className="w-4 h-4 mr-2" />
+                  Free Account - Full Features
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium Features</h3>
+                <p className="text-gray-600">Everything you need for professional use</p>
+              </div>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                  Unlimited document uploads
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                  Permanent secure storage
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                  Advanced analytics dashboard
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                  Document generation tools
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                  Chat history & more
+                </li>
+              </ul>
+              
+              <button
+                onClick={() => window.location.href = '/sign-up'}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Create Free Account
+              </button>
             </div>
           </div>
         </section>
@@ -1316,7 +1428,10 @@ const LandingPage: React.FC = () => {
 
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Is the AI contract review really free?</h3>
-              <p className="text-gray-600">Yes, our AI contract review and legal document analysis is completely free with no hidden costs, subscription fees, or usage limits. We believe legal technology should be accessible to everyone.</p>
+              <p className="text-gray-600">
+                Yes! You can upload up to 3 documents and chat with our AI completely free without any signup. 
+                For unlimited uploads, permanent storage, and premium features, create a free account with no hidden costs or subscription fees.
+              </p>
             </div>
 
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
@@ -1413,28 +1528,28 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* FINAL CTA SECTION */}
+        {/* UPDATED FINAL CTA SECTION */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Transform Your Legal Document Review?
+              Ready to Try AI Legal Analysis for Free?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Join thousands of legal professionals using AI to analyze contracts faster and more accurately
+              No signup required! Upload documents and chat with AI instantly, or create a free account for unlimited features.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
-                onClick={() => window.location.href = '/chat'}
+                onClick={() => window.location.href = '/documents'}
               >
-                Start Free AI Legal Analysis
+                Start Free Analysis - No Signup
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
               <button 
                 className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
-                onClick={() => window.location.href = '/create-document'}
+                onClick={() => window.location.href = '/sign-up'}
               >
-                Generate Legal Documents
+                Create Free Account
               </button>
             </div>
           </div>
