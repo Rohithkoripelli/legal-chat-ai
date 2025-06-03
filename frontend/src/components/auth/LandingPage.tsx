@@ -1012,7 +1012,7 @@ const LandingPage: React.FC = () => {
     );
   }
 
-  // Main landing page with all the freemium updates
+  // Main landing page with FIXED RESPONSIVE HERO SECTION
   return (
     <>
       {/* IMPROVED SEO META DATA */}
@@ -1050,59 +1050,74 @@ const LandingPage: React.FC = () => {
       </script>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        {/* Hero Section - OPTIMIZED H1 */}
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-8">
-              <Star className="w-4 h-4 mr-2" />
-              Trusted by 10,000+ Legal Professionals
-            </div>
-            
-            {/* OPTIMIZED H1 FOR TARGET KEYWORD */}
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              <span className="text-blue-600">AI Legal Document Analysis</span> 
-              <br />
-              Free Contract Review & Chat
-            </h1>
-            
-            {/* UPDATED H2 WITH FREEMIUM MESSAGING */}
-            <h2 className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Upload contracts, NDAs, and legal documents for instant <strong>AI-powered analysis</strong>. 
-              Get clause explanations, risk assessments, and legal insights 80% faster than manual review. 
-              <strong>Try it free - no signup required</strong> or create a free account for premium features.
-            </h2>
-            
-            {/* UPDATED Hero Features with FREEMIUM */}
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">Try Free - No Signup</span>
-              </div>
-              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <CheckCircle className="w-5 h-5 text-blue-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">Instant AI Analysis</span>
-              </div>
-              <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <CheckCircle className="w-5 h-5 text-purple-500 mr-2" />
-                <span className="text-sm font-medium text-gray-700">Free Account = Premium Features</span>
-              </div>
-            </div>
+        {/* FIXED RESPONSIVE HERO SECTION */}
+        <div className="relative overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
+              <main className="mt-8 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                  {/* Trust Badge - Responsive */}
+                  <div className="inline-flex items-center px-3 sm:px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
+                    <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="hidden sm:inline">Trusted by 10,000+ Legal Professionals</span>
+                    <span className="sm:hidden">10,000+ Professionals</span>
+                  </div>
+                  
+                  {/* FIXED Main Heading - Responsive */}
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+                    <span className="text-blue-600">AI Legal Analysis</span> 
+                    <br className="hidden sm:block" />
+                    <span className="block sm:inline">Free Contract Review</span>
+                  </h1>
+                  
+                  {/* FIXED Subheading - Responsive */}
+                  <div className="max-w-4xl mx-auto mb-6 sm:mb-8">
+                    <h2 className="text-sm sm:text-lg md:text-xl text-gray-600 mb-2 sm:mb-4 leading-relaxed">
+                      Upload legal documents for instant{' '}
+                      <strong className="text-gray-800">AI analysis</strong>. Get insights 80% faster.
+                    </h2>
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-600 leading-relaxed">
+                      <strong className="text-gray-800">No signup required</strong> - start now.
+                    </p>
+                  </div>
+                  
+                  {/* Feature Badges - Responsive */}
+                  <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 px-4">
+                    <div className="flex items-center bg-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm border border-gray-200">
+                      <CheckCircle className="w-3 h-3 sm:w-5 sm:h-5 text-green-500 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Legal AI Chat</span>
+                    </div>
+                    <div className="flex items-center bg-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm border border-gray-200">
+                      <CheckCircle className="w-3 h-3 sm:w-5 sm:h-5 text-green-500 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Risk Assessment</span>
+                    </div>
+                    <div className="flex items-center bg-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm border border-gray-200">
+                      <CheckCircle className="w-3 h-3 sm:w-5 sm:h-5 text-green-500 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Free Analysis</span>
+                    </div>
+                  </div>
 
-            {/* UPDATED CTA Buttons with FREEMIUM */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center"
-                onClick={() => window.location.href = '/documents'}
-              >
-                Try Free - No Signup Required
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
-              <button 
-                className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors"
-                onClick={() => window.location.href = '/sign-up'}
-              >
-                Create Free Account
-              </button>
+                  {/* CTA Buttons - Responsive Stack */}
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
+                    <button 
+                      className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      onClick={() => window.location.href = '/chat'}
+                    >
+                      <span className="truncate">Start Free AI Analysis</span>
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
+                    </button>
+                    <button 
+                      className="w-full sm:w-auto bg-green-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      onClick={() => window.location.href = '/create-document'}
+                    >
+                      <span className="truncate">AI Document Generator</span>
+                    </button>
+                  </div>
+
+                  {/* Mobile-specific additional spacing */}
+                  <div className="block sm:hidden mt-8"></div>
+                </div>
+              </main>
             </div>
           </div>
         </div>
@@ -1292,7 +1307,7 @@ const LandingPage: React.FC = () => {
                 <div className="mt-8 text-center">
                   <button 
                     className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-                    onClick={() => window.location.href = '/documents'}
+                    onClick={() => window.location.href = '/chat'}
                   >
                     Try Free AI Analysis Now
                   </button>
