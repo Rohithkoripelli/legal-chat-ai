@@ -1,4 +1,18 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
 Sitemap: https://legalchatai.com/sitemap.xml
+
+# Disallow admin areas if any
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /api/
+
+# Allow important crawl paths
+Allow: /chat
+Allow: /documents
+Allow: /create-document
+Allow: /about
+Allow: /privacy
+Allow: /terms
