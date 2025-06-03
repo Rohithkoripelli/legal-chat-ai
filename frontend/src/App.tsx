@@ -280,35 +280,7 @@ const AppContent: React.FC = () => {
                 </button>
               ))}
 
-              {/* Legal Pages Navigation for Guests */}
-              {!isSignedIn && (
-                <>
-                  <button
-                    onClick={() => navigate('/about')}
-                    className={`transition-colors px-3 py-2 text-sm ${
-                      location.pathname === '/about' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-                    }`}
-                  >
-                    About
-                  </button>
-                  <button
-                    onClick={() => navigate('/privacy')}
-                    className={`transition-colors px-3 py-2 text-sm ${
-                      location.pathname === '/privacy' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-                    }`}
-                  >
-                    Privacy
-                  </button>
-                  <button
-                    onClick={() => navigate('/terms')}
-                    className={`transition-colors px-3 py-2 text-sm ${
-                      location.pathname === '/terms' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-                    }`}
-                  >
-                    Terms
-                  </button>
-                </>
-              )}
+
             </nav>
 
             {/* Mobile Navigation - PRESERVING YOUR EXISTING MOBILE NAV */}
