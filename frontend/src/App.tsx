@@ -1,7 +1,7 @@
 // frontend/src/App.tsx - UPDATED WITH REACT ROUTER WHILE PRESERVING EXISTING FUNCTIONALITY
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain } from 'lucide-react';
+import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain, Menu, X, Home } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { useClerkAuth } from './hooks/useClerk';
 import LandingPage from './components/auth/LandingPage';
@@ -86,6 +86,111 @@ const guestFeatures = [
     isPremium: false
   }
 ];
+
+// Mobile Navigation Menu Component
+const MobileNavMenu: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  isSignedIn: boolean;
+  navigate: (path: string) => void;
+}> = ({ isOpen, onClose, isSignedIn, navigate }) => {
+  const navItems = [
+    { label: 'Home', path: '/', icon: <Home className="h-5 w-5" />, guestAllowed: true },
+    { label: 'Documents', path: '/documents', icon: <FileText className="h-5 w-5" />, guestAllowed: true },
+    { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true },
+    { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <AlertTriangle className="h-5 w-5" />, guestAllowed: true },
+    { label: 'Risk Analysis', path: '/risk-analysis', icon: <AlertTriangle className="h-5 w-5" />, guestAllowed: false },
+    { label: 'Dashboard', path: '/dashboard', icon: <BarChart3 className="h-5 w-5" />, guestAllowed: false },
+    { label: 'Generator', path: '/create-document', icon: <ClipboardList className="h-5 w-5" />, guestAllowed: false },
+  ];
+
+  // Filter items based on authentication status
+  const filteredItems = isSignedIn 
+    ? navItems.filter(item => item.path !== '/guest-contract-analysis')
+    : navItems.filter(item => item.guestAllowed);
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" 
+        onClick={onClose}
+      />
+      
+      {/* Menu Panel */}
+      <div className="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-lg font-bold text-gray-900">Legal AI</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          
+          {/* Navigation Items */}
+          <div className="flex-1 py-6">
+            <nav className="space-y-2 px-6">
+              {filteredItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    onClose();
+                  }}
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors group"
+                >
+                  <span className="text-gray-500 group-hover:text-blue-600 transition-colors">
+                    {item.icon}
+                  </span>
+                  <span className="font-medium">{item.label}</span>
+                  {!isSignedIn && (item.label === 'Documents' || item.label === 'AI Chat' || item.label === 'Contract Analysis') && (
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      FREE
+                    </span>
+                  )}
+                  {!isSignedIn && !item.guestAllowed && (
+                    <Crown className="h-4 w-4 text-yellow-500" />
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
+          
+          {/* Auth Buttons */}
+          {!isSignedIn && (
+            <div className="p-6 border-t border-gray-200">
+              <div className="space-y-3">
+                <button
+                  onClick={() => window.location.href = '/sign-in'}
+                  className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => window.location.href = '/sign-up'}
+                  className="w-full px-4 py-3 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
 
 // Premium Feature Upgrade Component - KEEPING YOUR EXISTING COMPONENT
 const PremiumFeaturePrompt: React.FC<{
@@ -187,6 +292,7 @@ const PremiumFeaturePrompt: React.FC<{
 const AppContent: React.FC = () => {
   const { isLoaded, isSignedIn } = useClerkAuth();
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -219,12 +325,29 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* Mobile Navigation Menu */}
+      <MobileNavMenu 
+        isOpen={isMobileMenuOpen} 
+        onClose={() => setIsMobileMenuOpen(false)}
+        isSignedIn={isSignedIn}
+        navigate={navigate}
+      />
+      
       {/* Header - PRESERVING YOUR EXISTING HEADER DESIGN */}
       <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
             {/* Left side - Logo and Brand */}
             <div className="flex items-center space-x-3 flex-shrink-0">
+              {/* Mobile Hamburger Menu Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2 text-gray-700 hover:text-blue-600 transition-colors lg:hidden"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+              
               <button
                 onClick={() => navigate('/')}
                 className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
