@@ -457,124 +457,17 @@ const AppContent: React.FC = () => {
 
             </nav>
 
-            {/* Mobile Navigation - PRESERVING YOUR EXISTING MOBILE NAV */}
-            <nav className="flex lg:hidden items-center space-x-1">
-              {!isSignedIn && (
-                <button
-                  onClick={() => navigate('/')}
-                  className={`p-2 rounded-lg ${location.pathname === '/' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-                >
-                  <FileText size={20} />
-                </button>
-              )}
-              
-              {features.slice(0, 3).map((feature) => (
-                <button
-                  key={feature.id}
-                  onClick={() => navigate(feature.path)}
-                  className={`p-2 rounded-lg relative ${
-                    location.pathname === feature.path ? 'bg-blue-600 text-white' : 'text-gray-600'
-                  }`}
-                >
-                  {feature.icon}
-                  {!isSignedIn && feature.isPremium && (
-                    <Crown className="h-2 w-2 text-yellow-500 absolute -top-1 -right-1" />
-                  )}
-                  {!isSignedIn && feature.guestAllowed && !feature.isPremium && (
-                    <div className="h-1 w-1 bg-green-500 rounded-full absolute -top-1 -right-1"></div>
-                  )}
-                </button>
-              ))}
-            </nav>
+            {/* Mobile Navigation - HIDDEN (using hamburger menu instead) */}
             
-            {/* Right side - Auth Buttons or User Button */}
-            <div className="flex-shrink-0">
+            {/* Right side - Auth Buttons or User Button (Desktop Only) */}
+            <div className="hidden lg:flex flex-shrink-0">
               {isSignedIn ? <UserButton /> : <HeaderAuthButtons />}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Feature Navigation Bar - Mobile Only - FIXED OVERFLOW */}
-      <div className="lg:hidden bg-white border-b border-gray-200 sticky top-20 z-40 shadow-sm overflow-x-auto">
-        <div className="flex items-center space-x-1 px-4 py-2 min-w-max">
-          {!isSignedIn && (
-            <button
-              onClick={() => navigate('/')}
-              className={`
-                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
-                ${location.pathname === '/' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-600 hover:text-blue-600'
-                }
-              `}
-            >
-              <FileText className="h-4 w-4" />
-              <span>Home</span>
-            </button>
-          )}
-          
-          {/* Show only essential features for mobile to prevent overflow */}
-          {features.slice(0, 2).map((feature) => (
-            <button
-              key={feature.id}
-              onClick={() => navigate(feature.path)}
-              className={`
-                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
-                ${location.pathname === feature.path 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-600 hover:text-blue-600'
-                }
-              `}
-            >
-              {feature.icon}
-              <span>{feature.label}</span>
-              {!isSignedIn && feature.isPremium && (
-                <Crown className="h-3 w-3 text-yellow-500" />
-              )}
-              {!isSignedIn && feature.guestAllowed && !feature.isPremium && (
-                <span className="text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded">
-                  FREE
-                </span>
-              )}
-            </button>
-          ))}
-          
-          {/* Add guest contract analysis for mobile */}
-          {!isSignedIn && guestFeatures.map((feature) => (
-            <button
-              key={feature.id}
-              onClick={() => navigate(feature.path)}
-              className={`
-                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
-                ${location.pathname === feature.path 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-600 hover:text-blue-600'
-                }
-              `}
-            >
-              {feature.icon}
-              <span className="hidden sm:inline">{feature.label}</span>
-              <span className="sm:hidden">Analysis</span>
-              <span className="text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded">
-                FREE
-              </span>
-            </button>
-          ))}
-          
-          {/* Premium features indicator for mobile */}
-          {!isSignedIn && (
-            <button
-              onClick={() => window.location.href = '/sign-up'}
-              className="flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 hover:from-purple-200 hover:to-blue-200"
-            >
-              <Crown className="h-4 w-4" />
-              <span className="hidden sm:inline">Premium</span>
-              <span className="sm:hidden">Pro</span>
-            </button>
-          )}
-        </div>
-      </div>
+      {/* Feature Navigation Bar - REMOVED (using hamburger menu instead) */}
 
       {/* Guest Feature Banner - PRESERVING YOUR EXISTING BANNER */}
       {!isSignedIn && location.pathname !== '/' && !location.pathname.match(/\/(about|privacy|terms)/) && (
