@@ -1,7 +1,7 @@
 // frontend/src/App.tsx - UPDATED WITH REACT ROUTER WHILE PRESERVING EXISTING FUNCTIONALITY
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight } from 'lucide-react';
+import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { useClerkAuth } from './hooks/useClerk';
 import LandingPage from './components/auth/LandingPage';
