@@ -25,160 +25,6 @@ interface GuestDocumentResponse {
 // Simple in-memory storage for guest documents
 const guestDocumentStorage = new Map<string, any>();
 
-// Simplified guest contract analysis function
-const performGuestContractAnalysis = async (documentName: string, documentContent: string): Promise<any> => {
-  try {
-    // Import OpenAI service
-    const { generateResponse } = await import('../services/llmService');
-    
-    // Simplified prompt for guest analysis (shorter and more focused)
-    const guestAnalysisPrompt = `
-You are a legal AI assistant. Analyze this contract document and provide a simplified analysis.
-
-Document: "${documentName}"
-Content (first 3000 characters): "${documentContent.substring(0, 3000)}"
-
-Please provide a JSON response with this exact structure:
-{
-  "documentId": "guest-analysis-${Date.now()}",
-  "documentName": "${documentName}",
-  "riskScore": "LOW|MEDIUM|HIGH",
-  "executiveSummary": {
-    "overview": "Brief 2-3 sentence overview of the document",
-    "keyDates": [
-      {
-        "date": "Date description",
-        "description": "What this date represents",
-        "importance": "HIGH|MEDIUM|LOW"
-      }
-    ],
-    "obligations": [
-      {
-        "party": "Party name",
-        "obligation": "Brief obligation description",
-        "deadline": "Deadline if any"
-      }
-    ],
-    "recommendedActions": ["Action 1", "Action 2", "Action 3"]
-  },
-  "riskAnalysis": {
-    "overallScore": 50,
-    "riskFactors": [
-      {
-        "category": "Risk category",
-        "severity": "HIGH|MEDIUM|LOW",
-        "description": "Brief risk description",
-        "clause": "Relevant clause text",
-        "recommendation": "Brief recommendation"
-      }
-    ]
-  },
-  "keyTerms": [
-    {
-      "term": "Term name",
-      "value": "Term value",
-      "category": "Term category",
-      "riskLevel": "HIGH|MEDIUM|LOW"
-    }
-  ],
-  "problematicClauses": [
-    {
-      "clause": "Problematic clause text",
-      "issue": "Issue description",
-      "severity": "HIGH|MEDIUM|LOW",
-      "suggestion": "Suggested improvement"
-    }
-  ],
-  "analyzedAt": "${new Date().toISOString()}"
-}
-
-Focus on the most important aspects. Provide practical, actionable insights. Keep responses concise but professional.
-`;
-
-    console.log('🤖 Calling OpenAI for guest contract analysis...');
-    
-    // Call OpenAI with the simplified prompt
-    const aiResponse = await generateResponse([
-      { role: 'system', content: 'You are a professional legal AI assistant specializing in contract analysis.' },
-      { role: 'user', content: guestAnalysisPrompt }
-    ]);
-
-    console.log('✅ OpenAI response received for guest analysis');
-
-    // Try to parse the JSON response
-    let analysisResult;
-    try {
-      analysisResult = JSON.parse(aiResponse);
-    } catch (parseError) {
-      console.warn('⚠️ Failed to parse OpenAI JSON response, using structured fallback');
-      
-      // If JSON parsing fails, create a structured response from the text
-      analysisResult = {
-        documentId: `guest-analysis-${Date.now()}`,
-        documentName: documentName,
-        riskScore: 'MEDIUM',
-        executiveSummary: {
-          overview: `AI analysis of "${documentName}" completed. This document contains legal provisions that should be reviewed for compliance and risk factors.`,
-          keyDates: [
-            {
-              date: 'Contract effective date',
-              description: 'Review document for specific effective dates and deadlines',
-              importance: 'HIGH'
-            }
-          ],
-          obligations: [
-            {
-              party: 'All Parties',
-              obligation: 'Comply with terms and conditions as specified in the document',
-              deadline: 'As specified in contract'
-            }
-          ],
-          recommendedActions: [
-            'Review all payment terms and deadlines',
-            'Verify liability limitations and insurance requirements',
-            'Ensure termination clauses are understood',
-            'Consult with legal counsel for important decisions'
-          ]
-        },
-        riskAnalysis: {
-          overallScore: 65,
-          riskFactors: [
-            {
-              category: 'General Contract Risk',
-              severity: 'MEDIUM',
-              description: 'Standard contractual provisions identified that may require attention',
-              clause: 'Various clauses throughout the document',
-              recommendation: 'Review with legal counsel to ensure favorable terms'
-            }
-          ]
-        },
-        keyTerms: [
-          {
-            term: 'Contract Scope',
-            value: 'As defined in the document',
-            category: 'Scope & Definitions',
-            riskLevel: 'LOW'
-          }
-        ],
-        problematicClauses: [
-          {
-            clause: 'AI analysis indicates potential areas for review',
-            issue: 'Simplified guest analysis - detailed review recommended',
-            severity: 'LOW',
-            suggestion: 'Create a free account for comprehensive AI analysis with full document processing'
-          }
-        ],
-        analyzedAt: new Date().toISOString()
-      };
-    }
-
-    return analysisResult;
-
-  } catch (error) {
-    console.error('❌ Error in guest contract analysis:', error);
-    throw error; // Let the calling function handle the fallback
-  }
-};
 
 // Configure multer for guest file uploads
 const guestStorage = multer.memoryStorage();
@@ -582,25 +428,41 @@ router.post('/contracts/analyze', async (req: Request, res: Response) => {
     }
 
     try {
-      console.log('🔍 Starting simplified AI contract analysis for guest document...');
+      console.log('🔍 Starting AI contract analysis for guest document using existing vectorization...');
       
-      // Perform simplified guest contract analysis
-      const analysis = await performGuestContractAnalysis(documentName, documentContent);
+      // Import contract analysis service - use the same service as authenticated users
+      const { analyzeContract } = await import('../services/contractAnalysisService');
+      
+      // Create a document object compatible with the analysis service
+      // The document is already vectorized, so we can use the full analysis
+      const mockDocument = {
+        _id: documentId,
+        name: documentName,
+        content: documentContent,
+        uploadedAt: new Date(),
+        type: guestDoc.type || 'application/pdf',
+        userId: 'guest-user' // Special identifier for guest users
+      };
+
+      console.log('🤖 Performing full AI contract analysis using vectorized guest document...');
+      
+      // Use the same analysis service - it will use the already-vectorized data
+      const analysis = await analyzeContract(mockDocument, 'guest-user');
       
       // Add guest-specific metadata
       const guestAnalysis = {
         ...analysis,
         isGuestAnalysis: true,
         limitations: [
-          'Guest mode provides simplified AI analysis',
-          'Create a free account for comprehensive analysis with full vectorization',
-          'Advanced compliance checking and detailed insights require authentication',
-          'Full clause-by-clause review available with signup'
+          'Guest mode provides full AI analysis using vectorization',
+          'Create a free account for permanent storage and advanced features',
+          'Full document history and advanced analytics require authentication',
+          'Unlimited analysis and premium features available with signup'
         ],
-        upgradeMessage: 'Sign up for free to unlock advanced contract analysis features with full document processing!'
+        upgradeMessage: 'Sign up for free to unlock unlimited contract analysis and permanent storage!'
       };
 
-      console.log('✅ Guest contract analysis completed successfully');
+      console.log('✅ Guest contract analysis completed successfully using vectorized data');
       
       res.json(guestAnalysis);
       
