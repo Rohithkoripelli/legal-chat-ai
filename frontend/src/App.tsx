@@ -18,6 +18,7 @@ import { ChatProvider } from './contexts/ChatContext';
 import DocumentsPage from './pages/DocumentPage';
 import ChatPage from './pages/ChatPage';
 import GuestDocumentsPage from './pages/GuestDocumentsPage';
+import GuestContractAnalysisPage from './pages/GuestContractAnalysisPage';
 
 // Import the legal pages
 import { PrivacyPolicyPage, AboutUsPage, TermsOfServicePage } from './components/auth/LegalPages';
@@ -70,6 +71,19 @@ const features = [
     description: 'Create legal documents',
     guestAllowed: false,
     isPremium: true
+  }
+];
+
+// Guest-only features (shown for non-authenticated users)
+const guestFeatures = [
+  {
+    id: 'guest-contract-analysis',
+    path: '/guest-contract-analysis',
+    label: 'Contract Analysis',
+    icon: <Brain className="h-5 w-5" />,
+    description: 'Free contract analysis for guest users',
+    guestAllowed: true,
+    isPremium: false
   }
 ];
 
@@ -280,6 +294,30 @@ const AppContent: React.FC = () => {
                 </button>
               ))}
 
+              {/* Add guest-only features for non-authenticated users */}
+              {!isSignedIn && guestFeatures.map((feature) => (
+                <button
+                  key={feature.id}
+                  onClick={() => navigate(feature.path)}
+                  className={`
+                    flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
+                    ${location.pathname === feature.path 
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25' 
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }
+                  `}
+                  title={feature.description}
+                >
+                  {feature.icon}
+                  <span className="hidden xl:inline">{feature.label}</span>
+                  <span className="xl:hidden">{feature.label}</span>
+                  
+                  <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded ml-1">
+                    GUEST
+                  </span>
+                </button>
+              ))}
+
 
             </nav>
 
@@ -364,6 +402,27 @@ const AppContent: React.FC = () => {
               )}
             </button>
           ))}
+          
+          {/* Add guest-only features for non-authenticated users */}
+          {!isSignedIn && guestFeatures.map((feature) => (
+            <button
+              key={feature.id}
+              onClick={() => navigate(feature.path)}
+              className={`
+                flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap relative
+                ${location.pathname === feature.path 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-600 hover:text-purple-600'
+                }
+              `}
+            >
+              {feature.icon}
+              <span>{feature.label}</span>
+              <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded">
+                GUEST
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -422,6 +481,9 @@ const AppContent: React.FC = () => {
           
           {/* Chat Route */}
           <Route path="/chat" element={<ChatPage />} />
+          
+          {/* Guest Contract Analysis Route */}
+          <Route path="/guest-contract-analysis" element={<GuestContractAnalysisPage />} />
           
           {/* Premium Routes - Show upgrade prompt for guests */}
           <Route 

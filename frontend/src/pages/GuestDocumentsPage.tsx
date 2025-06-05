@@ -559,6 +559,13 @@ const GuestDocumentsPage: React.FC = () => {
             <MessageSquare className="h-5 w-5 mr-2" />
             Try Free AI Chat
           </button>
+          <button
+            onClick={() => window.location.href = '/guest-contract-analysis'}
+            className="inline-flex items-center px-8 py-4 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors border-2 border-purple-600"
+          >
+            <Brain className="h-5 w-5 mr-2" />
+            Contract Analysis
+          </button>
         </div>
       </section>
 

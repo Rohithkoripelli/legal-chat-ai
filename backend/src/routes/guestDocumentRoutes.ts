@@ -399,6 +399,190 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
+// GUEST CONTRACT ANALYSIS ENDPOINT
+router.post('/contracts/analyze', async (req: Request, res: Response) => {
+  try {
+    const { documentId, documentName, documentContent } = req.body;
+    
+    console.log('🤖 Guest contract analysis request received for:', documentName);
+    
+    if (!documentId || !documentName || !documentContent) {
+      return res.status(400).json({ 
+        error: 'Document ID, name, and content are required for analysis' 
+      });
+    }
+
+    if (documentContent.length < 100) {
+      return res.status(400).json({ 
+        error: 'Document content is too short for meaningful contract analysis' 
+      });
+    }
+
+    // Check if document exists in guest storage
+    const guestDoc = guestDocumentStorage.get(documentId);
+    if (!guestDoc) {
+      return res.status(404).json({ 
+        error: 'Document not found. Please upload the document first.' 
+      });
+    }
+
+    try {
+      // Import contract analysis service
+      const { analyzeContract } = await import('../services/contractAnalysisService');
+      
+      // Create a mock document object for the analysis service
+      const mockDocument = {
+        _id: documentId,
+        name: documentName,
+        content: documentContent,
+        uploadedAt: new Date(),
+        type: guestDoc.type || 'application/pdf'
+      };
+
+      console.log('🔍 Starting AI contract analysis for guest document...');
+      
+      // Perform contract analysis (without user ID for guest mode)
+      const analysis = await analyzeContract(mockDocument, 'guest-user');
+      
+      // Add guest-specific metadata
+      const guestAnalysis = {
+        ...analysis,
+        isGuestAnalysis: true,
+        limitations: [
+          'Guest mode provides basic analysis only',
+          'Create a free account for comprehensive analysis',
+          'Advanced compliance checking requires authentication',
+          'Detailed clause-by-clause review available with signup'
+        ],
+        upgradeMessage: 'Sign up for free to unlock advanced contract analysis features!'
+      };
+
+      console.log('✅ Guest contract analysis completed successfully');
+      
+      res.json(guestAnalysis);
+      
+    } catch (analysisError) {
+      console.error('❌ Contract analysis service error:', analysisError);
+      
+      // Provide fallback analysis for guest users
+      const fallbackAnalysis = {
+        documentId,
+        documentName,
+        riskScore: 'MEDIUM' as const,
+        executiveSummary: {
+          overview: `This is a guest mode analysis of "${documentName}". Our AI service is temporarily unavailable, but we've identified this as a legal document with standard contractual provisions. For full AI-powered analysis with detailed risk assessment, clause-by-clause review, and compliance insights, please create a free account or try again later.`,
+          keyDates: [
+            {
+              date: 'Contract effective date',
+              description: 'Review the effective date and ensure all parties are aware',
+              importance: 'HIGH' as const
+            },
+            {
+              date: 'Payment due dates', 
+              description: 'Monitor payment schedule and deadlines',
+              importance: 'MEDIUM' as const
+            }
+          ],
+          obligations: [
+            {
+              party: 'All Parties',
+              obligation: 'Review contract terms and ensure compliance with all provisions',
+              deadline: 'Ongoing'
+            },
+            {
+              party: 'Service Provider',
+              obligation: 'Deliver services according to contract specifications',
+              deadline: 'As specified in contract'
+            }
+          ],
+          recommendedActions: [
+            'Review all payment terms and deadlines carefully',
+            'Identify any liability limitations and assess risk tolerance',
+            'Ensure termination clauses are favorable and clearly understood',
+            'Verify compliance requirements are achievable',
+            'Consider legal review for high-value or complex agreements'
+          ]
+        },
+        riskAnalysis: {
+          overallScore: 65,
+          riskFactors: [
+            {
+              category: 'Payment Terms',
+              severity: 'MEDIUM' as const,
+              description: 'Standard payment terms identified that may require monitoring',
+              clause: 'Payment clauses contain standard provisions that should be reviewed for your specific situation',
+              recommendation: 'Review payment schedule and ensure cash flow alignment'
+            },
+            {
+              category: 'Liability',
+              severity: 'MEDIUM' as const,
+              description: 'Liability provisions may limit recourse in case of disputes',
+              clause: 'Limitation of liability clauses may restrict available remedies',
+              recommendation: 'Consider additional insurance or risk mitigation strategies'
+            },
+            {
+              category: 'Termination',
+              severity: 'LOW' as const,
+              description: 'Standard termination provisions appear reasonable',
+              clause: 'Termination clauses provide standard notice requirements',
+              recommendation: 'Ensure termination process aligns with business needs'
+            }
+          ]
+        },
+        keyTerms: [
+          {
+            term: 'Contract Duration',
+            value: 'Review the contract for specific term length',
+            category: 'Term & Duration',
+            riskLevel: 'LOW' as const
+          },
+          {
+            term: 'Payment Terms',
+            value: 'Standard payment provisions identified',
+            category: 'Financial',
+            riskLevel: 'MEDIUM' as const
+          },
+          {
+            term: 'Liability Limits',
+            value: 'Limitation of liability clauses present',
+            category: 'Risk Management',
+            riskLevel: 'MEDIUM' as const
+          }
+        ],
+        problematicClauses: [
+          {
+            clause: 'Guest mode analysis provides general insights only. AI service temporarily unavailable.',
+            issue: 'Limited analysis capabilities in guest mode',
+            severity: 'LOW' as const,
+            suggestion: 'Create a free account for comprehensive AI-powered contract analysis with detailed clause review and compliance checking'
+          }
+        ],
+        analyzedAt: new Date().toISOString(),
+        isGuestAnalysis: true,
+        isFallbackAnalysis: true,
+        limitations: [
+          'AI service temporarily unavailable - using fallback analysis',
+          'Guest mode provides basic insights only',
+          'Create a free account for full AI analysis',
+          'Try again later for comprehensive analysis'
+        ],
+        upgradeMessage: 'Sign up for free to unlock advanced contract analysis with full AI capabilities!'
+      };
+      
+      console.log('📄 Providing fallback analysis for guest user');
+      res.json(fallbackAnalysis);
+    }
+    
+  } catch (error) {
+    console.error('❌ Error in guest contract analysis:', error);
+    res.status(500).json({ 
+      error: 'Contract analysis failed. Please try again.',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      suggestion: 'For reliable analysis, consider creating a free account!'
+    });
+  }
+});
+
 // Clean up old guest documents
 setInterval(async () => {
   const now = Date.now();
