@@ -244,14 +244,14 @@ const AppContent: React.FC = () => {
               </button>
             </div>
             
-            {/* Center - Feature Navigation (Desktop) - Updated with Router */}
+            {/* Center - Feature Navigation (Desktop) - FIXED OVERFLOW */}
             <nav className="hidden lg:flex items-center space-x-1">
               {/* Show Home for guests, skip for authenticated users */}
               {!isSignedIn && (
                 <button
                   onClick={() => navigate('/')}
                   className={`
-                    flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                    flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                     ${location.pathname === '/' 
                       ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -263,12 +263,13 @@ const AppContent: React.FC = () => {
                 </button>
               )}
 
-              {features.map((feature) => (
+              {/* Show only core features to prevent overflow */}
+              {features.slice(0, isSignedIn ? 5 : 2).map((feature) => (
                 <button
                   key={feature.id}
                   onClick={() => navigate(feature.path)}
                   className={`
-                    flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
+                    flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
                     ${location.pathname === feature.path 
                       ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -294,13 +295,13 @@ const AppContent: React.FC = () => {
                 </button>
               ))}
 
-              {/* Add guest-only features for non-authenticated users */}
+              {/* Add guest contract analysis for non-authenticated users */}
               {!isSignedIn && guestFeatures.map((feature) => (
                 <button
                   key={feature.id}
                   onClick={() => navigate(feature.path)}
                   className={`
-                    flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
+                    flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
                     ${location.pathname === feature.path 
                       ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25' 
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -310,14 +311,26 @@ const AppContent: React.FC = () => {
                 >
                   {feature.icon}
                   <span className="hidden xl:inline">{feature.label}</span>
-                  <span className="xl:hidden">{feature.label}</span>
+                  <span className="xl:hidden">Analysis</span>
                   
                   <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded ml-1">
-                    GUEST
+                    FREE
                   </span>
                 </button>
               ))}
 
+              {/* Premium features dropdown for guests to save space */}
+              {!isSignedIn && (
+                <button
+                  onClick={() => window.location.href = '/sign-up'}
+                  className="flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 hover:from-purple-200 hover:to-blue-200"
+                  title="View premium features"
+                >
+                  <Crown className="h-4 w-4" />
+                  <span className="hidden xl:inline">Premium</span>
+                  <span className="xl:hidden">Pro</span>
+                </button>
+              )}
 
             </nav>
 
@@ -359,14 +372,14 @@ const AppContent: React.FC = () => {
         </div>
       </header>
 
-      {/* Feature Navigation Bar - Mobile Only - PRESERVING YOUR EXISTING MOBILE BAR */}
+      {/* Feature Navigation Bar - Mobile Only - FIXED OVERFLOW */}
       <div className="lg:hidden bg-white border-b border-gray-200 sticky top-20 z-40 shadow-sm overflow-x-auto">
-        <div className="flex items-center space-x-1 px-6 py-2">
+        <div className="flex items-center space-x-1 px-4 py-2 min-w-max">
           {!isSignedIn && (
             <button
               onClick={() => navigate('/')}
               className={`
-                flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap
+                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
                 ${location.pathname === '/' 
                   ? 'bg-blue-600 text-white' 
                   : 'text-gray-600 hover:text-blue-600'
@@ -378,12 +391,13 @@ const AppContent: React.FC = () => {
             </button>
           )}
           
-          {features.map((feature) => (
+          {/* Show only essential features for mobile to prevent overflow */}
+          {features.slice(0, 2).map((feature) => (
             <button
               key={feature.id}
               onClick={() => navigate(feature.path)}
               className={`
-                flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap relative
+                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
                 ${location.pathname === feature.path 
                   ? 'bg-blue-600 text-white' 
                   : 'text-gray-600 hover:text-blue-600'
@@ -403,13 +417,13 @@ const AppContent: React.FC = () => {
             </button>
           ))}
           
-          {/* Add guest-only features for non-authenticated users */}
+          {/* Add guest contract analysis for mobile */}
           {!isSignedIn && guestFeatures.map((feature) => (
             <button
               key={feature.id}
               onClick={() => navigate(feature.path)}
               className={`
-                flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap relative
+                flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
                 ${location.pathname === feature.path 
                   ? 'bg-purple-600 text-white' 
                   : 'text-gray-600 hover:text-purple-600'
@@ -417,12 +431,25 @@ const AppContent: React.FC = () => {
               `}
             >
               {feature.icon}
-              <span>{feature.label}</span>
+              <span className="hidden sm:inline">{feature.label}</span>
+              <span className="sm:hidden">Analysis</span>
               <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded">
-                GUEST
+                FREE
               </span>
             </button>
           ))}
+          
+          {/* Premium features indicator for mobile */}
+          {!isSignedIn && (
+            <button
+              onClick={() => window.location.href = '/sign-up'}
+              className="flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 hover:from-purple-200 hover:to-blue-200"
+            >
+              <Crown className="h-4 w-4" />
+              <span className="hidden sm:inline">Premium</span>
+              <span className="sm:hidden">Pro</span>
+            </button>
+          )}
         </div>
       </div>
 
