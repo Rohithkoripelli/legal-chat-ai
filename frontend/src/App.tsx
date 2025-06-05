@@ -303,7 +303,7 @@ const AppContent: React.FC = () => {
                   className={`
                     flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
                     ${location.pathname === feature.path 
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25' 
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }
                   `}
@@ -425,8 +425,8 @@ const AppContent: React.FC = () => {
               className={`
                 flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0
                 ${location.pathname === feature.path 
-                  ? 'bg-purple-600 text-white' 
-                  : 'text-gray-600 hover:text-purple-600'
+                  ? 'bg-blue-600 text-white' 
+                  : 'text-gray-600 hover:text-blue-600'
                 }
               `}
             >
