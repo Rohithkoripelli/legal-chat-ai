@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DocumentHead } from '../SEO/DocumentHead';
-import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle, Crown } from 'lucide-react';
+import { FileText, MessageSquare, Shield, Zap, CheckCircle, BarChart3, ArrowRight, Users, Star, Mail, User, Lock, Globe, Eye, Heart, AlertTriangle, Crown, Menu, X, Home } from 'lucide-react';
+import HeaderAuthButtons from './HeaderAuthButtons';
 
 // Privacy Policy Component
 const PrivacyPolicyPage: React.FC = () => {
@@ -956,9 +957,101 @@ const FooterWithLegalLinks: React.FC<{
   );
 };
 
+// Mobile Navigation Menu Component
+const MobileNavMenu: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+}> = ({ isOpen, onClose }) => {
+  const navItems = [
+    { label: 'Home', path: '/', icon: <Home className="h-5 w-5" /> },
+    { label: 'Documents', path: '/documents', icon: <FileText className="h-5 w-5" /> },
+    { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" /> },
+    { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Shield className="h-5 w-5" /> },
+    { label: 'Document Generator', path: '/create-document', icon: <BarChart3 className="h-5 w-5" /> },
+  ];
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden" 
+        onClick={onClose}
+      />
+      
+      {/* Menu Panel */}
+      <div className="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 md:hidden transform transition-transform duration-300 ease-in-out">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-lg font-bold text-gray-900">Legal AI</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          
+          {/* Navigation Items */}
+          <div className="flex-1 py-6">
+            <nav className="space-y-2 px-6">
+              {navItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    window.location.href = item.path;
+                    onClose();
+                  }}
+                  className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors group"
+                >
+                  <span className="text-gray-500 group-hover:text-blue-600 transition-colors">
+                    {item.icon}
+                  </span>
+                  <span className="font-medium">{item.label}</span>
+                  {item.label === 'Contract Analysis' && (
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      FREE
+                    </span>
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
+          
+          {/* Auth Buttons */}
+          <div className="p-6 border-t border-gray-200">
+            <div className="space-y-3">
+              <button
+                onClick={() => window.location.href = '/sign-in'}
+                className="w-full px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => window.location.href = '/sign-up'}
+                className="w-full px-4 py-3 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 // Main Landing Page Component
 const LandingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'landing' | 'privacy' | 'about' | 'terms'>('landing');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Render the selected page
   if (currentPage === 'privacy') {
@@ -1050,11 +1143,84 @@ const LandingPage: React.FC = () => {
       </script>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        {/* Mobile Navigation Menu */}
+        <MobileNavMenu 
+          isOpen={isMobileMenuOpen} 
+          onClose={() => setIsMobileMenuOpen(false)} 
+        />
+        
+        {/* MOBILE HEADER - Only visible on mobile */}
+        <header className="md:hidden bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+          <div className="flex items-center justify-between px-4 py-3">
+            {/* Hamburger Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 text-gray-700 hover:text-blue-600 transition-colors"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            
+            {/* Logo */}
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-lg font-bold text-gray-900">Legal AI</span>
+            </div>
+            
+            {/* Auth Buttons - Compact for mobile */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => window.location.href = '/sign-in'}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => window.location.href = '/sign-up'}
+                className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Start
+              </button>
+            </div>
+          </div>
+        </header>
+        
+        {/* DESKTOP HEADER - Only visible on desktop */}
+        <header className="hidden md:block bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Legal Chat AI</h1>
+                  <p className="text-xs text-gray-600">Free AI Legal Document Analysis</p>
+                </div>
+              </div>
+              
+              {/* Navigation */}
+              <nav className="hidden lg:flex items-center space-x-6">
+                <a href="/documents" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Documents</a>
+                <a href="/chat" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">AI Chat</a>
+                <a href="/guest-contract-analysis" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Contract Analysis</a>
+                <a href="/create-document" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Generator</a>
+              </nav>
+              
+              {/* Auth Buttons */}
+              <HeaderAuthButtons />
+            </div>
+          </div>
+        </header>
+        
         {/* FIXED RESPONSIVE HERO SECTION */}
         <div className="relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
-              <main className="mt-8 sm:mt-12 md:mt-16 lg:mt-20 xl:mt-28 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <main className="mt-4 sm:mt-8 md:mt-12 lg:mt-16 xl:mt-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
                   {/* Trust Badge - Responsive */}
                   <div className="inline-flex items-center px-3 sm:px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8">
