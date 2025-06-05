@@ -329,7 +329,7 @@ const AppContent: React.FC = () => {
       <MobileNavMenu 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)}
-        isSignedIn={isSignedIn}
+        isSignedIn={!!isSignedIn}
         navigate={navigate}
       />
       
