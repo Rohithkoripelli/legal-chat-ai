@@ -46,15 +46,6 @@
       isPremium: false
     },
     {
-      id: 'contracts' as Page,
-      path: '/risk-analysis',
-      label: 'Risk Analysis',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      description: 'Advanced risk assessment',
-      guestAllowed: false,
-      isPremium: true
-    },
-    {
       id: 'dashboard' as Page,
       path: '/dashboard',
       label: 'Dashboard',
