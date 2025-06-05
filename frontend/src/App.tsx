@@ -313,7 +313,7 @@ const AppContent: React.FC = () => {
                   <span className="hidden xl:inline">{feature.label}</span>
                   <span className="xl:hidden">Analysis</span>
                   
-                  <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded ml-1">
+                  <span className="text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded ml-1">
                     FREE
                   </span>
                 </button>
@@ -433,7 +433,7 @@ const AppContent: React.FC = () => {
               {feature.icon}
               <span className="hidden sm:inline">{feature.label}</span>
               <span className="sm:hidden">Analysis</span>
-              <span className="text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded">
+              <span className="text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded">
                 FREE
               </span>
             </button>
