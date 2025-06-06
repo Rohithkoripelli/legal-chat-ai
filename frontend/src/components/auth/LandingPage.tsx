@@ -1496,13 +1496,6 @@ const LandingPage: React.FC = () => {
         </section>
 
       </div>
-
-      {/* Footer with Legal Links */}
-      <FooterWithLegalLinks
-        onPrivacyClick={() => setCurrentPage('privacy')}
-        onAboutClick={() => setCurrentPage('about')}
-        onTermsClick={() => setCurrentPage('terms')}
-      />
     </>
   );
 };
