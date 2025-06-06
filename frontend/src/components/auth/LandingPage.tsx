@@ -1495,18 +1495,6 @@ const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Legal Disclaimer */}
-        <div className="bg-yellow-50 border-t border-yellow-200 py-12">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-sm text-yellow-800 mb-4">
-              ⚖️ <strong>Important Legal Notice:</strong> This AI legal document analysis tool is for informational purposes only 
-              and does not constitute legal advice. Always consult with a qualified attorney for legal matters and professional guidance.
-            </p>
-            <p className="text-xs text-yellow-700">
-              AI-generated analysis should be reviewed by qualified legal professionals before making legal decisions.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Footer with Legal Links */}
