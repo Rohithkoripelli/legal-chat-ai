@@ -59,7 +59,116 @@ const ChatPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* SEO-OPTIMIZED HEADER SECTION */}
+      {/* MAIN CHAT INTERFACE - MOVED TO TOP */}
+      <div className="bg-white rounded-lg shadow-sm border h-[600px] flex flex-col mb-8">
+        {/* Error Display */}
+        {displayError && (
+          <div className="border-b border-red-200 bg-red-50 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-red-800 font-medium">Error: {displayError}</span>
+              </div>
+              <button
+                onClick={clearError}
+                className="text-red-600 hover:text-red-800 text-sm"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Chat Messages Area */}
+        <div className="flex-1 overflow-hidden">
+          {messages.length === 0 && !displayError ? (
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center max-w-lg">
+                <div className="text-gray-400 mb-6">
+                  <MessageSquare className="mx-auto h-16 w-16" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-3">
+                  {isSignedIn ? 'Welcome to Your Personal Legal AI!' : 'Welcome to Free Legal Chat AI!'}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {documentCount > 0 
+                    ? `You have ${documentCount} document${documentCount !== 1 ? 's' : ''} ready for AI analysis. Start asking questions about your legal content.`
+                    : isSignedIn 
+                      ? 'Upload your legal documents first, then return here to chat with our AI assistant for comprehensive analysis.'
+                      : 'Upload your legal documents for free, then chat with our AI assistant for instant analysis. No signup required!'
+                  }
+                </p>
+                
+                {/* EXAMPLE QUERIES */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h4 className="font-semibold text-gray-900 mb-3">Try these example questions:</h4>
+                  <div className="grid md:grid-cols-2 gap-2 text-sm text-gray-600">
+                    <div className="space-y-1">
+                      <p>• "What are the payment terms in this contract?"</p>
+                      <p>• "Identify any liability clauses"</p>
+                      <p>• "What is the termination notice period?"</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p>• "Summarize the key obligations"</p>
+                      <p>• "What are the potential risks?"</p>
+                      <p>• "Explain this clause in simple terms"</p>
+                    </div>
+                  </div>
+                </div>
+
+                {documentCount === 0 && (
+                  <button
+                    onClick={() => window.location.href = '/documents'}
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {isSignedIn ? 'Upload Documents First' : 'Upload Documents Free'}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <MessageList messages={messages} />
+          )}
+        </div>
+
+        {/* Message Input */}
+        <div className="border-t bg-gray-50 p-4">
+          {documentCount === 0 ? (
+            <div className="text-center py-4">
+              <p className="text-gray-600 mb-4">
+                {isSignedIn 
+                  ? 'No documents uploaded yet. Upload documents to start chatting with AI.'
+                  : 'No documents uploaded yet. Upload documents for free to start AI chat analysis!'
+                }
+              </p>
+              <button
+                onClick={() => window.location.href = '/documents'}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {isSignedIn ? 'Upload Documents' : 'Upload Documents Free'}
+              </button>
+            </div>
+          ) : (
+            <div>
+              <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+              {!isSignedIn && (
+                <div className="mt-2 text-center">
+                  <p className="text-xs text-gray-500">
+                    💡 Enjoying free AI chat? <button 
+                      onClick={() => window.location.href = '/sign-up'}
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >Create a free account</button> for unlimited features!
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* SEO-OPTIMIZED HEADER SECTION - MOVED AFTER CHAT */}
       <header className="mb-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -240,115 +349,6 @@ const ChatPage: React.FC = () => {
           </div>
         </section>
       )}
-
-      {/* MAIN CHAT INTERFACE */}
-      <div className="bg-white rounded-lg shadow-sm border h-[600px] flex flex-col mb-8">
-        {/* Error Display */}
-        {displayError && (
-          <div className="border-b border-red-200 bg-red-50 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="h-4 w-4 text-red-500" />
-                <span className="text-red-800 font-medium">Error: {displayError}</span>
-              </div>
-              <button
-                onClick={clearError}
-                className="text-red-600 hover:text-red-800 text-sm"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Chat Messages Area */}
-        <div className="flex-1 overflow-hidden">
-          {messages.length === 0 && !displayError ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center max-w-lg">
-                <div className="text-gray-400 mb-6">
-                  <MessageSquare className="mx-auto h-16 w-16" />
-                </div>
-                <h3 className="text-xl font-medium text-gray-900 mb-3">
-                  {isSignedIn ? 'Welcome to Your Personal Legal AI!' : 'Welcome to Free Legal Chat AI!'}
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {documentCount > 0 
-                    ? `You have ${documentCount} document${documentCount !== 1 ? 's' : ''} ready for AI analysis. Start asking questions about your legal content.`
-                    : isSignedIn 
-                      ? 'Upload your legal documents first, then return here to chat with our AI assistant for comprehensive analysis.'
-                      : 'Upload your legal documents for free, then chat with our AI assistant for instant analysis. No signup required!'
-                  }
-                </p>
-                
-                {/* EXAMPLE QUERIES */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Try these example questions:</h4>
-                  <div className="grid md:grid-cols-2 gap-2 text-sm text-gray-600">
-                    <div className="space-y-1">
-                      <p>• "What are the payment terms in this contract?"</p>
-                      <p>• "Identify any liability clauses"</p>
-                      <p>• "What is the termination notice period?"</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p>• "Summarize the key obligations"</p>
-                      <p>• "What are the potential risks?"</p>
-                      <p>• "Explain this clause in simple terms"</p>
-                    </div>
-                  </div>
-                </div>
-
-                {documentCount === 0 && (
-                  <button
-                    onClick={() => window.location.href = '/documents'}
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    {isSignedIn ? 'Upload Documents First' : 'Upload Documents Free'}
-                  </button>
-                )}
-              </div>
-            </div>
-          ) : (
-            <MessageList messages={messages} />
-          )}
-        </div>
-
-        {/* Message Input */}
-        <div className="border-t bg-gray-50 p-4">
-          {documentCount === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-gray-600 mb-4">
-                {isSignedIn 
-                  ? 'No documents uploaded yet. Upload documents to start chatting with AI.'
-                  : 'No documents uploaded yet. Upload documents for free to start AI chat analysis!'
-                }
-              </p>
-              <button
-                onClick={() => window.location.href = '/documents'}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {isSignedIn ? 'Upload Documents' : 'Upload Documents Free'}
-              </button>
-            </div>
-          ) : (
-            <div>
-              <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-              {!isSignedIn && (
-                <div className="mt-2 text-center">
-                  <p className="text-xs text-gray-500">
-                    💡 Enjoying free AI chat? <button 
-                      onClick={() => window.location.href = '/sign-up'}
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >Create a free account</button> for unlimited features!
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* CALL-TO-ACTION SECTION */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-white text-center">

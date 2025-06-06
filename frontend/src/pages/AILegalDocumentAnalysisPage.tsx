@@ -289,38 +289,6 @@ const AILegalDocumentAnalysisPage: React.FC = () => {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="bg-gray-50 py-20">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                AI Legal Document Analysis FAQ
-              </h2>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">How accurate is AI legal document analysis?</h3>
-                <p className="text-gray-600">Our AI achieves 96%+ accuracy in identifying key contract terms, risks, and compliance issues. The system is trained on millions of legal documents and continuously improved based on legal expert feedback.</p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">What file formats are supported for legal document analysis?</h3>
-                <p className="text-gray-600">We support PDF, Microsoft Word (.doc, .docx), and plain text files. Our OCR technology can extract text from scanned documents and images within PDFs.</p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Is AI legal document analysis secure?</h3>
-                <p className="text-gray-600">Yes, we use enterprise-grade security with AES-256 encryption, secure processing, and compliance with data protection regulations. Documents are processed securely and not stored permanently.</p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Can AI replace legal review entirely?</h3>
-                <p className="text-gray-600">AI legal document analysis is a powerful tool to assist and accelerate legal review, but it should complement, not replace, qualified legal counsel. Always consult with an attorney for important legal decisions.</p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* CTA Section */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">

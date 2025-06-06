@@ -516,65 +516,6 @@ const GuestContractAnalysisPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
-      <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Free Contract Analysis - No Signup Required
-        </h1>
-        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-          Upload your contracts and legal agreements for instant AI analysis. Get risk assessment, 
-          key term extraction, and compliance insights - completely free to try with our guest mode.
-        </p>
-        
-        <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-          <Brain className="w-4 h-4 mr-2" />
-          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} ready for analysis
-        </div>
-      </header>
-
-      {/* Benefits Section */}
-      <section className="grid md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
-            <Brain className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">AI Risk Analysis</h3>
-          <p className="text-blue-800 text-sm">
-            Advanced AI examines contracts for potential risks and liability issues
-          </p>
-        </div>
-        
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg mb-4">
-            <Shield className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-green-900 mb-2">Clause Review</h3>
-          <p className="text-green-800 text-sm">
-            Identifies problematic clauses and suggests improvements
-          </p>
-        </div>
-        
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-600 rounded-lg mb-4">
-            <Zap className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-purple-900 mb-2">Instant Results</h3>
-          <p className="text-purple-800 text-sm">
-            Get comprehensive contract analysis in under 60 seconds
-          </p>
-        </div>
-
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-600 rounded-lg mb-4">
-            <FileText className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-orange-900 mb-2">No Signup Required</h3>
-          <p className="text-orange-800 text-sm">
-            Start analyzing contracts immediately with guest mode
-          </p>
-        </div>
-      </section>
-
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center space-x-2">
@@ -668,6 +609,65 @@ const GuestContractAnalysisPage: React.FC = () => {
             </div>
           </div>
         )}
+      </section>
+
+      {/* Header */}
+      <header className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Free Contract Analysis - No Signup Required
+        </h1>
+        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
+          Upload your contracts and legal agreements for instant AI analysis. Get risk assessment, 
+          key term extraction, and compliance insights - completely free to try with our guest mode.
+        </p>
+        
+        <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+          <Brain className="w-4 h-4 mr-2" />
+          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} ready for analysis
+        </div>
+      </header>
+
+      {/* Benefits Section */}
+      <section className="grid md:grid-cols-4 gap-6 mb-12">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
+            <Brain className="h-6 w-6 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-blue-900 mb-2">AI Risk Analysis</h3>
+          <p className="text-blue-800 text-sm">
+            Advanced AI examines contracts for potential risks and liability issues
+          </p>
+        </div>
+        
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg mb-4">
+            <Shield className="h-6 w-6 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-green-900 mb-2">Clause Review</h3>
+          <p className="text-green-800 text-sm">
+            Identifies problematic clauses and suggests improvements
+          </p>
+        </div>
+        
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-600 rounded-lg mb-4">
+            <Zap className="h-6 w-6 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-purple-900 mb-2">Instant Results</h3>
+          <p className="text-purple-800 text-sm">
+            Get comprehensive contract analysis in under 60 seconds
+          </p>
+        </div>
+
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-600 rounded-lg mb-4">
+            <FileText className="h-6 w-6 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-orange-900 mb-2">No Signup Required</h3>
+          <p className="text-orange-800 text-sm">
+            Start analyzing contracts immediately with guest mode
+          </p>
+        </div>
       </section>
 
       {/* Free vs Premium */}

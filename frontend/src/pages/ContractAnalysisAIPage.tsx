@@ -36,7 +36,43 @@ const ContractAnalysisAIPage: React.FC = () => {
       </script>
 
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        {/* Hero Section */}
+        {/* Contract Upload Section - MOVED TO TOP */}
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-dashed border-purple-300 p-8">
+              <div className="text-center">
+                <FileText className="h-16 w-16 text-purple-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Upload Contract for Instant AI Analysis
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Drag and drop any contract for comprehensive risk assessment and clause analysis
+                </p>
+
+                {/* Contract Types */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-sm">
+                  <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Employment</div>
+                  <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Service Agreements</div>
+                  <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">NDAs</div>
+                  <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Vendor Contracts</div>
+                </div>
+
+                <button 
+                  className="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors inline-flex items-center"
+                  onClick={() => window.location.href = '/chat'}
+                >
+                  Start Free Contract Analysis
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </button>
+                <p className="text-sm text-gray-500 mt-4">
+                  Supports PDF, Word, and text files • Enterprise-grade security • No signup required
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Section - MOVED AFTER CONTRACT UPLOAD */}
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center">
             <div className="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-8">
@@ -55,40 +91,6 @@ const ContractAnalysisAIPage: React.FC = () => {
               Our advanced contract analysis AI identifies risks, analyzes clauses, checks compliance, 
               and provides professional-grade contract review in seconds. <strong>Free for all contract types.</strong>
             </h2>
-
-            {/* Contract Upload Demo */}
-            <div className="max-w-3xl mx-auto mb-12">
-              <div className="bg-white rounded-2xl shadow-xl border-2 border-dashed border-purple-300 p-8">
-                <div className="text-center">
-                  <FileText className="h-16 w-16 text-purple-600 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Upload Contract for Instant AI Analysis
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Drag and drop any contract for comprehensive risk assessment and clause analysis
-                  </p>
-
-                  {/* Contract Types */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-sm">
-                    <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Employment</div>
-                    <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Service Agreements</div>
-                    <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">NDAs</div>
-                    <div className="bg-purple-50 px-3 py-2 rounded-lg text-purple-700">Vendor Contracts</div>
-                  </div>
-
-                  <button 
-                    className="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors inline-flex items-center"
-                    onClick={() => window.location.href = '/chat'}
-                  >
-                    Start Free Contract Analysis
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </button>
-                  <p className="text-sm text-gray-500 mt-4">
-                    Supports PDF, Word, and text files • Enterprise-grade security • No signup required
-                  </p>
-                </div>
-              </div>
-            </div>
 
             {/* Key Benefits */}
             <div className="grid md:grid-cols-4 gap-4 max-w-5xl mx-auto">
@@ -403,81 +405,6 @@ const ContractAnalysisAIPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section className="bg-gray-50 py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                What Legal Professionals Say About Contract Analysis AI
-              </h2>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6">
-                  "This contract analysis AI caught several liability issues in our vendor agreement 
-                  that we completely missed. It's like having a contract expert review every document."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full mr-4 flex items-center justify-center">
-                    <span className="text-purple-600 font-semibold">AM</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Angela Martinez</p>
-                    <p className="text-sm text-gray-600">Legal Operations Manager, FinTech Corp</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6">
-                  "We use this for initial contract review before sending to our legal team. 
-                  It's saved us thousands in legal fees and speeds up our deal process significantly."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full mr-4 flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold">JC</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">James Chen</p>
-                    <p className="text-sm text-gray-600">VP of Business Development, SaaS Company</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6">
-                  "The risk assessment feature is incredibly accurate. It highlights exactly what 
-                  we need to negotiate and provides clear explanations for business stakeholders."
-                </p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-full mr-4 flex items-center justify-center">
-                    <span className="text-green-600 font-semibold">RT</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Rachel Taylor</p>
-                    <p className="text-sm text-gray-600">Senior Attorney, Corporate Legal</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* FAQ */}
         <section className="max-w-4xl mx-auto px-6 py-20">

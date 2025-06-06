@@ -31,76 +31,6 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* SEO-OPTIMIZED HEADER */}
-      <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Upload Legal Documents for Free AI Analysis
-        </h1>
-        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-          Upload your contracts, NDAs, and legal documents for instant AI analysis. 
-          Our legal document AI provides professional insights, risk assessment, and contract review 
-          completely free with enterprise-grade security.
-        </p>
-        
-        {/* Document Stats */}
-        {isSignedIn && (
-          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-            <FileText className="w-4 h-4 mr-2" />
-            {documents.length} document{documents.length !== 1 ? 's' : ''} uploaded • Ready for AI analysis
-          </div>
-        )}
-        
-        {!isSignedIn && (
-          <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
-            <AlertCircle className="w-4 h-4 mr-2" />
-            Sign in to upload and analyze legal documents
-          </div>
-        )}
-      </header>
-
-      {/* SEO-RICH BENEFITS SECTION */}
-      <section className="grid md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
-            <Upload className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">Easy Upload</h3>
-          <p className="text-blue-800 text-sm">
-            Drag & drop PDF, Word, or text files for instant AI document analysis
-          </p>
-        </div>
-        
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg mb-4">
-            <Brain className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-green-900 mb-2">AI Analysis</h3>
-          <p className="text-green-800 text-sm">
-            Advanced AI analyzes legal documents for risks, terms, and compliance
-          </p>
-        </div>
-        
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-600 rounded-lg mb-4">
-            <Shield className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-purple-900 mb-2">Secure Processing</h3>
-          <p className="text-purple-800 text-sm">
-            Enterprise-grade security with AES-256 encryption and GDPR compliance
-          </p>
-        </div>
-
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-600 rounded-lg mb-4">
-            <MessageSquare className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-orange-900 mb-2">AI Chat</h3>
-          <p className="text-orange-800 text-sm">
-            Chat with AI about your documents for instant legal insights
-          </p>
-        </div>
-      </section>
-
       {/* SUCCESS MESSAGE */}
       {uploadSuccess && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -111,8 +41,88 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
         </div>
       )}
 
+      {/* MAIN UPLOAD SECTION - MOVED TO TOP */}
+      {isSignedIn && (
+        <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
+              <Upload className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Upload Your Legal Documents for AI Analysis
+            </h2>
+            <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+              Upload contracts, NDAs, agreements, or any legal document. 
+              Our AI will analyze them instantly for risks, key terms, and compliance issues.
+            </p>
+          </div>
+          
+          {/* Document Upload Component */}
+          <DocumentUpload onUploadSuccess={handleUploadSuccess} />
+
+          {/* Supported Formats */}
+          <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 className="font-semibold text-gray-900 mb-3 text-center">Supported Legal Document Formats</h3>
+            <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-700">
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-red-600" />
+                <span>PDF Documents</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span>Word (.doc, .docx)</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-gray-600" />
+                <span>Text Files (.txt)</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-orange-600" />
+                <span>RTF Documents</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* UPLOADED DOCUMENTS SECTION - MOVED TO TOP */}
+      {isSignedIn && (
+        <section className="bg-white rounded-xl shadow-lg border border-gray-200 mb-12">
+          <div className="p-8 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Uploaded Legal Documents</h2>
+                <p className="text-gray-600">
+                  Manage your uploaded documents and analyze them with AI chat
+                </p>
+              </div>
+              {documents.length > 0 && (
+                <button
+                  onClick={() => onNavigateToChat ? onNavigateToChat() : window.location.href = '/chat'}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Analyze with AI Chat
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="p-8">
+            <DocumentList
+              documents={documents}
+              loading={loading}
+              error={error}
+              onDeleteDocument={deleteDocument}
+              onDownloadDocument={downloadDocument}
+              onRetry={refreshDocuments}
+            />
+          </div>
+        </section>
+      )}
+
       {/* AUTHENTICATION CHECK */}
-      {!isSignedIn ? (
+      {!isSignedIn && (
         <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-8 mb-12 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-6">
             <AlertCircle className="h-8 w-8 text-yellow-600" />
@@ -140,85 +150,34 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
             </button>
           </div>
         </section>
-      ) : (
-        <>
-          {/* MAIN UPLOAD SECTION */}
-          <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
-                <Upload className="h-8 w-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Upload Your Legal Documents for AI Analysis
-              </h2>
-              <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                Upload contracts, NDAs, agreements, or any legal document. 
-                Our AI will analyze them instantly for risks, key terms, and compliance issues.
-              </p>
-            </div>
-            
-            {/* Document Upload Component */}
-            <DocumentUpload onUploadSuccess={handleUploadSuccess} />
-
-            {/* Supported Formats */}
-            <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-3 text-center">Supported Legal Document Formats</h3>
-              <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-700">
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-red-600" />
-                  <span>PDF Documents</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  <span>Word (.doc, .docx)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-gray-600" />
-                  <span>Text Files (.txt)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-orange-600" />
-                  <span>RTF Documents</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* UPLOADED DOCUMENTS SECTION */}
-          <section className="bg-white rounded-xl shadow-lg border border-gray-200 mb-12">
-            <div className="p-8 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Uploaded Legal Documents</h2>
-                  <p className="text-gray-600">
-                    Manage your uploaded documents and analyze them with AI chat
-                  </p>
-                </div>
-                {documents.length > 0 && (
-                  <button
-                    onClick={() => onNavigateToChat ? onNavigateToChat() : window.location.href = '/chat'}
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  >
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Analyze with AI Chat
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="p-8">
-              <DocumentList
-                documents={documents}
-                loading={loading}
-                error={error}
-                onDeleteDocument={deleteDocument}
-                onDownloadDocument={downloadDocument}
-                onRetry={refreshDocuments}
-              />
-            </div>
-          </section>
-        </>
       )}
+
+      {/* SEO-OPTIMIZED HEADER */}
+      <header className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Upload Legal Documents for Free AI Analysis
+        </h1>
+        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
+          Upload your contracts, NDAs, and legal documents for instant AI analysis. 
+          Our legal document AI provides professional insights, risk assessment, and contract review 
+          completely free with enterprise-grade security.
+        </p>
+        
+        {/* Document Stats */}
+        {isSignedIn && (
+          <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+            <FileText className="w-4 h-4 mr-2" />
+            {documents.length} document{documents.length !== 1 ? 's' : ''} uploaded • Ready for AI analysis
+          </div>
+        )}
+        
+        {!isSignedIn && (
+          <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            Sign in to upload and analyze legal documents
+          </div>
+        )}
+      </header>
 
       {/* DOCUMENT WORKFLOW SECTION */}
       <section className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-8 mb-12">
@@ -454,77 +413,6 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
         </div>
       </section>
 
-      {/* TESTIMONIALS SECTION */}
-      <section className="bg-gray-50 rounded-xl p-8 mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          What Users Say About Our Legal Document AI
-        </h2>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
-            </div>
-            <p className="text-gray-700 mb-4 text-sm">
-              "The AI document analysis caught several issues in our contract that we missed. 
-              Incredible accuracy and so much faster than manual review."
-            </p>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-100 rounded-full mr-3 flex items-center justify-center">
-                <span className="text-blue-600 font-semibold text-sm">SM</span>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">Sarah Martinez</p>
-                <p className="text-xs text-gray-600">Legal Counsel</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
-            </div>
-            <p className="text-gray-700 mb-4 text-sm">
-              "Perfect for startups like ours. We can analyze contracts instantly without 
-              expensive legal fees. The AI insights are surprisingly accurate."
-            </p>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-green-100 rounded-full mr-3 flex items-center justify-center">
-                <span className="text-green-600 font-semibold text-sm">MK</span>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">Mike Kim</p>
-                <p className="text-xs text-gray-600">Startup Founder</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
-            </div>
-            <p className="text-gray-700 mb-4 text-sm">
-              "Game-changer for contract review. What used to take hours now takes minutes. 
-              The risk assessment feature is particularly valuable."
-            </p>
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-purple-100 rounded-full mr-3 flex items-center justify-center">
-                <span className="text-purple-600 font-semibold text-sm">JL</span>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">Jennifer Liu</p>
-                <p className="text-xs text-gray-600">Business Owner</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CALL-TO-ACTION SECTION */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-white text-center">

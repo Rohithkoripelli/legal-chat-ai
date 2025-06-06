@@ -383,67 +383,6 @@ const GuestDocumentsPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* SEO-OPTIMIZED HEADER */}
-      <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Free Legal Document Upload & AI Analysis - No Signup Required
-        </h1>
-        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-          Upload your contracts, NDAs, and legal documents for instant free AI analysis with advanced vectorization. 
-          No registration required! Get professional insights, risk assessment, and contract review 
-          with our advanced legal AI assistant - completely free to try.
-        </p>
-        
-        {/* Document Stats */}
-        <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-          <FileText className="w-4 h-4 mr-2" />
-          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} uploaded • Vectorized & ready for AI chat
-        </div>
-      </header>
-
-      {/* SEO-RICH BENEFITS SECTION */}
-      <section className="grid md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
-            <Upload className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">No Signup Required</h3>
-          <p className="text-blue-800 text-sm">
-            Upload and analyze legal documents instantly with AI vectorization
-          </p>
-        </div>
-        
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg mb-4">
-            <Brain className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-green-900 mb-2">Advanced Vector Search</h3>
-          <p className="text-green-800 text-sm">
-            AI vectorizes documents for precise semantic search and analysis
-          </p>
-        </div>
-        
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-600 rounded-lg mb-4">
-            <Zap className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-purple-900 mb-2">Instant Results</h3>
-          <p className="text-purple-800 text-sm">
-            Get comprehensive analysis and insights in under 30 seconds
-          </p>
-        </div>
-
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-600 rounded-lg mb-4">
-            <MessageSquare className="h-6 w-6 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-orange-900 mb-2">AI Chat Assistant</h3>
-          <p className="text-orange-800 text-sm">
-            Chat with AI about your documents using vector-powered search
-          </p>
-        </div>
-      </section>
-
       {/* SUCCESS MESSAGE */}
       {uploadSuccess && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -534,6 +473,24 @@ const GuestDocumentsPage: React.FC = () => {
           />
         </div>
       </section>
+
+      {/* SEO-OPTIMIZED HEADER */}
+      <header className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Free Legal Document Upload & AI Analysis - No Signup Required
+        </h1>
+        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
+          Upload your contracts, NDAs, and legal documents for instant free AI analysis with advanced vectorization. 
+          No registration required! Get professional insights, risk assessment, and contract review 
+          with our advanced legal AI assistant - completely free to try.
+        </p>
+        
+        {/* Document Stats */}
+        <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+          <FileText className="w-4 h-4 mr-2" />
+          {guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} uploaded • Vectorized & ready for AI chat
+        </div>
+      </header>
 
       {/* CTA SECTION */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-white text-center">
