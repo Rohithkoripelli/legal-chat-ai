@@ -378,8 +378,7 @@
                 Ready to Unlock Premium Features?
               </h3>
               <p className="text-gray-600 mb-6">
-                Join thousands of legal professionals who trust our AI platform. 
-                Create your free account in seconds - no credit card required.
+                Create your free account in seconds and enjoy the benefits
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
