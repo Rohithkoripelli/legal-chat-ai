@@ -60,7 +60,6 @@ const GuestContractAnalysisPage: React.FC = () => {
   const [analysis, setAnalysis] = useState<ContractAnalysis | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showUpload, setShowUpload] = useState(false);
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
 
@@ -80,11 +79,6 @@ const GuestContractAnalysisPage: React.FC = () => {
     }
   }, []);
 
-  const handleDocumentUpload = (document: GuestDocument) => {
-    setGuestDocuments(prev => [...prev, document]);
-    sessionStorage.setItem('guestDocuments', JSON.stringify([...guestDocuments, document]));
-    setShowUpload(false);
-  };
 
   const analyzeContract = async (document: GuestDocument) => {
     setAnalyzing(true);
@@ -541,14 +535,14 @@ const GuestContractAnalysisPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.location.href = '/guest-documents'}
+                onClick={() => window.location.href = '/documents'}
                 className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 <Upload className="h-5 w-5 mr-2" />
                 Upload Documents
               </button>
               <button
-                onClick={() => setShowUpload(true)}
+                onClick={() => window.location.href = '/documents'}
                 className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
               >
                 <FileText className="h-5 w-5 mr-2" />
@@ -600,7 +594,7 @@ const GuestContractAnalysisPage: React.FC = () => {
 
             <div className="mt-8 text-center">
               <button
-                onClick={() => window.location.href = '/guest-documents'}
+                onClick={() => window.location.href = '/documents'}
                 className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 <Upload className="h-4 w-4 mr-2" />
