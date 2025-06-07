@@ -1451,7 +1451,7 @@ const LandingPage: React.FC<{
               </button>
               <button 
                 className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
-                onClick={() => window.location.href = '/sign-up'}
+                onClick={onSignUp || (() => window.location.href = '/sign-up')}
               >
                 Create Free Account
               </button>
