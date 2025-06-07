@@ -220,6 +220,75 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
     }
   };
 
+  // Function to format the executive summary with proper structure
+  const formatExecutiveSummary = (overview: string) => {
+    if (!overview || typeof overview !== 'string') return [];
+    
+    const sections: { title: string; content: string[] }[] = [];
+    
+    // Look for **Section:** pattern
+    const sectionRegex = /\*\*([^:*]+):\*\*\s*([\s\S]*?)(?=\*\*[^:*]+:\*\*|$)/g;
+    let match;
+
+    while ((match = sectionRegex.exec(overview)) !== null) {
+      const title = match[1].trim();
+      const content = match[2].trim();
+      
+      // Split content into bullet points
+      const items: string[] = [];
+      
+      // Split by lines and filter out empty ones
+      const lines = content.split('\n').filter(line => line.trim().length > 0);
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        // Remove leading dashes/bullets and clean up
+        const cleanLine = trimmedLine.replace(/^[-•*]\s*/, '').trim();
+        if (cleanLine.length > 5) {
+          items.push(cleanLine);
+        }
+      }
+      
+      if (items.length > 0) {
+        sections.push({ title, content: items });
+      }
+    }
+
+    // If no sections found, try simple line-by-line parsing
+    if (sections.length === 0) {
+      const lines = overview.split('\n').filter(line => line.trim().length > 0);
+      let currentSection: { title: string; content: string[] } | null = null;
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        
+        // Check if this looks like a header (has bold formatting or ends with :)
+        if (trimmedLine.includes('**') || trimmedLine.endsWith(':')) {
+          // Save previous section
+          if (currentSection && currentSection.content.length > 0) {
+            sections.push(currentSection);
+          }
+          // Start new section
+          const title = trimmedLine.replace(/\*\*/g, '').replace(/:/g, '').trim();
+          currentSection = { title, content: [] };
+        } else if (currentSection && trimmedLine) {
+          // Add content to current section
+          const cleanContent = trimmedLine.replace(/^[-•*]\s*/, '').trim();
+          if (cleanContent.length > 5) {
+            currentSection.content.push(cleanContent);
+          }
+        }
+      }
+      
+      // Don't forget the last section
+      if (currentSection && currentSection.content.length > 0) {
+        sections.push(currentSection);
+      }
+    }
+
+    return sections;
+  };
+
   // AUTH CHECK - Show auth required message if not signed in
   if (!isSignedIn) {
     return (
@@ -348,8 +417,29 @@ const ContractAnalysisPage: React.FC<ContractAnalysisPageProps> = ({ documentId,
       {/* Executive Summary */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Executive Summary</h2>
-        <div className="prose max-w-none">
-          <p className="text-gray-700 leading-relaxed">{analysis.executiveSummary.overview}</p>
+        <div className="space-y-4">
+          {formatExecutiveSummary(analysis.executiveSummary.overview).map((section, index) => (
+            <div key={index} className="border-l-4 border-blue-500 pl-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                {section.title}
+              </h3>
+              <ul className="space-y-1">
+                {section.content.map((item, itemIndex) => (
+                  <li key={itemIndex} className="flex items-start space-x-2">
+                    <div className="flex-shrink-0 w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
+                    <p className="text-gray-700 leading-relaxed text-sm">{item}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          
+          {/* Fallback if no structured content */}
+          {formatExecutiveSummary(analysis.executiveSummary.overview).length === 0 && (
+            <div className="text-gray-700 leading-relaxed">
+              <p>{analysis.executiveSummary.overview}</p>
+            </div>
+          )}
         </div>
       </div>
 
