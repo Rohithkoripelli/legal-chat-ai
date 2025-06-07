@@ -24,6 +24,69 @@ export const useGuestChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Handle streaming response
+  const handleStreamingResponse = async (response: Response, messageId: string) => {
+    // Check if response is actually streaming (SSE) or regular JSON
+    const contentType = response.headers.get('content-type');
+    
+    if (contentType?.includes('text/event-stream') || contentType?.includes('text/plain')) {
+      // Handle streaming response
+      if (!response.body) {
+        throw new Error('No response body for streaming');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.trim() && line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'chunk' && data.content) {
+                  fullText += data.content;
+                  // Update the message with accumulated text
+                  setMessages(prev => prev.map(msg => 
+                    msg.id === messageId 
+                      ? { ...msg, text: fullText }
+                      : msg
+                  ));
+                } else if (data.type === 'done') {
+                  console.log('✅ Streaming complete');
+                  return;
+                }
+              } catch (parseError) {
+                // Skip invalid JSON lines
+                continue;
+              }
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+    } else {
+      // Fallback to regular JSON response
+      const data = await response.json();
+      const responseText = data.response || 'Sorry, I could not process your request.';
+      
+      // Update the message with the full response
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, text: responseText }
+          : msg
+      ));
+    }
+  };
+
   const sendMessage = useCallback(async ({ message }: { message: string }) => {
     setIsLoading(true);
     setError(null);
@@ -37,6 +100,17 @@ export const useGuestChat = () => {
     };
     
     setMessages(prev => [...prev, userMessage]);
+
+    // Add placeholder AI message for streaming
+    const aiMessageId = `ai-${Date.now()}`;
+    const aiMessage: GuestMessage = {
+      id: aiMessageId,
+      text: '',
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, aiMessage]);
 
     try {
       // Get guest documents from session storage
@@ -67,7 +141,7 @@ export const useGuestChat = () => {
         uploadedAt: typeof doc.uploadedAt === 'string' ? doc.uploadedAt : doc.uploadedAt.toISOString()
       }));
 
-      // Send message to the backend without authentication
+      // Send message to the backend with streaming support
       console.log('📤 Sending guest message to chat API with document context');
       console.log('📋 Sending document IDs:', documentContext.map(doc => doc.id));
       
@@ -78,7 +152,8 @@ export const useGuestChat = () => {
         },
         body: JSON.stringify({ 
           message,
-          documents: documentContext // Send full document context with IDs
+          documents: documentContext,
+          stream: true // Enable streaming
         }),
       });
 
@@ -95,7 +170,8 @@ export const useGuestChat = () => {
             },
             body: JSON.stringify({ 
               message,
-              documentIds: [] // Empty for guest users
+              documentIds: [],
+              stream: true
             }),
           });
 
@@ -103,35 +179,14 @@ export const useGuestChat = () => {
             throw new Error(`Chat request failed: ${fallbackResponse.status}`);
           }
 
-          const fallbackData = await fallbackResponse.json();
-          
-          // Add AI response
-          const aiMessage: GuestMessage = {
-            id: `ai-${Date.now()}`,
-            text: fallbackData.response || generateGuestFallbackResponse(message, documents),
-            isUser: false,
-            timestamp: new Date()
-          };
-          
-          setMessages(prev => [...prev, aiMessage]);
+          await handleStreamingResponse(fallbackResponse, aiMessageId);
           return;
         }
         
         throw new Error(`Chat request failed: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('✅ Guest chat response received');
-      
-      // Add AI response
-      const aiMessage: GuestMessage = {
-        id: `ai-${Date.now()}`,
-        text: data.response || 'Sorry, I could not process your request.',
-        isUser: false,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
+      await handleStreamingResponse(response, aiMessageId);
 
       console.log('✅ Guest chat message exchange completed successfully');
 
@@ -149,14 +204,13 @@ export const useGuestChat = () => {
         docs = [];
       }
       
-      const fallbackResponse: GuestMessage = {
-        id: `ai-${Date.now()}`,
-        text: generateGuestFallbackResponse(message, docs),
-        isUser: false,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, fallbackResponse]);
+      // Update the existing AI message with fallback response
+      const fallbackText = generateGuestFallbackResponse(message, docs);
+      setMessages(prev => prev.map(msg => 
+        msg.id === aiMessageId 
+          ? { ...msg, text: fallbackText }
+          : msg
+      ));
     } finally {
       setIsLoading(false);
     }

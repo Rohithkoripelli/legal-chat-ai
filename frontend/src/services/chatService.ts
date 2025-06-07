@@ -38,9 +38,9 @@ export const chatService = {
   },
 
   /**
-   * Send message to chat API
+   * Send message to chat API with streaming support
    */
-  sendMessage: async (sessionId: string, message: string, documentIds: string[] = []) => {
+  sendMessage: async (sessionId: string, message: string, documentIds: string[] = [], onStreamChunk?: (chunk: string) => void) => {
     try {
       console.log('📤 Sending message to chat API:', message);
       
@@ -52,7 +52,8 @@ export const chatService = {
         body: JSON.stringify({
           sessionId,
           message,
-          documentIds
+          documentIds,
+          stream: !!onStreamChunk // Enable streaming if callback provided
         }),
       });
 
@@ -60,14 +61,66 @@ export const chatService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('✅ Received chat response');
-      
-      return {
-        success: true,
-        data: data,
-        response: data.response // Make sure response is available at top level too
-      };
+      // Handle streaming response
+      if (onStreamChunk && response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.trim() && line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  if (data.type === 'chunk' && data.content) {
+                    fullResponse += data.content;
+                    onStreamChunk(data.content);
+                  } else if (data.type === 'done') {
+                    console.log('✅ Streaming complete');
+                    return {
+                      success: true,
+                      data: {
+                        response: fullResponse,
+                        aiMessage: { text: fullResponse, isUser: false }
+                      }
+                    };
+                  }
+                } catch (parseError) {
+                  // Skip invalid JSON lines
+                  continue;
+                }
+              }
+            }
+          }
+        } finally {
+          reader.releaseLock();
+        }
+
+        return {
+          success: true,
+          data: {
+            response: fullResponse,
+            aiMessage: { text: fullResponse, isUser: false }
+          }
+        };
+      } else {
+        // Fallback to regular response
+        const data = await response.json();
+        console.log('✅ Received chat response');
+        
+        return {
+          success: true,
+          data: data,
+          response: data.response
+        };
+      }
     } catch (error) {
       console.error('❌ Chat service error:', error);
       return {

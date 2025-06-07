@@ -12,7 +12,12 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextE
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Use requestAnimationFrame to ensure the DOM is updated
+    const timer = requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    return () => cancelAnimationFrame(timer);
   }, [messages, isLoading]);
 
   // Format text with simple markdown-like syntax
