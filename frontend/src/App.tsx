@@ -87,17 +87,24 @@
     handleSignIn: () => void;
     handleSignUp: () => void;
   }> = ({ isOpen, onClose, isSignedIn, navigate, handleSignIn, handleSignUp }) => {
-    // Combine all navigation items
-    const allNavItems = [
+    // Mobile navigation items to match desktop
+    const mobileNavItems = [
       { label: 'Home', path: '/', icon: <Home className="h-5 w-5" />, guestAllowed: true, isPremium: false },
-      ...features,
-      ...(isSignedIn ? [] : guestFeatures)
+      { label: 'Documents', path: '/documents', icon: <FileText className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
+      { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
+      { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn, showOnlyForGuests: true },
+      { label: 'Dashboard', path: '/dashboard', icon: <BarChart3 className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
+      { label: 'Generator', path: '/create-document', icon: <ClipboardList className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
+      { label: 'Premium', path: '/premium', icon: <Crown className="h-5 w-5" />, guestAllowed: true, isPremium: true, showOnlyForGuests: true }
     ];
 
     // Filter items based on authentication status
-    const filteredItems = isSignedIn
-      ? allNavItems.filter(item => item.path !== '/guest-contract-analysis')
-      : allNavItems;
+    const filteredItems = mobileNavItems.filter(item => {
+      if (item.showOnlyForGuests && isSignedIn) return false;
+      if (item.showOnlyForSignedIn && !isSignedIn) return false;
+      if (item.label === 'Contract Analysis' && isSignedIn) return false;
+      return true;
+    });
 
     if (!isOpen) return null;
 
@@ -720,7 +727,7 @@
                   </div>
                 </div>
                 <button
-                  onClick={() => window.location.href = '/sign-up'}
+                  onClick={handleSignUp}
                   className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                 >
                   <Users className="h-4 w-4 mr-1" />
@@ -877,7 +884,7 @@
                     </span>
                   </div>
                   <button
-                    onClick={() => window.location.href = '/sign-up'}
+                    onClick={handleSignUp}
                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
                   >
                     <Users className="h-4 w-4 mr-2" />
