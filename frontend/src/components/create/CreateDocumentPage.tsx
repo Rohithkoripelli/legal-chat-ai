@@ -2214,23 +2214,29 @@ const CreateDocumentPage: React.FC = () => {
         canonical="https://www.legalchatai.com/create-document"
         jsonLD={{
           "@context": "https://schema.org",
-          "@type": "WebApplication",
+          "@type": "WebPage",
           "name": "AI Legal Document Generator",
           "description": "AI-powered legal document generation platform",
-          "applicationCategory": "DocumentGeneration",
-          "operatingSystem": "Web",
-          "provider": {
-            "@type": "Organization",
-            "name": "LegalChatAI",
-            "url": "https://legalchatai.com"
-          },
-          "featureList": [
-            "Contract Generation",
-            "NDA Templates",
-            "Agreement Creation",
-            "Legal Document Templates",
-            "AI-Powered Customization"
-          ]
+          "url": "https://www.legalchatai.com/create-document",
+          "about": {
+            "@type": "WebApplication",
+            "name": "AI Legal Document Generator",
+            "description": "AI-powered legal document generation platform",
+            "applicationCategory": "DocumentGeneration",
+            "operatingSystem": "Web",
+            "provider": {
+              "@type": "Organization",
+              "name": "LegalChatAI",
+              "url": "https://www.legalchatai.com"
+            },
+            "featureList": [
+              "Contract Generation",
+              "NDA Templates",
+              "Agreement Creation",
+              "Legal Document Templates",
+              "AI-Powered Customization"
+            ]
+          }
         }}
       />
       <div className="max-w-7xl mx-auto px-6 py-8">

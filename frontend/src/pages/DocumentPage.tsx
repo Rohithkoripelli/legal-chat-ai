@@ -39,15 +39,21 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
         canonical="https://www.legalchatai.com/documents"
         jsonLD={{
           "@context": "https://schema.org",
-          "@type": "WebApplication",
+          "@type": "WebPage",
           "name": "Legal Document Management",
           "description": "AI-powered legal document upload and management platform",
-          "applicationCategory": "DocumentManagement",
-          "operatingSystem": "Web",
-          "provider": {
-            "@type": "Organization",
-            "name": "LegalChatAI",
-            "url": "https://legalchatai.com"
+          "url": "https://www.legalchatai.com/documents",
+          "about": {
+            "@type": "WebApplication",
+            "name": "Legal Document Management",
+            "description": "AI-powered legal document upload and management platform",
+            "applicationCategory": "DocumentManagement",
+            "operatingSystem": "Web",
+            "provider": {
+              "@type": "Organization",
+              "name": "LegalChatAI",
+              "url": "https://www.legalchatai.com"
+            }
           }
         }}
       />

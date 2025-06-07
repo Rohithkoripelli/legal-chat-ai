@@ -67,18 +67,24 @@ const ChatPage: React.FC = () => {
         canonical="https://www.legalchatai.com/chat"
         jsonLD={{
           "@context": "https://schema.org",
-          "@type": "Service",
+          "@type": "WebPage",
           "name": "AI Legal Chat Assistant",
           "description": "Free AI-powered legal consultation and chat service",
-          "provider": {
-            "@type": "Organization",
-            "name": "LegalChatAI",
-            "url": "https://legalchatai.com"
-          },
-          "serviceType": "Legal AI Consultation",
-          "audience": {
-            "@type": "Audience",
-            "audienceType": ["Legal Professionals", "Business Owners", "Individuals"]
+          "url": "https://www.legalchatai.com/chat",
+          "about": {
+            "@type": "Service",
+            "name": "AI Legal Chat Assistant",
+            "description": "Free AI-powered legal consultation and chat service",
+            "provider": {
+              "@type": "Organization",
+              "name": "LegalChatAI",
+              "url": "https://www.legalchatai.com"
+            },
+            "serviceType": "Legal AI Consultation",
+            "audience": {
+              "@type": "Audience",
+              "audienceType": ["Legal Professionals", "Business Owners", "Individuals"]
+            }
           }
         }}
       />
