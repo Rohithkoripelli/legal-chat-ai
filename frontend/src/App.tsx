@@ -220,37 +220,41 @@
   };
 
   // Premium Features Showcase Page
-  const PremiumFeaturesPage: React.FC = () => {
+  const PremiumFeaturesPage: React.FC<{ 
+    onSignUp?: () => void; 
+    onSignIn?: () => void; 
+  }> = ({ onSignUp, onSignIn }) => {
     const navigate = useNavigate();
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50">
         {/* Hero Section */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-700 py-16">
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-700 py-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center text-white">
-              <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-8">
                 <Crown className="w-4 h-4 mr-2" />
                 Premium Features
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Unlock the Full Power of AI Legal Analysis
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Unlock the Full Power of<br />
+                <span className="text-white">AI Legal Analysis</span>
               </h1>
-              <p className="text-xl text-purple-100 mb-8 max-w-3xl mx-auto">
+              <p className="text-xl md:text-2xl text-purple-100 mb-10 max-w-4xl mx-auto leading-relaxed">
                 Get unlimited access to advanced AI document generation, risk analysis dashboard, 
-                and professional-grade legal tools. <strong>Completely free</strong> - no hidden costs.
+                and professional-grade legal tools. <strong className="text-white">Completely free</strong> - no hidden costs.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
                 <button
-                  onClick={() => window.location.href = '/sign-up'}
-                  className="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                  onClick={onSignUp || (() => window.location.href = '/sign-up')}
+                  className="bg-white text-purple-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   <Users className="w-5 h-5 mr-2" />
                   Create Free Account
                 </button>
                 <button
                   onClick={() => navigate('/?explicit=true')}
-                  className="bg-purple-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-600 transition-colors border-2 border-purple-500"
+                  className="bg-purple-500/20 backdrop-blur-sm text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-purple-500/30 transition-all duration-200 border-2 border-white/20 hover:border-white/40"
                 >
                   ← Back to Home
                 </button>
@@ -260,92 +264,94 @@
         </div>
 
         {/* Features Showcase */}
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Premium Features You'll Get (100% Free)
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Premium Features You'll Get 
+              <span className="text-purple-600">(100% Free)</span>
             </h2>
-            <p className="text-lg text-gray-600">
-              All premium features are included in your free account - no subscriptions, no hidden fees
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              All premium features are included in your free account - no subscriptions, no hidden fees, 
+              no credit card required
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-16">
+          <div className="grid lg:grid-cols-2 gap-8 mb-20">
             {/* AI Document Generator */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-purple-200">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <ClipboardList className="h-10 w-10 text-white" />
+            <div className="bg-white rounded-3xl shadow-2xl p-10 border border-purple-100 hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-2">
+              <div className="text-center mb-10">
+                <div className="w-24 h-24 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                  <ClipboardList className="h-12 w-12 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">AI Document Generator</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">AI Document Generator</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
                   Generate professional legal documents instantly using advanced AI. Create contracts, 
                   NDAs, terms of service, and more with guided templates.
                 </p>
               </div>
               
-              <div className="space-y-4 mb-8">
+              <div className="space-y-5 mb-10">
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Professional Document Templates</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Professional Document Templates</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>AI-Powered Customization</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">AI-Powered Customization</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Instant PDF Generation</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Instant PDF Generation</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Legal Compliance Checking</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Legal Compliance Checking</span>
                 </div>
               </div>
 
               <button
                 onClick={() => navigate('/create-document')}
-                className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 Try Document Generator
               </button>
             </div>
 
             {/* Risk Analysis Dashboard */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-indigo-200">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="h-10 w-10 text-white" />
+            <div className="bg-white rounded-3xl shadow-2xl p-10 border border-indigo-100 hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-2">
+              <div className="text-center mb-10">
+                <div className="w-24 h-24 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                  <BarChart3 className="h-12 w-12 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Analytics Dashboard</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">Analytics Dashboard</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
                   Advanced analytics and insights for your legal documents. Track risks, compliance 
                   status, and get actionable recommendations.
                 </p>
               </div>
               
-              <div className="space-y-4 mb-8">
+              <div className="space-y-5 mb-10">
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Portfolio Risk Overview</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Portfolio Risk Overview</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Compliance Tracking</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Compliance Tracking</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Risk Scoring & Trends</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Risk Scoring & Trends</span>
                 </div>
                 <div className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <span>Document Insights</span>
+                  <CheckCircle className="h-6 w-6 text-green-600 mr-4 flex-shrink-0" />
+                  <span className="text-lg">Document Insights</span>
                 </div>
               </div>
 
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 View Analytics Dashboard
               </button>
@@ -353,58 +359,78 @@
           </div>
 
           {/* Additional Premium Features */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-16">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-12 mb-20">
+            <h3 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Plus These Premium Benefits
             </h3>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-10">
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-green-600" />
+                <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <FileText className="h-10 w-10 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Unlimited Documents</h4>
-                <p className="text-gray-600 text-sm">Upload and analyze unlimited legal documents with permanent secure storage</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Unlimited Documents</h4>
+                <p className="text-gray-600 text-lg leading-relaxed">Upload and analyze unlimited legal documents with permanent secure storage and instant access</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <MessageSquare className="h-10 w-10 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Chat History</h4>
-                <p className="text-gray-600 text-sm">Access your complete chat history and document analysis results anytime</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Complete Chat History</h4>
+                <p className="text-gray-600 text-lg leading-relaxed">Access your complete chat history and document analysis results anytime, anywhere</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-purple-600" />
+                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <Star className="h-10 w-10 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">Priority Support</h4>
-                <p className="text-gray-600 text-sm">Get priority customer support and early access to new features</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Priority Support</h4>
+                <p className="text-gray-600 text-lg leading-relaxed">Get priority customer support and early access to new features and updates</p>
               </div>
             </div>
           </div>
 
           {/* Call to Action */}
           <div className="text-center">
-            <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-4xl mx-auto border border-purple-100">
+              <h3 className="text-4xl font-bold text-gray-900 mb-6">
                 Ready to Unlock Premium Features?
               </h3>
-              <p className="text-gray-600 mb-6">
-                Create your free account in seconds and enjoy the benefits
+              <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Create your free account in seconds and enjoy all premium features with no restrictions. 
+                No credit card required, no hidden fees, just pure AI-powered legal analysis.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
                 <button
-                  onClick={() => window.location.href = '/sign-up'}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-colors inline-flex items-center justify-center"
+                  onClick={onSignUp || (() => window.location.href = '/sign-up')}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-10 py-5 rounded-xl text-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  <Users className="w-5 h-5 mr-2" />
+                  <Users className="w-6 h-6 mr-3" />
                   Create Free Account
                 </button>
                 <button
-                  onClick={() => window.location.href = '/sign-in'}
-                  className="bg-gray-100 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 transition-colors"
+                  onClick={onSignIn || (() => window.location.href = '/sign-in')}
+                  className="bg-gray-100 text-gray-700 px-10 py-5 rounded-xl text-xl font-semibold hover:bg-gray-200 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   Sign In
                 </button>
+              </div>
+              
+              {/* Trust indicators */}
+              <div className="mt-10 pt-8 border-t border-gray-200">
+                <p className="text-sm text-gray-500 mb-4">Trusted by professionals worldwide</p>
+                <div className="flex justify-center items-center space-x-8 text-sm text-gray-400">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                    <span>100% Free</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                    <span>No Credit Card</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                    <span>Instant Access</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -757,7 +783,12 @@
                 onSignIn={handleSignIn} 
               />
             } />
-            <Route path="/premium" element={<PremiumFeaturesPage />} />
+            <Route path="/premium" element={
+              <PremiumFeaturesPage 
+                onSignUp={handleSignUp} 
+                onSignIn={handleSignIn} 
+              />
+            } />
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
