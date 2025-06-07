@@ -1104,14 +1104,34 @@ const LandingPage: React.FC<{
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
                     <button 
                       className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center min-w-0"
-                      onClick={() => window.location.href = '/chat'}
+                      onClick={() => {
+                        // Check if guest documents exist
+                        const guestDocs = sessionStorage.getItem('guestDocuments');
+                        const hasDocuments = guestDocs && JSON.parse(guestDocs).length > 0;
+                        
+                        if (hasDocuments) {
+                          window.location.href = '/chat';
+                        } else {
+                          window.location.href = '/documents';
+                        }
+                      }}
                     >
                       <span className="truncate">Get Instant Insights</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </button>
                     <button 
                       className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
-                      onClick={() => window.location.href = '/guest-contract-analysis'}
+                      onClick={() => {
+                        // Check if guest documents exist
+                        const guestDocs = sessionStorage.getItem('guestDocuments');
+                        const hasDocuments = guestDocs && JSON.parse(guestDocs).length > 0;
+                        
+                        if (hasDocuments) {
+                          window.location.href = '/guest-contract-analysis';
+                        } else {
+                          window.location.href = '/documents';
+                        }
+                      }}
                     >
                       <span className="truncate">Legal Documents Analysis</span>
                     </button>
@@ -1271,7 +1291,17 @@ const LandingPage: React.FC<{
                 <div className="mt-8 text-center">
                   <button 
                     className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-                    onClick={() => window.location.href = '/chat'}
+                    onClick={() => {
+                      // Check if guest documents exist
+                      const guestDocs = sessionStorage.getItem('guestDocuments');
+                      const hasDocuments = guestDocs && JSON.parse(guestDocs).length > 0;
+                      
+                      if (hasDocuments) {
+                        window.location.href = '/chat';
+                      } else {
+                        window.location.href = '/documents';
+                      }
+                    }}
                   >
                     Try Free AI Analysis Now
                   </button>
