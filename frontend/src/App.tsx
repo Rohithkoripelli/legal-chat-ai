@@ -197,26 +197,13 @@
   const HomePageWrapper: React.FC<{ isSignedIn: boolean }> = ({ isSignedIn }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [hasRedirected, setHasRedirected] = useState(false);
     
     useEffect(() => {
-      // Only redirect signed-in users if they're landing on the home page
-      // and haven't been redirected already in this session
-      if (isSignedIn && !hasRedirected) {
-        // Check if this is likely an automatic landing (no referrer from within the app)
-        const isFromExternalSource = !document.referrer || 
-                                    !document.referrer.includes(window.location.origin);
-        
-        // Check if the URL has any search params that might indicate explicit navigation
-        const hasExplicitParams = location.search.includes('explicit') || 
-                                 location.hash.includes('home');
-        
-        if (isFromExternalSource && !hasExplicitParams) {
-          setHasRedirected(true);
-          navigate('/documents');
-        }
+      // If user is signed in and on home page WITHOUT the explicit parameter, redirect to documents
+      if (isSignedIn && !location.search.includes('explicit')) {
+        navigate('/documents', { replace: true });
       }
-    }, [isSignedIn, navigate, hasRedirected, location.search, location.hash]);
+    }, [isSignedIn, navigate, location.search]);
 
     return <LandingPage />;
   };
