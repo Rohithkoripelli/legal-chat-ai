@@ -201,7 +201,11 @@
   };
 
   // Home Page Wrapper Component - Handles smart redirection for signed-in users
-  const HomePageWrapper: React.FC<{ isSignedIn: boolean }> = ({ isSignedIn }) => {
+  const HomePageWrapper: React.FC<{ 
+    isSignedIn: boolean; 
+    onSignUp: () => void; 
+    onSignIn: () => void; 
+  }> = ({ isSignedIn, onSignUp, onSignIn }) => {
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -212,7 +216,7 @@
       }
     }, [isSignedIn, navigate, location.search]);
 
-    return <LandingPage />;
+    return <LandingPage onSignUp={onSignUp} onSignIn={onSignIn} />;
   };
 
   // Premium Features Showcase Page
@@ -745,7 +749,11 @@
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={
-              <HomePageWrapper isSignedIn={!!isSignedIn} />
+              <HomePageWrapper 
+                isSignedIn={!!isSignedIn} 
+                onSignUp={handleSignUp} 
+                onSignIn={handleSignIn} 
+              />
             } />
             <Route path="/premium" element={<PremiumFeaturesPage />} />
             <Route path="/about" element={<AboutUsPage />} />

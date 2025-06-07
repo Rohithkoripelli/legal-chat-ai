@@ -957,7 +957,10 @@ const FooterWithLegalLinks: React.FC<{
 };
 
 // Main Landing Page Component
-const LandingPage: React.FC = () => {
+const LandingPage: React.FC<{
+  onSignUp?: () => void;
+  onSignIn?: () => void;
+}> = ({ onSignUp, onSignIn }) => {
   const [currentPage, setCurrentPage] = useState<'landing' | 'privacy' | 'about' | 'terms'>('landing');
 
   // Render the selected page
@@ -1412,7 +1415,7 @@ const LandingPage: React.FC = () => {
               </ul>
               
               <button
-                onClick={() => window.location.href = '/sign-up'}
+                onClick={onSignUp || (() => window.location.href = '/sign-up')}
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 Create Free Account
