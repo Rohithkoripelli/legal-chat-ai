@@ -1143,52 +1143,38 @@ const LandingPage: React.FC<{
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="h-16 w-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                <FileText className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">AI Contract Analysis</h3>
-              <p className="text-gray-600 mb-4">
-                Advanced <strong>contract analysis AI</strong> that identifies risks, compliance issues, and key terms 
-                in seconds. Support for PDF, Word, and text formats with automatic OCR.
-              </p>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li>• Risk assessment and scoring</li>
-                <li>• Clause-by-clause breakdown</li>
-                <li>• Compliance checking</li>
-              </ul>
-            </article>
-
+          <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
             <article className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
               <div className="h-16 w-16 bg-green-100 rounded-xl flex items-center justify-center mb-6">
                 <MessageSquare className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Legal AI Chat Assistant</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Legal AI Chat & Instant Insights</h3>
               <p className="text-gray-600 mb-4">
-                Intelligent <strong>legal AI assistant</strong> that answers questions about your documents. 
-                Ask in plain English and get expert-level legal analysis with citations.
+                Intelligent <strong>legal AI assistant</strong> that provides instant answers about your documents. 
+                Ask questions in plain English and get expert-level analysis with lightning-fast response times.
               </p>
               <ul className="text-sm text-gray-500 space-y-1">
                 <li>• Natural language queries</li>
+                <li>• Sub-second response times</li>
                 <li>• Source citations included</li>
                 <li>• Context-aware responses</li>
               </ul>
             </article>
 
             <article className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="h-16 w-16 bg-red-100 rounded-xl flex items-center justify-center mb-6">
-                <Shield className="h-8 w-8 text-red-600" />
+              <div className="h-16 w-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                <FileText className="h-8 w-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Free AI Contract Review</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">AI-Based Document Generation</h3>
               <p className="text-gray-600 mb-4">
-                Professional-grade <strong>AI contract review</strong> at no cost. Identify potential risks, 
-                unfavorable terms, and missing clauses before signing.
+                Generate professional legal documents using advanced AI. Create contracts, agreements, 
+                and legal forms tailored to your specific needs with intelligent templates and customization.
               </p>
               <ul className="text-sm text-gray-500 space-y-1">
-                <li>• Automated risk detection</li>
-                <li>• Term analysis and scoring</li>
-                <li>• Legal compliance checking</li>
+                <li>• Smart document templates</li>
+                <li>• Custom legal forms</li>
+                <li>• Automated formatting</li>
+                <li>• Professional quality output</li>
               </ul>
             </article>
 
@@ -1196,47 +1182,16 @@ const LandingPage: React.FC<{
               <div className="h-16 w-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
                 <BarChart3 className="h-8 w-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Legal Document AI Analytics</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Legal Document Analysis Powered by AI</h3>
               <p className="text-gray-600 mb-4">
-                Comprehensive analytics dashboard showing document risks, compliance status, 
-                and portfolio insights powered by advanced <strong>legal document AI</strong>.
+                Comprehensive <strong>contract analysis AI</strong> with risk assessment, compliance checking, 
+                and analytics dashboard. Get detailed insights on your legal documents with professional-grade accuracy.
               </p>
               <ul className="text-sm text-gray-500 space-y-1">
-                <li>• Portfolio risk overview</li>
-                <li>• Compliance tracking</li>
-                <li>• Trend analysis</li>
-              </ul>
-            </article>
-
-            <article className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="h-16 w-16 bg-yellow-100 rounded-xl flex items-center justify-center mb-6">
-                <Zap className="h-8 w-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Instant Legal Analysis</h3>
-              <p className="text-gray-600 mb-4">
-                Lightning-fast document processing with sub-second response times. 
-                Get professional legal insights without the wait or expensive hourly fees.
-              </p>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li>• Sub-second analysis</li>
-                <li>• Real-time processing</li>
-                <li>• Enterprise performance</li>
-              </ul>
-            </article>
-
-            <article className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-              <div className="h-16 w-16 bg-indigo-100 rounded-xl flex items-center justify-center mb-6">
-                <CheckCircle className="h-8 w-8 text-indigo-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Enterprise-Grade Security</h3>
-              <p className="text-gray-600 mb-4">
-                Bank-level security with end-to-end encryption, GDPR compliance, 
-                and SOC 2 certification. Your legal documents stay private and secure.
-              </p>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li>• AES-256 encryption</li>
-                <li>• GDPR compliant</li>
-                <li>• SOC 2 certified</li>
+                <li>• Risk assessment and scoring</li>
+                <li>• Clause-by-clause breakdown</li>
+                <li>• Compliance checking</li>
+                <li>• Portfolio analytics dashboard</li>
               </ul>
             </article>
           </div>
