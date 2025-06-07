@@ -2,17 +2,24 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://legalchatai.com/sitemap-main.xml
+Sitemap: https://legalchatai.com/sitemap.xml
 
 # Disallow admin areas if any
 Disallow: /admin/
 Disallow: /_next/
 Disallow: /api/
+Disallow: /build/
+Disallow: /node_modules/
 
 # Allow important crawl paths
 Allow: /chat
 Allow: /documents
 Allow: /create-document
+Allow: /contract-analysis
+Allow: /ai-legal-document-analysis
 Allow: /about
 Allow: /privacy
 Allow: /terms
+
+# Crawl-delay
+Crawl-delay: 1

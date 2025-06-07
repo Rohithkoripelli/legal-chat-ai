@@ -7,6 +7,8 @@ interface DocumentHeadProps {
   canonical?: string;
   image?: string;
   verification?: string;
+  jsonLD?: object;
+  noindex?: boolean;
 }
 
 export const DocumentHead: React.FC<DocumentHeadProps> = ({
@@ -15,7 +17,9 @@ export const DocumentHead: React.FC<DocumentHeadProps> = ({
   keywords = "legal AI, legal chat ai, contract analysis, document review, AI lawyer, legal assistant, free legal analysis",
   canonical = "https://legalchatai.com",
   image = "https://legalchatai.com/og-image.jpg",
-  verification
+  verification,
+  jsonLD,
+  noindex = false
 }) => {
   useEffect(() => {
     // Update document title
@@ -49,7 +53,8 @@ export const DocumentHead: React.FC<DocumentHeadProps> = ({
     // Update basic meta tags
     updateMetaTag('description', description);
     updateMetaTag('keywords', keywords);
-    updateMetaTag('robots', 'index, follow, max-snippet:-1, max-image-preview:large');
+    const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large';
+    updateMetaTag('robots', robotsContent);
     
     // Update Open Graph tags
     updateMetaTag('og:title', title, true);
@@ -75,14 +80,13 @@ export const DocumentHead: React.FC<DocumentHeadProps> = ({
 
     // Add structured data
     const addStructuredData = () => {
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
+      // Remove existing script
+      const existingScript = document.querySelector('script[type="application/ld+json"][data-react-seo]');
       if (existingScript) {
         existingScript.remove();
       }
 
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.textContent = JSON.stringify({
+      const defaultStructuredData = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "LegalChatAI",
@@ -107,13 +111,18 @@ export const DocumentHead: React.FC<DocumentHeadProps> = ({
           "Risk Assessment",
           "Clause Identification"
         ]
-      });
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-react-seo', 'true');
+      script.textContent = JSON.stringify(jsonLD || defaultStructuredData);
       document.head.appendChild(script);
     };
 
     addStructuredData();
 
-  }, [title, description, keywords, canonical, image, verification]);
+  }, [title, description, keywords, canonical, image, verification, jsonLD, noindex]);
 
   return null; // This component doesn't render anything
 };

@@ -6,6 +6,7 @@ import { useChat } from '../hooks/useChat';
 import { useGuestChat } from '../hooks/useGuestChat';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '@clerk/clerk-react';
+import { DocumentHead } from '../components/SEO/DocumentHead';
 import { MessageSquare, FileText, Shield, Zap, CheckCircle, ArrowRight, Upload, Brain, Clock, Star, AlertCircle, Users } from 'lucide-react';
 
 const ChatPage: React.FC = () => {
@@ -58,7 +59,30 @@ const ChatPage: React.FC = () => {
   const documents = isSignedIn ? authDocuments : guestDocuments;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <>
+      <DocumentHead
+        title="AI Legal Chat Assistant | Free Legal AI Consultation | LegalChatAI"
+        description="Chat with AI for instant legal document analysis and consultation. Get immediate answers to legal questions, contract reviews, and legal guidance. Free to use."
+        keywords="legal AI chat, AI legal consultation, legal chat assistant, AI lawyer chat, legal questions AI, contract chat AI"
+        canonical="https://legalchatai.com/chat"
+        jsonLD={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "AI Legal Chat Assistant",
+          "description": "Free AI-powered legal consultation and chat service",
+          "provider": {
+            "@type": "Organization",
+            "name": "LegalChatAI",
+            "url": "https://legalchatai.com"
+          },
+          "serviceType": "Legal AI Consultation",
+          "audience": {
+            "@type": "Audience",
+            "audienceType": ["Legal Professionals", "Business Owners", "Individuals"]
+          }
+        }}
+      />
+      <div className="max-w-6xl mx-auto p-6">
       {/* MAIN CHAT INTERFACE - MOVED TO TOP */}
       <div className="bg-white rounded-lg shadow-sm border h-[600px] flex flex-col mb-8">
         {/* Error Display */}
@@ -432,7 +456,8 @@ const ChatPage: React.FC = () => {
           </ul>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

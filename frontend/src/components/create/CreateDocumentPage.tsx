@@ -1,5 +1,6 @@
 // CreateDocumentPage.tsx - Complete with all original questions and logo support - FIXED
 import React, { useState, useRef } from 'react';
+import { DocumentHead } from '../SEO/DocumentHead';
 import { 
   FileText, 
   Users, 
@@ -2205,7 +2206,34 @@ const CreateDocumentPage: React.FC = () => {
   const categories = Object.keys(categoryInfo);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
+    <>
+      <DocumentHead
+        title="AI Legal Document Generator | Create Contracts & Legal Docs | LegalChatAI"
+        description="Generate professional legal documents with AI. Create contracts, NDAs, agreements, and more. Customizable templates with AI assistance. Free to use."
+        keywords="AI document generator, legal document generator, AI contract generator, create legal documents, legal template generator, AI legal documents"
+        canonical="https://legalchatai.com/create-document"
+        jsonLD={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "AI Legal Document Generator",
+          "description": "AI-powered legal document generation platform",
+          "applicationCategory": "DocumentGeneration",
+          "operatingSystem": "Web",
+          "provider": {
+            "@type": "Organization",
+            "name": "LegalChatAI",
+            "url": "https://legalchatai.com"
+          },
+          "featureList": [
+            "Contract Generation",
+            "NDA Templates",
+            "Agreement Creation",
+            "Legal Document Templates",
+            "AI-Powered Customization"
+          ]
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-6 py-8">
       {/* Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 mb-12 text-white">
         <div className="text-center">
@@ -2297,7 +2325,8 @@ const CreateDocumentPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

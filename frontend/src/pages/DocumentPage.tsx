@@ -5,6 +5,7 @@ import DocumentUpload from '../components/documents/DocumentUpload';
 import DocumentList from '../components/documents/DocumentList';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '@clerk/clerk-react';
+import { DocumentHead } from '../components/SEO/DocumentHead';
 
 interface DocumentsPageProps {
   onNavigateToChat?: () => void;
@@ -30,7 +31,27 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <>
+      <DocumentHead
+        title="Legal Document Upload & Management | AI Document Analysis | LegalChatAI"
+        description="Upload legal documents for AI analysis. Manage contracts, NDAs, agreements securely. Get instant insights and document management in one place. Free to use."
+        keywords="legal document upload, document management, AI document analysis, contract upload, legal document storage, document analysis tool"
+        canonical="https://legalchatai.com/documents"
+        jsonLD={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Legal Document Management",
+          "description": "AI-powered legal document upload and management platform",
+          "applicationCategory": "DocumentManagement",
+          "operatingSystem": "Web",
+          "provider": {
+            "@type": "Organization",
+            "name": "LegalChatAI",
+            "url": "https://legalchatai.com"
+          }
+        }}
+      />
+      <div className="max-w-6xl mx-auto p-6">
       {/* SUCCESS MESSAGE */}
       {uploadSuccess && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -478,7 +499,8 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
