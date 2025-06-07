@@ -294,7 +294,7 @@ const GuestDocumentList: React.FC<{
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-blue-900 mb-2">
-                🎯 Ready for AI Analysis ({documents.length} documents)
+                🎯 Ready to get insights ({documents.length} document{documents.length !== 1 ? 's' : ''})
               </h3>
               <p className="text-blue-800 text-sm">
                 Your documents have been processed and vectorized. You can now chat with AI about them!
@@ -306,6 +306,29 @@ const GuestDocumentList: React.FC<{
             >
               <MessageSquare className="h-4 w-4" />
               <span>Start AI Chat</span>
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Contract Analysis Banner */}
+      {documents.length > 0 && (
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-purple-900 mb-2">
+                📋 Do you want to Analyze and get review of document?
+              </h3>
+              <p className="text-purple-800 text-sm">
+                Get comprehensive contract analysis with risk assessment, key terms extraction, and detailed review!
+              </p>
+            </div>
+            <button
+              onClick={() => window.location.href = '/guest-contract-analysis'}
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 font-medium"
+            >
+              <Brain className="h-4 w-4" />
+              <span>Analyze Contract</span>
             </button>
           </div>
         </div>
