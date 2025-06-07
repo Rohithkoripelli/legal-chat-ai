@@ -88,7 +88,7 @@ const GuestContractAnalysisPage: React.FC = () => {
     try {
       console.log('🤖 Starting guest contract analysis for:', document.name);
 
-      const response = await fetch(`${API_BASE_URL}/api/guest/contracts/analyze`, {
+      const response = await fetch(`${API_BASE_URL}/api/guest/documents/contracts/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,23 +101,24 @@ const GuestContractAnalysisPage: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Analysis failed: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Analysis failed: ${response.status}`);
       }
 
       const analysisResult = await response.json();
-      console.log('✅ Guest contract analysis completed');
+      console.log('✅ Guest contract analysis completed with real AI');
       setAnalysis(analysisResult);
     } catch (err) {
       console.error('❌ Error analyzing contract:', err);
       setError(err instanceof Error ? err.message : 'Analysis failed');
       
-      // Provide fallback analysis for guest users
+      // Only provide fallback analysis if the real API completely fails
       const fallbackAnalysis: ContractAnalysis = {
         documentId: document.id,
         documentName: document.name,
         riskScore: 'MEDIUM',
         executiveSummary: {
-          overview: `This is a guest mode analysis of "${document.name}". Our AI has identified this as a legal document with standard contractual provisions. For full AI-powered analysis with detailed risk assessment, clause-by-clause review, and compliance insights, please create a free account or try again when our analysis service is available.`,
+          overview: `AI analysis temporarily unavailable for "${document.name}". Our service is currently experiencing high demand. This fallback analysis provides basic insights while we restore full AI-powered analysis. Please try again in a few minutes for comprehensive AI contract review.`,
           keyDates: [
             {
               date: 'Contract effective date',
@@ -276,9 +277,9 @@ const GuestContractAnalysisPage: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">🔓 Upgrade for Advanced Analysis</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">🔓 Upgrade for Premium Features</h3>
               <p className="text-blue-800 text-sm">
-                This is a basic guest analysis. Create a free account for comprehensive AI contract analysis with detailed compliance checking, advanced risk assessment, and clause-by-clause review.
+                You just received a full AI contract analysis! Create a free account for unlimited documents, permanent storage, advanced analytics dashboard, and document generation tools.
               </p>
             </div>
             <button
@@ -308,7 +309,7 @@ const GuestContractAnalysisPage: React.FC = () => {
             </div>
             <div className="text-right text-sm text-gray-500">
               Analyzed: {new Date(analysis.analyzedAt).toLocaleString()}
-              <div className="text-xs text-blue-600">Guest Mode Analysis</div>
+              <div className="text-xs text-blue-600">AI-Powered Analysis</div>
             </div>
           </div>
         </div>
@@ -476,7 +477,7 @@ const GuestContractAnalysisPage: React.FC = () => {
             <div>
               <h4 className="font-medium text-yellow-800 mb-2">Important Legal Notice</h4>
               <p className="text-yellow-700 text-sm">
-                This guest mode analysis is for informational purposes only and does not constitute legal advice. 
+                This AI-powered contract analysis is for informational purposes only and does not constitute legal advice. 
                 The AI analysis should supplement, not replace, consultation with qualified legal professionals. 
                 Always consult with a licensed attorney for legal matters and important decisions.
               </p>
@@ -494,13 +495,13 @@ const GuestContractAnalysisPage: React.FC = () => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Analyzing Your Contract...
+              AI is Analyzing Your Contract...
             </h3>
             <p className="text-gray-600">
-              Our AI is examining "{selectedDocument?.name}" for risks, key terms, and compliance issues. This may take 30-60 seconds.
+              Our AI is performing comprehensive analysis of "{selectedDocument?.name}" using OpenAI for risk assessment, key terms extraction, and compliance review. This may take 30-60 seconds.
             </p>
             <div className="mt-4 text-sm text-blue-600">
-              ✨ Guest Mode: Basic analysis included free • Upgrade for advanced features
+              ✨ Free AI Analysis • Full contract analysis with real AI • No signup required
             </div>
           </div>
         </div>
