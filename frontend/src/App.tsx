@@ -418,7 +418,9 @@
     featureName: string;
     featureDescription: string;
     icon: React.ReactNode;
-  }> = ({ featureName, featureDescription, icon }) => {
+    onSignUp?: () => void;
+    onSignIn?: () => void;
+  }> = ({ featureName, featureDescription, icon, onSignUp, onSignIn }) => {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
         <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
@@ -470,14 +472,14 @@
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => window.location.href = '/sign-up'}
+              onClick={onSignUp || (() => window.location.href = '/sign-up')}
               className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               <Users className="h-5 w-5 mr-2" />
               Create Free Account
             </button>
             <button
-              onClick={() => window.location.href = '/sign-in'}
+              onClick={onSignIn || (() => window.location.href = '/sign-in')}
               className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
             >
               Sign In
@@ -796,6 +798,8 @@
                     featureName="Risk Analysis"
                     featureDescription="Advanced risk analysis and contract scoring requires a free account."
                     icon={<AlertTriangle className="h-8 w-8" />}
+                    onSignUp={handleSignUp}
+                    onSignIn={handleSignIn}
                   />
                 )
               }
@@ -813,6 +817,8 @@
                     featureName="Analytics Dashboard"
                     featureDescription="View detailed analytics, document insights, and usage statistics with a free account."
                     icon={<BarChart3 className="h-8 w-8" />}
+                    onSignUp={handleSignUp}
+                    onSignIn={handleSignIn}
                   />
                 )
               }
@@ -830,6 +836,8 @@
                     featureName="Document Generator"
                     featureDescription="Create professional legal documents with AI assistance. Sign up for free to access our document generator."
                     icon={<ClipboardList className="h-8 w-8" />}
+                    onSignUp={handleSignUp}
+                    onSignIn={handleSignIn}
                   />
                 )
               }
