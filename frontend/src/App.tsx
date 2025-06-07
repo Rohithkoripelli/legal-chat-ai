@@ -292,6 +292,13 @@
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Redirect signed-in users from home page to documents page
+    useEffect(() => {
+      if (isLoaded && isSignedIn && location.pathname === '/') {
+        navigate('/documents');
+      }
+    }, [isLoaded, isSignedIn, location.pathname, navigate]);
+
     // Convert URL path to Page type for compatibility with existing navigation
     const getPageFromPath = (pathname: string): Page => {
       switch (pathname) {
@@ -347,7 +354,7 @@
                 </button>
 
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate(isSignedIn ? '/documents' : '/')}
                   className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
                 >
                   <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -367,22 +374,20 @@
 
               {/* Center - Feature Navigation (Desktop Only) */}
               <nav className="hidden lg:flex items-center space-x-1">
-                {/* Show Home for guests, skip for authenticated users */}
-                {!isSignedIn && (
-                  <button
-                    onClick={() => navigate('/')}
-                    className={`
-                      flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      ${location.pathname === '/'
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }
-                    `}
-                  >
-                    <FileText size={16} />
-                    <span>Home</span>
-                  </button>
-                )}
+                {/* Show Home button for all users */}
+                <button
+                  onClick={() => navigate('/')}
+                  className={`
+                    flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                    ${location.pathname === '/'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }
+                  `}
+                >
+                  <FileText size={16} />
+                  <span>Home</span>
+                </button>
 
                 {/* Show only core features to prevent overflow */}
                 {features.slice(0, isSignedIn ? 5 : 2).map((feature) => (
