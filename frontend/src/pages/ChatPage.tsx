@@ -64,7 +64,7 @@ const ChatPage: React.FC = () => {
         title="AI Legal Chat Assistant | Free Legal AI Consultation | LegalChatAI"
         description="Chat with AI for instant legal document analysis and consultation. Get immediate answers to legal questions, contract reviews, and legal guidance. Free to use."
         keywords="legal AI chat, AI legal consultation, legal chat assistant, AI lawyer chat, legal questions AI, contract chat AI"
-        canonical="https://legalchatai.com/chat"
+        canonical="https://www.legalchatai.com/chat"
         jsonLD={{
           "@context": "https://schema.org",
           "@type": "Service",

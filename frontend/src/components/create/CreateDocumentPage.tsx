@@ -2211,7 +2211,7 @@ const CreateDocumentPage: React.FC = () => {
         title="AI Legal Document Generator | Create Contracts & Legal Docs | LegalChatAI"
         description="Generate professional legal documents with AI. Create contracts, NDAs, agreements, and more. Customizable templates with AI assistance. Free to use."
         keywords="AI document generator, legal document generator, AI contract generator, create legal documents, legal template generator, AI legal documents"
-        canonical="https://legalchatai.com/create-document"
+        canonical="https://www.legalchatai.com/create-document"
         jsonLD={{
           "@context": "https://schema.org",
           "@type": "WebApplication",

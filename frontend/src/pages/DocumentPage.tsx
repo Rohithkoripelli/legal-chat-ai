@@ -36,7 +36,7 @@ const DocumentsPage: React.FC<DocumentsPageProps> = ({ onNavigateToChat }) => {
         title="Legal Document Upload & Management | AI Document Analysis | LegalChatAI"
         description="Upload legal documents for AI analysis. Manage contracts, NDAs, agreements securely. Get instant insights and document management in one place. Free to use."
         keywords="legal document upload, document management, AI document analysis, contract upload, legal document storage, document analysis tool"
-        canonical="https://legalchatai.com/documents"
+        canonical="https://www.legalchatai.com/documents"
         jsonLD={{
           "@context": "https://schema.org",
           "@type": "WebApplication",

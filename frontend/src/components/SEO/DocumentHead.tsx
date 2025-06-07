@@ -15,7 +15,7 @@ export const DocumentHead: React.FC<DocumentHeadProps> = ({
   title = "LegalChatAI - Free AI Legal Document Analysis & Chat Platform",
   description = "Upload legal documents and chat with AI for instant analysis. Get contract insights, clause explanations, and legal guidance powered by advanced AI technology. Free to use.",
   keywords = "legal AI, legal chat ai, contract analysis, document review, AI lawyer, legal assistant, free legal analysis",
-  canonical = "https://legalchatai.com",
+  canonical = "https://www.legalchatai.com",
   image = "https://legalchatai.com/og-image.jpg",
   verification,
   jsonLD,
