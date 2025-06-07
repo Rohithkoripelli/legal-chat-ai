@@ -1,6 +1,6 @@
   // frontend/src/App.tsx - UPDATED WITH REACT ROUTER WHILE PRESERVING EXISTING FUNCTIONALITY
   import React, { useState, useEffect } from 'react';
-  import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+  import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
   import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain, Menu, X, Home } from 'lucide-react';
   import { Analytics } from '@vercel/analytics/react';
   import { useClerkAuth } from './hooks/useClerk';
@@ -135,9 +135,9 @@
                   <button
                     key={item.path}
                     onClick={() => {
-                      // Add explicit state for Home navigation
+                      // Add explicit parameter for Home navigation
                       if (item.path === '/') {
-                        navigate(item.path, { state: { explicit: true } });
+                        navigate('/?explicit=true');
                       } else {
                         navigate(item.path);
                       }
@@ -197,20 +197,26 @@
   const HomePageWrapper: React.FC<{ isSignedIn: boolean }> = ({ isSignedIn }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [hasRedirected, setHasRedirected] = useState(false);
     
     useEffect(() => {
-      // Only redirect if user is signed in AND this is not an explicit navigation
-      // (i.e., they didn't click Home button or type the URL manually)
-      if (isSignedIn && !location.state?.explicit) {
+      // Only redirect signed-in users if they're landing on the home page
+      // and haven't been redirected already in this session
+      if (isSignedIn && !hasRedirected) {
         // Check if this is likely an automatic landing (no referrer from within the app)
-        const isAutomaticLanding = !document.referrer || 
-                                  !document.referrer.includes(window.location.origin);
+        const isFromExternalSource = !document.referrer || 
+                                    !document.referrer.includes(window.location.origin);
         
-        if (isAutomaticLanding) {
-          navigate('/documents', { replace: true });
+        // Check if the URL has any search params that might indicate explicit navigation
+        const hasExplicitParams = location.search.includes('explicit') || 
+                                 location.hash.includes('home');
+        
+        if (isFromExternalSource && !hasExplicitParams) {
+          setHasRedirected(true);
+          navigate('/documents');
         }
       }
-    }, [isSignedIn, navigate, location.state]);
+    }, [isSignedIn, navigate, hasRedirected, location.search, location.hash]);
 
     return <LandingPage />;
   };
@@ -375,7 +381,7 @@
                 </button>
 
                 <button
-                  onClick={() => navigate('/', { state: { explicit: true } })}
+                  onClick={() => navigate('/?explicit=true')}
                   className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
                 >
                   <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -397,7 +403,7 @@
               <nav className="hidden lg:flex items-center space-x-1">
                 {/* Show Home button for all users */}
                 <button
-                  onClick={() => navigate('/', { state: { explicit: true } })}
+                  onClick={() => navigate('/?explicit=true')}
                   className={`
                     flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                     ${location.pathname === '/'
