@@ -1,6 +1,6 @@
   // frontend/src/App.tsx - UPDATED WITH REACT ROUTER WHILE PRESERVING EXISTING FUNCTIONALITY
   import React, { useState, useEffect } from 'react';
-  import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+  import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
   import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain, Menu, X, Home } from 'lucide-react';
   import { Analytics } from '@vercel/analytics/react';
   import { useClerkAuth } from './hooks/useClerk';
@@ -135,7 +135,12 @@
                   <button
                     key={item.path}
                     onClick={() => {
-                      navigate(item.path);
+                      // Add explicit state for Home navigation
+                      if (item.path === '/') {
+                        navigate(item.path, { state: { explicit: true } });
+                      } else {
+                        navigate(item.path);
+                      }
                       onClose();
                     }}
                     className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors group"
@@ -186,6 +191,28 @@
         </div>
       </>
     );
+  };
+
+  // Home Page Wrapper Component - Handles smart redirection for signed-in users
+  const HomePageWrapper: React.FC<{ isSignedIn: boolean }> = ({ isSignedIn }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    useEffect(() => {
+      // Only redirect if user is signed in AND this is not an explicit navigation
+      // (i.e., they didn't click Home button or type the URL manually)
+      if (isSignedIn && !location.state?.explicit) {
+        // Check if this is likely an automatic landing (no referrer from within the app)
+        const isAutomaticLanding = !document.referrer || 
+                                  !document.referrer.includes(window.location.origin);
+        
+        if (isAutomaticLanding) {
+          navigate('/documents', { replace: true });
+        }
+      }
+    }, [isSignedIn, navigate, location.state]);
+
+    return <LandingPage />;
   };
 
   // Premium Feature Upgrade Component - KEEPING YOUR EXISTING COMPONENT
@@ -292,12 +319,6 @@
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Redirect signed-in users from home page to documents page
-    useEffect(() => {
-      if (isLoaded && isSignedIn && location.pathname === '/') {
-        navigate('/documents');
-      }
-    }, [isLoaded, isSignedIn, location.pathname, navigate]);
 
     // Convert URL path to Page type for compatibility with existing navigation
     const getPageFromPath = (pathname: string): Page => {
@@ -354,7 +375,7 @@
                 </button>
 
                 <button
-                  onClick={() => navigate(isSignedIn ? '/documents' : '/')}
+                  onClick={() => navigate('/', { state: { explicit: true } })}
                   className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
                 >
                   <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -376,7 +397,7 @@
               <nav className="hidden lg:flex items-center space-x-1">
                 {/* Show Home button for all users */}
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/', { state: { explicit: true } })}
                   className={`
                     flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                     ${location.pathname === '/'
@@ -529,7 +550,9 @@
         <main className="min-h-screen">
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={
+              <HomePageWrapper isSignedIn={!!isSignedIn} />
+            } />
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
