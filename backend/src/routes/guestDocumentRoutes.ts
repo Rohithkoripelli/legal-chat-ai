@@ -475,7 +475,25 @@ router.post('/contracts/analyze', async (req: Request, res: Response) => {
         documentName,
         riskScore: 'MEDIUM' as const,
         executiveSummary: {
-          overview: `This is a guest mode analysis of "${documentName}". Our AI service is temporarily unavailable, but we've identified this as a legal document with standard contractual provisions. For full AI-powered analysis with detailed risk assessment, clause-by-clause review, and compliance insights, please create a free account or try again later.`,
+          overview: `**Guest Mode Analysis: ${documentName}**
+
+**Status:**
+- AI service temporarily unavailable
+- Basic analysis completed with standard insights
+
+**Document Overview:**
+- Legal document with standard contractual provisions identified
+- Guest mode provides general insights only
+
+**Analysis Limitations:**
+- Full AI-powered analysis requires account creation
+- Detailed risk assessment not available in fallback mode
+- Clause-by-clause review requires full service
+
+**Recommendations:**
+- Create a free account for comprehensive AI analysis
+- Try analysis again later when full service is available
+- Consider manual review for immediate needs`,
           keyDates: [
             {
               date: 'Contract effective date',

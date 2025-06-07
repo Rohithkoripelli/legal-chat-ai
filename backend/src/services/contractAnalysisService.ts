@@ -229,18 +229,34 @@ export const analyzeContract = async (document: any, userId: string): Promise<Co
     console.log(`📄 Processing content (${truncatedContent.length} characters) for user: ${userId}`);
 
     // STEP 1: Executive Summary
-    const summaryPrompt = `Analyze this legal contract and provide a detailed summary.
+    const summaryPrompt = `Analyze this legal contract and provide a detailed, well-formatted summary.
 
 Contract Content:
 ${truncatedContent}
 
-Provide a structured analysis covering:
-1. Document type and main parties involved
-2. Key business purpose and scope  
-3. Primary obligations of each party
-4. Notable terms, conditions, and financial aspects
+Provide a structured analysis with proper formatting and line breaks. Use this exact format:
 
-Keep it professional, detailed, and specific to this contract.`;
+**Document Overview:**
+- Document type and main parties involved
+
+**Business Purpose & Scope:**
+- Key business purpose and scope of the agreement
+
+**Primary Obligations:**
+- Party 1: [List key obligations]
+- Party 2: [List key obligations]
+
+**Key Terms & Conditions:**
+- Notable financial terms and payment provisions
+- Important deadlines and performance requirements
+- Risk management and liability provisions
+
+**Highlights:**
+- Most important aspects of this contract
+- Critical dates or milestones
+- Potential areas of concern
+
+Format your response with clear line breaks, bullet points, and structured sections. Make it human-readable and easy to understand.`;
 
     let executiveSummary = '';
     try {
@@ -255,13 +271,22 @@ Keep it professional, detailed, and specific to this contract.`;
       console.log('✅ Executive summary generated');
     } catch (summaryError) {
       console.warn('❌ Executive summary failed:', summaryError);
-      executiveSummary = `Contract analysis completed but detailed summary generation encountered technical limitations.
+      executiveSummary = `**Document Overview:**
+- Contract analysis completed but detailed summary generation encountered technical limitations
+- Document: ${document.originalName || document.name}
 
-Document: ${document.originalName || document.name}
-Content Length: ${document.content?.length || 0} characters
-Analysis Date: ${new Date().toLocaleDateString()}
+**Technical Information:**
+- Content Length: ${document.content?.length || 0} characters
+- Analysis Date: ${new Date().toLocaleDateString()}
 
-Manual review recommended for detailed analysis.`;
+**Status:**
+- AI-powered summary generation temporarily unavailable
+- Basic structural analysis completed
+
+**Recommended Actions:**
+- Manual review recommended for detailed analysis
+- Contact support if issue persists
+- Try analysis again later for full AI insights`;
     }
 
     // STEP 2: Extract Key Terms and Dates (with JSON)
@@ -517,7 +542,19 @@ Calculate risk score (1-100) based on:
       userId, // INCLUDE userId even in fallback
       riskScore: 'MEDIUM' as const,
       executiveSummary: {
-        overview: `Analysis failed: ${error.message}. Manual review required.`,
+        overview: `**Analysis Status:**
+- Analysis failed: ${error.message}
+- Manual review required
+
+**Document Information:**
+- Document: ${document.originalName || document.name}
+- Analysis Date: ${new Date().toLocaleDateString()}
+
+**Recommended Actions:**
+- Conduct manual contract review
+- Consult with legal counsel
+- Extract key terms manually
+- Try analysis again later`,
         keyDates: [],
         obligations: [],
         recommendedActions: [
@@ -552,19 +589,42 @@ export const generateContractSummary = async (document: any): Promise<string> =>
       ? sanitizedContent.substring(0, maxContentLength) + '...[truncated]'
       : sanitizedContent;
 
-    const prompt = `Create a comprehensive executive summary of this contract:
+    const prompt = `Create a comprehensive, well-formatted executive summary of this contract:
 
 ${truncatedContent}
 
-Structure your response with these sections:
-## Contract Overview
-## Key Business Terms  
-## Main Obligations
-## Important Dates & Deadlines
-## Risk Assessment
-## Recommended Next Steps
+Structure your response with proper formatting and line breaks. Use this exact format:
 
-Keep it professional and executive-friendly.`;
+**Contract Overview:**
+- Document type and parties involved
+- Core business purpose
+
+**Key Business Terms:**
+- Financial terms and payment structure
+- Contract duration and scope
+- Performance requirements
+
+**Main Obligations:**
+- Primary party responsibilities
+- Deliverables and deadlines
+- Compliance requirements
+
+**Important Dates & Deadlines:**
+- Contract effective dates
+- Key milestones and deliverable dates
+- Termination or renewal dates
+
+**Risk Assessment:**
+- Potential areas of concern
+- Liability and risk management provisions
+- Compliance and regulatory considerations
+
+**Recommended Next Steps:**
+- Immediate actions required
+- Key areas requiring attention
+- Suggested review priorities
+
+Format with clear line breaks, bullet points, and structured sections for easy reading.`;
 
     const summary = await safeOpenAICall([
       {
@@ -582,24 +642,24 @@ Keep it professional and executive-friendly.`;
   } catch (error: any) {
     console.error('❌ Contract summary generation failed:', error);
     
-    return `# Contract Summary: ${document.originalName || document.name}
+    return `**Contract Summary: ${document.originalName || document.name}**
 
-## Status
-❌ **Detailed Summary Unavailable**: AI-powered summary generation encountered technical limitations.
+**Status:**
+❌ **Detailed Summary Unavailable** - AI-powered summary generation encountered technical limitations.
 
-## Document Information
+**Document Information:**
 - **Name**: ${document.originalName || document.name}
 - **Size**: ${document.size ? `${Math.round(document.size / 1024)} KB` : 'Unknown'}
 - **Content**: ${document.content ? `${document.content.length} characters extracted` : 'No content extracted'}
 - **Processing Date**: ${new Date().toLocaleDateString()}
 
-## Recommended Actions
-1. **Manual Review**: Examine the document directly for key terms and conditions
-2. **Legal Consultation**: Consult with qualified legal counsel for detailed analysis
-3. **Key Information**: Extract important dates, obligations, and terms manually
-4. **Retry**: Try the analysis again when technical issues are resolved
+**Recommended Actions:**
+- **Manual Review**: Examine the document directly for key terms and conditions
+- **Legal Consultation**: Consult with qualified legal counsel for detailed analysis
+- **Key Information**: Extract important dates, obligations, and terms manually
+- **Retry**: Try the analysis again when technical issues are resolved
 
-## Technical Notes
+**Technical Notes:**
 This is a fallback summary due to technical limitations. For detailed AI-powered analysis, please try again or contact support if issues persist.`;
   }
 };
