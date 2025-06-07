@@ -208,6 +208,201 @@
     return <LandingPage />;
   };
 
+  // Premium Features Showcase Page
+  const PremiumFeaturesPage: React.FC = () => {
+    const navigate = useNavigate();
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-700 py-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center text-white">
+              <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6">
+                <Crown className="w-4 h-4 mr-2" />
+                Premium Features
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                Unlock the Full Power of AI Legal Analysis
+              </h1>
+              <p className="text-xl text-purple-100 mb-8 max-w-3xl mx-auto">
+                Get unlimited access to advanced AI document generation, risk analysis dashboard, 
+                and professional-grade legal tools. <strong>Completely free</strong> - no hidden costs.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => window.location.href = '/sign-up'}
+                  className="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                >
+                  <Users className="w-5 h-5 mr-2" />
+                  Create Free Account
+                </button>
+                <button
+                  onClick={() => navigate('/?explicit=true')}
+                  className="bg-purple-500 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-600 transition-colors border-2 border-purple-500"
+                >
+                  ← Back to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Showcase */}
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Premium Features You'll Get (100% Free)
+            </h2>
+            <p className="text-lg text-gray-600">
+              All premium features are included in your free account - no subscriptions, no hidden fees
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 mb-16">
+            {/* AI Document Generator */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-purple-200">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <ClipboardList className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">AI Document Generator</h3>
+                <p className="text-gray-600 mb-6">
+                  Generate professional legal documents instantly using advanced AI. Create contracts, 
+                  NDAs, terms of service, and more with guided templates.
+                </p>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Professional Document Templates</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>AI-Powered Customization</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Instant PDF Generation</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Legal Compliance Checking</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate('/create-document')}
+                className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+              >
+                Try Document Generator
+              </button>
+            </div>
+
+            {/* Risk Analysis Dashboard */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-indigo-200">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <BarChart3 className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Analytics Dashboard</h3>
+                <p className="text-gray-600 mb-6">
+                  Advanced analytics and insights for your legal documents. Track risks, compliance 
+                  status, and get actionable recommendations.
+                </p>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Portfolio Risk Overview</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Compliance Tracking</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Risk Scoring & Trends</span>
+                </div>
+                <div className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Document Insights</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              >
+                View Analytics Dashboard
+              </button>
+            </div>
+          </div>
+
+          {/* Additional Premium Features */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mb-16">
+            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+              Plus These Premium Benefits
+            </h3>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-8 w-8 text-green-600" />
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Unlimited Documents</h4>
+                <p className="text-gray-600 text-sm">Upload and analyze unlimited legal documents with permanent secure storage</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Chat History</h4>
+                <p className="text-gray-600 text-sm">Access your complete chat history and document analysis results anytime</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="h-8 w-8 text-purple-600" />
+                </div>
+                <h4 className="font-semibold text-gray-900 mb-2">Priority Support</h4>
+                <p className="text-gray-600 text-sm">Get priority customer support and early access to new features</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center">
+            <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Ready to Unlock Premium Features?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Join thousands of legal professionals who trust our AI platform. 
+                Create your free account in seconds - no credit card required.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => window.location.href = '/sign-up'}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-colors inline-flex items-center justify-center"
+                >
+                  <Users className="w-5 h-5 mr-2" />
+                  Create Free Account
+                </button>
+                <button
+                  onClick={() => window.location.href = '/sign-in'}
+                  className="bg-gray-100 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-200 transition-colors"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Premium Feature Upgrade Component - KEEPING YOUR EXISTING COMPONENT
   const PremiumFeaturePrompt: React.FC<{
     featureName: string;
@@ -462,7 +657,7 @@
                 {/* Premium features dropdown for guests to save space */}
                 {!isSignedIn && (
                   <button
-                    onClick={() => window.location.href = '/sign-up'}
+                    onClick={() => navigate('/premium')}
                     className="flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700
   hover:from-purple-200 hover:to-blue-200"
                     title="View premium features"
@@ -546,6 +741,7 @@
             <Route path="/" element={
               <HomePageWrapper isSignedIn={!!isSignedIn} />
             } />
+            <Route path="/premium" element={<PremiumFeaturesPage />} />
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
