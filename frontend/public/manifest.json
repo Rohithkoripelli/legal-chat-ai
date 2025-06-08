@@ -1,7 +1,7 @@
 {
-  "short_name": "Legal Chat AI",
-  "name": "Legal Chat AI - Document Analysis Assistant",
-  "description": "Intelligent Document Analysis Assistant for legal documents",
+  "short_name": "LegalChatAI",
+  "name": "LegalChatAI - AI Legal Document Analysis Platform",
+  "description": "Free AI-powered legal document analysis and chat platform for contracts, NDAs, and legal documents",
   "icons": [
     {
       "src": "favicon.ico",
@@ -9,14 +9,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "favicon-32x32.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "32x32"
     },
     {
-      "src": "logo512.png",
+      "src": "apple-touch-icon.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "180x180"
     }
   ],
   "start_url": ".",
