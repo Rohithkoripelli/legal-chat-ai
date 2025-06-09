@@ -23,6 +23,15 @@
   // Import the legal pages
   import { PrivacyPolicyPage, AboutUsPage, TermsOfServicePage } from './components/auth/LegalPages';
 
+  // Import the new SEO-optimized pages
+  import NDAAnalyzerPage from './pages/NDAAnalyzerPage';
+  import LegalDocumentReviewPage from './pages/LegalDocumentReviewPage';
+  import ContractRiskAssessmentPage from './pages/ContractRiskAssessmentPage';
+  import EmploymentAgreementAnalysisPage from './pages/EmploymentAgreementAnalysisPage';
+  import StartupLegalDocumentsPage from './pages/StartupLegalDocumentsPage';
+  import FreeLegalAIPage from './pages/FreeLegalAIPage';
+  import HelpPage from './pages/HelpPage';
+
   type Page = 'landing' | 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
   // Feature data for navigation - KEEPING YOUR EXISTING STRUCTURE
@@ -810,6 +819,15 @@
 
             {/* Guest Contract Analysis Route */}
             <Route path="/guest-contract-analysis" element={<GuestContractAnalysisPage />} />
+
+            {/* New SEO-Optimized Pages */}
+            <Route path="/nda-analyzer" element={<NDAAnalyzerPage />} />
+            <Route path="/legal-document-review" element={<LegalDocumentReviewPage />} />
+            <Route path="/contract-risk-assessment" element={<ContractRiskAssessmentPage />} />
+            <Route path="/employment-agreement-analysis" element={<EmploymentAgreementAnalysisPage />} />
+            <Route path="/startup-legal-documents" element={<StartupLegalDocumentsPage />} />
+            <Route path="/free-legal-ai" element={<FreeLegalAIPage />} />
+            <Route path="/help" element={<HelpPage />} />
 
             {/* Premium Routes - Show upgrade prompt for guests */}
             <Route 
