@@ -17,7 +17,7 @@ export const useChat = () => {
     setIsLoading(true);
     setError(null);
 
-    // Add user message first (preserve existing functionality)
+    // Add user message first (preserve existing functionalities)
     const userMessage: Message = {
       id: Date.now(),
       text: message,

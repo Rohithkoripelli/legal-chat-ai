@@ -122,10 +122,10 @@ const ChatPage: React.FC = () => {
                 </h3>
                 <p className="text-gray-600 mb-6">
                   {documentCount > 0 
-                    ? `You have ${documentCount} document${documentCount !== 1 ? 's' : ''} ready for AI analysis. Start asking questions about your legal content.`
+                    ? `You have ${documentCount} document${documentCount !== 1 ? 's' : ''} ready for AI analysis. Ask questions about your documents or general legal topics.`
                     : isSignedIn 
-                      ? 'Upload your legal documents first, then return here to chat with our AI assistant for comprehensive analysis.'
-                      : 'Upload your legal documents for free, then chat with our AI assistant for instant analysis. No signup required!'
+                      ? 'Ask general legal questions or upload documents for specific analysis. Our AI assistant can help with both!'
+                      : 'Ask general legal questions for free, or upload documents for specific analysis. No signup required!'
                   }
                 </p>
                 
@@ -134,14 +134,34 @@ const ChatPage: React.FC = () => {
                   <h4 className="font-semibold text-gray-900 mb-3">Try these example questions:</h4>
                   <div className="grid md:grid-cols-2 gap-2 text-sm text-gray-600">
                     <div className="space-y-1">
-                      <p>• "What are the payment terms in this contract?"</p>
-                      <p>• "Identify any liability clauses"</p>
-                      <p>• "What is the termination notice period?"</p>
+                      {documentCount > 0 ? (
+                        <>
+                          <p>• "What are the payment terms in this contract?"</p>
+                          <p>• "Identify any liability clauses"</p>
+                          <p>• "What is the termination notice period?"</p>
+                        </>
+                      ) : (
+                        <>
+                          <p>• "What should I include in an NDA?"</p>
+                          <p>• "What is a force majeure clause?"</p>
+                          <p>• "How do liability limitations work?"</p>
+                        </>
+                      )}
                     </div>
                     <div className="space-y-1">
-                      <p>• "Summarize the key obligations"</p>
-                      <p>• "What are the potential risks?"</p>
-                      <p>• "Explain this clause in simple terms"</p>
+                      {documentCount > 0 ? (
+                        <>
+                          <p>• "Summarize the key obligations"</p>
+                          <p>• "What are the potential risks?"</p>
+                          <p>• "Explain this clause in simple terms"</p>
+                        </>
+                      ) : (
+                        <>
+                          <p>• "What's the difference between LLC and Corp?"</p>
+                          <p>• "How do non-compete clauses work?"</p>
+                          <p>• "What are standard contract terms?"</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -152,7 +172,7 @@ const ChatPage: React.FC = () => {
                     className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    {isSignedIn ? 'Upload Documents First' : 'Upload Documents Free'}
+                    {isSignedIn ? 'Upload Documents (Optional)' : 'Upload Documents Free (Optional)'}
                   </button>
                 )}
               </div>
@@ -164,37 +184,29 @@ const ChatPage: React.FC = () => {
 
         {/* Message Input */}
         <div className="border-t bg-gray-50 p-4">
-          {documentCount === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-gray-600 mb-4">
-                {isSignedIn 
-                  ? 'No documents uploaded yet. Upload documents to start chatting with AI.'
-                  : 'No documents uploaded yet. Upload documents for free to start AI chat analysis!'
-                }
-              </p>
-              <button
-                onClick={() => window.location.href = '/documents'}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {isSignedIn ? 'Upload Documents' : 'Upload Documents Free'}
-              </button>
-            </div>
-          ) : (
-            <div>
-              <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-              {!isSignedIn && (
-                <div className="mt-2 text-center">
-                  <p className="text-xs text-gray-500">
-                    💡 Enjoying free AI chat? <button 
+          <div>
+            <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+            <div className="mt-2 text-center">
+              {documentCount === 0 ? (
+                <p className="text-xs text-gray-500">
+                  💡 You can ask general legal questions, or <button 
+                    onClick={() => window.location.href = '/documents'}
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >upload documents</button> for specific analysis!
+                </p>
+              ) : (
+                <p className="text-xs text-gray-500">
+                  💡 Ask questions about your {documentCount} uploaded document{documentCount !== 1 ? 's' : ''} or general legal topics.
+                  {!isSignedIn && (
+                    <span> <button 
                       onClick={() => window.location.href = '/sign-up'}
                       className="text-blue-600 hover:text-blue-800 underline"
-                    >Create a free account</button> for unlimited features!
-                  </p>
-                </div>
+                    >Create a free account</button> for unlimited features!</span>
+                  )}
+                </p>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
