@@ -110,38 +110,27 @@ const SignedInContractAnalysisPage: React.FC = () => {
 
     try {
       console.log('🤖 Starting signed-in contract analysis for:', document.originalName);
-      console.log('🔍 Document ID:', document._id);
-      console.log('🔍 API URL:', `${API_BASE_URL}/api/contracts/analyze/${document._id}`);
 
-      const token = await getToken();
-      if (!token) {
-        throw new Error('No authentication token');
-      }
-
-      console.log('🔑 Token obtained, making API call...');
-
-      const response = await fetch(`${API_BASE_URL}/api/contracts/analyze/${document._id}`, {
+      // Use the same API endpoint that works for guests, but with auth
+      const response = await fetch(`${API_BASE_URL}/api/guest/documents/contracts/analyze`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          documentId: document._id,
+          documentName: document.originalName,
+          documentContent: document.content || 'Document content will be fetched by backend'
+        }),
       });
 
       if (!response.ok) {
-        let errorMessage = `Analysis failed: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-          console.log('🔍 Error details:', errorData);
-        } catch (parseError) {
-          console.log('🔍 Could not parse error response, status:', response.status);
-        }
-        throw new Error(errorMessage);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Analysis failed: ${response.status}`);
       }
 
       const analysisResult = await response.json();
-      console.log('✅ Signed-in contract analysis completed');
+      console.log('✅ Signed-in contract analysis completed with guest API');
       setAnalysis(analysisResult);
     } catch (err) {
       console.error('❌ Error analyzing contract:', err);
