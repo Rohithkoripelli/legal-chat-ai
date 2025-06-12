@@ -4,10 +4,10 @@ import { useAuth } from '@clerk/clerk-react';
 import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, BarChart3 } from 'lucide-react';
 
 interface UserDocument {
-  _id: string;
-  originalName: string;
+  id: string;
+  name: string;
   size: number;
-  mimeType: string;
+  type: string;
   uploadedAt: string;
   content?: string;
 }
@@ -94,6 +94,8 @@ const SignedInContractAnalysisPage: React.FC = () => {
       }
 
       const documents = await response.json();
+      console.log('📄 Fetched documents:', documents);
+      console.log('📄 First document structure:', documents[0]);
       setUserDocuments(documents);
     } catch (err) {
       console.error('Error fetching user documents:', err);
@@ -109,16 +111,19 @@ const SignedInContractAnalysisPage: React.FC = () => {
     setSelectedDocument(document);
 
     try {
-      console.log('🤖 Starting signed-in contract analysis for:', document.originalName);
+      console.log('🤖 Starting signed-in contract analysis for:', document.name);
+      console.log('🔍 Document details:', { id: document.id, name: document.name, size: document.size });
 
       // Create a simple document object that mimics guest documents
       // Since backend has issues with individual document fetch, we'll use a placeholder content
       // and let the backend handle it via the document ID
       const analysisRequest = {
-        documentId: document._id,
-        documentName: document.originalName,
-        documentContent: `Document content for: ${document.originalName} (${document.size} bytes). Backend will fetch actual content.`
+        documentId: document.id,
+        documentName: document.name,
+        documentContent: `Document content for: ${document.name} (${document.size} bytes). Backend will fetch actual content.`
       };
+
+      console.log('🔍 Analysis request:', analysisRequest);
 
       console.log('🤖 Analyzing contract using guest API endpoint...');
 
@@ -146,11 +151,11 @@ const SignedInContractAnalysisPage: React.FC = () => {
       // If guest API fails, provide fallback analysis like guest version does
       console.log('🔄 Providing fallback analysis for signed-in user...');
       const fallbackAnalysis: ContractAnalysis = {
-        documentId: document._id,
-        documentName: document.originalName,
+        documentId: document.id,
+        documentName: document.name,
         riskScore: 'MEDIUM',
         executiveSummary: {
-          overview: `Professional analysis for "${document.originalName}". This is a fallback analysis while we resolve backend connectivity. Your document has been uploaded successfully and is stored securely in your account. Please try again in a few minutes for full AI-powered analysis.`,
+          overview: `Professional analysis for "${document.name}". This is a fallback analysis while we resolve backend connectivity. Your document has been uploaded successfully and is stored securely in your account. Please try again in a few minutes for full AI-powered analysis.`,
           keyDates: [
             {
               date: 'Contract effective date',
@@ -192,7 +197,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
         keyTerms: [
           {
             term: 'Contract Document',
-            value: `Your uploaded document: ${document.originalName}`,
+            value: `Your uploaded document: ${document.name}`,
             category: 'Document Info',
             riskLevel: 'LOW'
           }
@@ -603,7 +608,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
               AI is Analyzing Your Contract...
             </h3>
             <p className="text-gray-600">
-              Our AI is performing comprehensive analysis of "{selectedDocument?.originalName}" for risk assessment, key terms extraction, and compliance review. This may take 30-60 seconds.
+              Our AI is performing comprehensive analysis of "{selectedDocument?.name}" for risk assessment, key terms extraction, and compliance review. This may take 30-60 seconds.
             </p>
             <div className="mt-4 text-sm text-blue-600">
               ✨ Premium AI Analysis • Complete contract analysis • Saved to your account
@@ -677,7 +682,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userDocuments.map((document) => (
                 <div
-                  key={document._id}
+                  key={document.id}
                   className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300 cursor-pointer"
                   onClick={() => analyzeContract(document)}
                 >
@@ -687,7 +692,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-medium text-gray-900 mb-1">
-                        {document.originalName}
+                        {document.name}
                       </h3>
                       <div className="flex flex-col space-y-1 text-sm text-gray-500">
                         <span>Size: {formatFileSize(document.size)}</span>
