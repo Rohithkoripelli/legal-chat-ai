@@ -19,6 +19,7 @@
   import ChatPage from './pages/ChatPage';
   import GuestDocumentsPage from './pages/GuestDocumentsPage';
   import GuestContractAnalysisPage from './pages/GuestContractAnalysisPage';
+  import SignedInContractAnalysisPage from './pages/SignedInContractAnalysisPage';
 
   // Import the legal pages
   import { PrivacyPolicyPage, AboutUsPage, TermsOfServicePage } from './components/auth/LegalPages';
@@ -52,6 +53,15 @@
       icon: <MessageSquare className="h-5 w-5" />,
       description: 'Chat with AI about your documents',
       guestAllowed: true,
+      isPremium: false
+    },
+    {
+      id: 'contracts' as Page,
+      path: '/contract-analysis',
+      label: 'Contract Analysis',
+      icon: <Brain className="h-5 w-5" />,
+      description: 'AI-powered contract analysis and risk assessment',
+      guestAllowed: false,
       isPremium: false
     },
     {
@@ -102,6 +112,7 @@
       { label: 'Documents', path: '/documents', icon: <FileText className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn, showOnlyForGuests: true },
+      { label: 'Contract Analysis', path: '/contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: false, isPremium: false, showOnlyForSignedIn: true },
       { label: 'Dashboard', path: '/dashboard', icon: <BarChart3 className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
       { label: 'Generator', path: '/create-document', icon: <ClipboardList className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
       { label: 'Premium', path: '/premium', icon: <Crown className="h-5 w-5" />, guestAllowed: true, isPremium: true, showOnlyForGuests: true }
@@ -819,6 +830,24 @@
 
             {/* Guest Contract Analysis Route */}
             <Route path="/guest-contract-analysis" element={<GuestContractAnalysisPage />} />
+
+            {/* Signed-in Contract Analysis Route */}
+            <Route 
+              path="/contract-analysis" 
+              element={
+                isSignedIn ? (
+                  <SignedInContractAnalysisPage />
+                ) : (
+                  <PremiumFeaturePrompt
+                    featureName="Contract Analysis"
+                    featureDescription="Advanced contract analysis with document storage and history requires a free account."
+                    icon={<Brain className="h-8 w-8" />}
+                    onSignUp={handleSignUp}
+                    onSignIn={handleSignIn}
+                  />
+                )
+              }
+            />
 
             {/* New SEO-Optimized Pages */}
             <Route path="/nda-analyzer" element={<NDAAnalyzerPage />} />
