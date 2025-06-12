@@ -111,7 +111,37 @@ const SignedInContractAnalysisPage: React.FC = () => {
     try {
       console.log('🤖 Starting signed-in contract analysis for:', document.originalName);
 
-      // Use the same API endpoint that works for guests, but with auth
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token');
+      }
+
+      // First, fetch the document content if not available
+      let documentContent = document.content;
+      if (!documentContent) {
+        console.log('📄 Fetching document content...');
+        const contentResponse = await fetch(`${API_BASE_URL}/api/documents/${document._id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!contentResponse.ok) {
+          throw new Error('Failed to fetch document content');
+        }
+
+        const documentData = await contentResponse.json();
+        documentContent = documentData.content;
+      }
+
+      if (!documentContent || documentContent.length < 10) {
+        throw new Error('Document content is empty or too short for analysis');
+      }
+
+      console.log('🤖 Analyzing contract with content length:', documentContent.length);
+
+      // Use the same API endpoint that works for guests
       const response = await fetch(`${API_BASE_URL}/api/guest/documents/contracts/analyze`, {
         method: 'POST',
         headers: {
@@ -120,7 +150,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
         body: JSON.stringify({
           documentId: document._id,
           documentName: document.originalName,
-          documentContent: document.content || 'Document content will be fetched by backend'
+          documentContent: documentContent
         }),
       });
 
