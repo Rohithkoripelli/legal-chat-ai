@@ -127,13 +127,18 @@ const SignedInContractAnalysisPage: React.FC = () => {
 
       console.log('🤖 Analyzing contract using guest API endpoint...');
 
-      // Use the exact same API endpoint that works for guests
-      const response = await fetch(`${API_BASE_URL}/api/guest/documents/contracts/analyze`, {
+      // Use the authenticated contract analysis API for signed-in users
+      const token = await getToken();
+      if (!token) {
+        throw new Error('No authentication token');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/contracts/analyze/${document.id}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(analysisRequest),
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
       if (!response.ok) {
