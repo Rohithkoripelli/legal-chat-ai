@@ -120,19 +120,33 @@ const SignedInContractAnalysisPage: React.FC = () => {
       let documentContent = document.content;
       if (!documentContent) {
         console.log('📄 Fetching document content...');
-        const contentResponse = await fetch(`${API_BASE_URL}/api/documents/${document._id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+        try {
+          const contentResponse = await fetch(`${API_BASE_URL}/api/documents/${document._id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!contentResponse.ok) {
+            console.log('⚠️ Could not fetch document content, status:', contentResponse.status);
+            // Try to get error details
+            try {
+              const errorData = await contentResponse.json();
+              console.log('⚠️ Error details:', errorData);
+            } catch (e) {
+              console.log('⚠️ Could not parse error response');
+            }
+            throw new Error(`Failed to fetch document content: ${contentResponse.status}`);
           }
-        });
 
-        if (!contentResponse.ok) {
-          throw new Error('Failed to fetch document content');
+          const documentData = await contentResponse.json();
+          documentContent = documentData.content;
+          console.log('✅ Document content fetched, length:', documentContent?.length || 0);
+        } catch (fetchError) {
+          console.error('❌ Error fetching document content:', fetchError);
+          throw new Error('Could not access document content for analysis');
         }
-
-        const documentData = await contentResponse.json();
-        documentContent = documentData.content;
       }
 
       if (!documentContent || documentContent.length < 10) {
