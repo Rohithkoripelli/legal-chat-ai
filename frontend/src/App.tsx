@@ -122,7 +122,6 @@
     const filteredItems = mobileNavItems.filter(item => {
       if (item.showOnlyForGuests && isSignedIn) return false;
       if (item.showOnlyForSignedIn && !isSignedIn) return false;
-      if (item.label === 'Contract Analysis' && isSignedIn) return false;
       return true;
     });
 
