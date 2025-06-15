@@ -367,23 +367,23 @@ const ChatPage: React.FC = () => {
       {/* GUEST UPGRADE PROMPT */}
       {!isSignedIn && (
         <section className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex-1">
               <h3 className="text-lg font-bold text-green-900 mb-2">💡 Enjoying the Free AI Chat?</h3>
               <p className="text-green-800 mb-3">
                 Create a free account to unlock unlimited uploads, permanent storage, advanced analytics, 
                 chat history, and document generation tools!
               </p>
-              <div className="flex items-center space-x-4 text-sm text-green-700">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-green-700">
                 <span className="flex items-center"><CheckCircle className="h-4 w-4 mr-1" /> Unlimited documents</span>
                 <span className="flex items-center"><CheckCircle className="h-4 w-4 mr-1" /> Secure storage</span>
                 <span className="flex items-center"><CheckCircle className="h-4 w-4 mr-1" /> Chat history</span>
               </div>
             </div>
-            <div className="flex-shrink-0 ml-6">
+            <div className="flex-shrink-0">
               <button
                 onClick={() => window.location.href = '/sign-up'}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                className="w-full lg:w-auto bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
               >
                 Upgrade Free →
               </button>
