@@ -1,6 +1,6 @@
 # NDA Analysis Guide: AI-Powered Non-Disclosure Agreement Review
 
-*Published: June 15, 2024 | Updated: June 15, 2024 | Reading Time: 10 minutes*
+*Published: June 15, 2025 | Updated: June 15, 2025 | Reading Time: 10 minutes*
 
 Non-Disclosure Agreements (NDAs) are among the most commonly used legal documents in business, yet they're often signed without proper analysis. A poorly structured NDA can expose your business to significant risks or fail to protect your valuable confidential information. This comprehensive guide will help you understand, analyze, and optimize NDAs using AI-powered tools.
 

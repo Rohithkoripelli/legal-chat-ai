@@ -1,8 +1,8 @@
-# The Complete Legal Checklist for Startups in 2024: AI-Powered Legal Compliance
+# The Complete Legal Checklist for Startups in 2025: AI-Powered Legal Compliance
 
-*Published: June 15, 2024 | Updated: June 15, 2024 | Reading Time: 12 minutes*
+*Published: June 15, 2025 | Updated: June 15, 2025 | Reading Time: 12 minutes*
 
-Starting a business is exciting, but navigating the legal requirements can be overwhelming. According to a 2023 study, 60% of startups face legal issues within their first two years, often due to incomplete or incorrect legal documentation. This comprehensive checklist will help you establish a solid legal foundation for your startup while leveraging AI tools to reduce costs and complexity.
+Starting a business is exciting, but navigating the legal requirements can be overwhelming. According to a 2024 study, 60% of startups face legal issues within their first two years, often due to incomplete or incorrect legal documentation. This comprehensive checklist will help you establish a solid legal foundation for your startup while leveraging AI tools to reduce costs and complexity.
 
 ## Why Legal Compliance Matters for Startups
 

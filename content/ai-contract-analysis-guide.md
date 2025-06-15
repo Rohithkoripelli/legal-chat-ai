@@ -1,6 +1,6 @@
-# AI Contract Analysis: The Complete Guide for 2024
+# AI Contract Analysis: The Complete Guide for 2025
 
-*Published: June 15, 2024 | Updated: June 15, 2024 | Reading Time: 8 minutes*
+*Published: June 15, 2025 | Updated: June 15, 2025 | Reading Time: 8 minutes*
 
 Contract analysis has traditionally been one of the most time-consuming and expensive aspects of legal work. A single contract review by a law firm can cost anywhere from $500 to $5,000, depending on complexity. But artificial intelligence is revolutionizing this process, making professional-grade contract analysis accessible to businesses of all sizes.
 

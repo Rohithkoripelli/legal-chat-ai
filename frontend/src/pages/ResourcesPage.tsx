@@ -1,13 +1,13 @@
 // src/pages/ResourcesPage.tsx
 import React from 'react';
 import { DocumentHead } from '../components/SEO/DocumentHead';
-import { BookOpen, FileText, Clock, ArrowRight, Users, Star, Brain, CheckCircle, Shield, Download, Eye } from 'lucide-react';
+import { BookOpen, FileText, Clock, ArrowRight, Users, Brain, CheckCircle, Shield, Download } from 'lucide-react';
 
 const ResourcesPage: React.FC = () => {
   const articles = [
     {
       id: 'ai-contract-analysis-guide',
-      title: 'AI Contract Analysis: Complete Guide for 2024',
+      title: 'AI Contract Analysis: Complete Guide for 2025',
       description: 'Learn how AI is revolutionizing contract analysis, reducing costs by 90% and improving efficiency. Complete guide with real-world examples and implementation strategies.',
       readTime: '8 min read',
       category: 'AI Technology',
@@ -17,7 +17,7 @@ const ResourcesPage: React.FC = () => {
     },
     {
       id: 'startup-legal-checklist',
-      title: 'The Complete Legal Checklist for Startups in 2024',
+      title: 'The Complete Legal Checklist for Startups in 2025',
       description: 'Comprehensive legal compliance guide for startups. From business formation to IP protection, this 12-minute guide covers everything you need to build a legally sound startup.',
       readTime: '12 min read',
       category: 'Startup Legal',
@@ -37,7 +37,7 @@ const ResourcesPage: React.FC = () => {
     },
     {
       id: 'ai-vs-human-legal-review',
-      title: 'AI vs Human Legal Review: Complete Comparison Guide 2024',
+      title: 'AI vs Human Legal Review: Complete Comparison Guide 2025',
       description: 'Comprehensive comparison of AI and human legal review. Learn when to use AI, when to use attorneys, and how to combine both for optimal results.',
       readTime: '11 min read',
       category: 'Legal Technology',
@@ -194,16 +194,6 @@ const ResourcesPage: React.FC = () => {
                       Read Full Guide
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </button>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <Eye className="w-4 h-4 mr-1" />
-                        <span>2.1k views</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 mr-1 text-yellow-500" />
-                        <span>4.8</span>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

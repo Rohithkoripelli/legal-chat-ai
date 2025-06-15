@@ -630,9 +630,11 @@ import ResourcesPage from './pages/ResourcesPage';
                   </div>
                   <div className="hidden sm:block">
                     <h1 className="text-2xl font-bold text-gray-900">Legal AI</h1>
-                    <p className="text-sm text-gray-600">
-                      {isSignedIn ? 'Professional AI Legal Assistant' : 'Free AI Legal Document Analysis'}
-                    </p>
+                    {isSignedIn && (
+                      <p className="text-sm text-gray-600">
+                        Professional AI Legal Assistant
+                      </p>
+                    )}
                   </div>
                   <div className="sm:hidden">
                     <h1 className="text-xl font-bold text-gray-900">Legal AI</h1>
