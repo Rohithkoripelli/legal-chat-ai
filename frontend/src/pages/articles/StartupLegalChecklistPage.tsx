@@ -4,6 +4,20 @@ import { DocumentHead } from '../../components/SEO/DocumentHead';
 import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield } from 'lucide-react';
 
 const StartupLegalChecklistPage: React.FC = () => {
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      const progressBar = document.getElementById('reading-progress');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const handleDownloadPDF = () => {
     const element = document.createElement('a');
     const file = new Blob([`The Complete Legal Checklist for Startups in 2025: AI-Powered Legal Compliance
@@ -106,9 +120,14 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
           </div>
         </div>
 
+        {/* Reading Progress Bar */}
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+          <div className="h-full bg-gradient-to-r from-green-500 to-blue-600 transition-all duration-300" style={{width: '0%'}} id="reading-progress"></div>
+        </div>
+
         {/* Article Content */}
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <article className="prose prose-lg max-w-none">
+          <article className="prose prose-lg prose-green max-w-none">
             
             {/* 8-Phase Overview */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">

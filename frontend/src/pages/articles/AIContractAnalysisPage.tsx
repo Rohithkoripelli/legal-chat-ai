@@ -1,9 +1,23 @@
 // src/pages/articles/AIContractAnalysisPage.tsx
 import React from 'react';
 import { DocumentHead } from '../../components/SEO/DocumentHead';
-import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, DollarSign, AlertTriangle } from 'lucide-react';
 
 const AIContractAnalysisPage: React.FC = () => {
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      const progressBar = document.getElementById('reading-progress');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const handleDownloadPDF = () => {
     // For now, we'll create a simple text-based PDF download
     // In production, you'd want to use a proper PDF generation library
@@ -108,9 +122,14 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
           </div>
         </div>
 
+        {/* Reading Progress Bar */}
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300" style={{width: '0%'}} id="reading-progress"></div>
+        </div>
+
         {/* Article Content */}
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <article className="prose prose-lg max-w-none">
+          <article className="prose prose-lg prose-blue max-w-none">
             
             {/* Table of Contents */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
@@ -147,76 +166,237 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>What is AI Contract Analysis?</h2>
-            <p>
-              AI contract analysis uses machine learning algorithms and natural language processing to automatically 
-              review, analyze, and extract key information from legal documents. Instead of spending hours manually 
-              combing through contracts, AI can identify risks, extract important terms, and flag potential issues in minutes.
-            </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                  <Brain className="w-6 h-6 text-blue-600" />
+                </div>
+                What is AI Contract Analysis?
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                AI contract analysis uses machine learning algorithms and natural language processing to automatically 
+                review, analyze, and extract key information from legal documents. Instead of spending hours manually 
+                combing through contracts, AI can identify risks, extract important terms, and flag potential issues in minutes.
+              </p>
+            </div>
 
-            <h3>How AI Contract Analysis Works</h3>
-            <p>Modern AI contract analysis tools like LegalAI use several sophisticated technologies:</p>
-            <ol>
-              <li><strong>Natural Language Processing (NLP)</strong>: Understands legal language and context</li>
-              <li><strong>Machine Learning</strong>: Learns from thousands of legal documents to identify patterns</li>
-              <li><strong>Risk Assessment Algorithms</strong>: Automatically scores contracts based on potential risks</li>
-              <li><strong>Data Extraction</strong>: Pulls out key terms, dates, obligations, and clauses</li>
-              <li><strong>Comparative Analysis</strong>: Compares contract terms against industry standards</li>
-            </ol>
+            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-8 mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">How AI Contract Analysis Works</h3>
+              <p className="text-gray-700 mb-6">Modern AI contract analysis tools like LegalAI use several sophisticated technologies:</p>
+              <div className="grid gap-4">
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-bold text-sm">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Natural Language Processing (NLP)</h4>
+                    <p className="text-gray-600 text-sm">Understands legal language and context</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-bold text-sm">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Machine Learning</h4>
+                    <p className="text-gray-600 text-sm">Learns from thousands of legal documents to identify patterns</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-bold text-sm">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Risk Assessment Algorithms</h4>
+                    <p className="text-gray-600 text-sm">Automatically scores contracts based on potential risks</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-bold text-sm">4</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Data Extraction</h4>
+                    <p className="text-gray-600 text-sm">Pulls out key terms, dates, obligations, and clauses</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 font-bold text-sm">5</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Comparative Analysis</h4>
+                    <p className="text-gray-600 text-sm">Compares contract terms against industry standards</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h2>Key Benefits of AI Contract Analysis</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Key Benefits of AI Contract Analysis</h2>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <Clock className="w-6 h-6 text-green-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Speed & Efficiency</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Traditional Method</span>
+                      <span className="text-sm font-bold text-red-600">2-8 hours</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">AI Analysis</span>
+                      <span className="text-sm font-bold text-green-600">2-5 minutes</span>
+                    </div>
+                    <div className="text-center p-3 bg-green-100 rounded-lg">
+                      <span className="text-sm font-bold text-green-800">95%+ time savings</span>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>1. Speed and Efficiency</h3>
-            <ul>
-              <li><strong>Traditional Method</strong>: 2-8 hours per contract</li>
-              <li><strong>AI Analysis</strong>: 2-5 minutes per contract</li>
-              <li><strong>Result</strong>: 95%+ time savings</li>
-            </ul>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <DollarSign className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Cost Reduction</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Legal Firm Review</span>
+                      <span className="text-sm font-bold text-red-600">$500-$5,000</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">AI Analysis</span>
+                      <span className="text-sm font-bold text-blue-600">$0-$50</span>
+                    </div>
+                    <div className="text-center p-3 bg-blue-100 rounded-lg">
+                      <span className="text-sm font-bold text-blue-800">90%+ cost savings</span>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>2. Cost Reduction</h3>
-            <ul>
-              <li><strong>Legal Firm Review</strong>: $500-$5,000 per contract</li>
-              <li><strong>AI Analysis</strong>: $0-$50 per contract (depending on complexity)</li>
-              <li><strong>Annual Savings</strong>: $50,000-$500,000+ for businesses with regular contract needs</li>
-            </ul>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                      <CheckCircle className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Consistency & Accuracy</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    AI doesn't get tired, distracted, or have bad days. It applies the same rigorous analysis to every 
+                    contract, ensuring consistent quality and reducing human error.
+                  </p>
+                </div>
 
-            <h3>3. Consistency and Accuracy</h3>
-            <p>
-              AI doesn't get tired, distracted, or have bad days. It applies the same rigorous analysis to every 
-              contract, ensuring consistent quality and reducing human error.
-            </p>
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                      <Clock className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">24/7 Availability</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    Need a contract reviewed at 2 AM? AI is always available, enabling faster business decisions and deal closures.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <h3>4. 24/7 Availability</h3>
-            <p>
-              Need a contract reviewed at 2 AM? AI is always available, enabling faster business decisions and deal closures.
-            </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">What AI Can Identify in Contracts</h2>
+              
+              <div className="grid lg:grid-cols-3 gap-6">
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Risk Assessment</h3>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span><strong>High-risk clauses</strong>: Unlimited liability, automatic renewals, broad indemnification</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span><strong>Compliance issues</strong>: Terms that violate regulations or company policies</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span><strong>Unfavorable terms</strong>: Below-market rates, excessive penalties, one-sided obligations</span>
+                    </li>
+                  </ul>
+                </div>
 
-            <h2>What AI Can Identify in Contracts</h2>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Key Information Extraction</h3>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Payment terms and schedules</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Termination clauses and notice periods</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Intellectual property rights</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Confidentiality requirements</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Performance obligations</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Dispute resolution mechanisms</span>
+                    </li>
+                  </ul>
+                </div>
 
-            <h3>Risk Assessment</h3>
-            <ul>
-              <li><strong>High-risk clauses</strong>: Unlimited liability, automatic renewals, broad indemnification</li>
-              <li><strong>Compliance issues</strong>: Terms that violate regulations or company policies</li>
-              <li><strong>Unfavorable terms</strong>: Below-market rates, excessive penalties, one-sided obligations</li>
-            </ul>
-
-            <h3>Key Information Extraction</h3>
-            <ul>
-              <li>Payment terms and schedules</li>
-              <li>Termination clauses and notice periods</li>
-              <li>Intellectual property rights</li>
-              <li>Confidentiality requirements</li>
-              <li>Performance obligations</li>
-              <li>Dispute resolution mechanisms</li>
-            </ul>
-
-            <h3>Financial Analysis</h3>
-            <ul>
-              <li>Total contract value calculations</li>
-              <li>Payment risk assessment</li>
-              <li>Revenue recognition implications</li>
-              <li>Cost analysis and budgeting impacts</li>
-            </ul>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Financial Analysis</h3>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Total contract value calculations</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Payment risk assessment</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Revenue recognition implications</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Cost analysis and budgeting impacts</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
             <h2>Common Use Cases for AI Contract Analysis</h2>
 

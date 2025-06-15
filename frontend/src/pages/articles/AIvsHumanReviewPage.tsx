@@ -4,6 +4,20 @@ import { DocumentHead } from '../../components/SEO/DocumentHead';
 import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Users, TrendingUp, DollarSign } from 'lucide-react';
 
 const AIvsHumanReviewPage: React.FC = () => {
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      const progressBar = document.getElementById('reading-progress');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const handleDownloadPDF = () => {
     const element = document.createElement('a');
     const file = new Blob([`AI vs Human Legal Review: Complete Comparison Guide 2025
@@ -105,9 +119,14 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
           </div>
         </div>
 
+        {/* Reading Progress Bar */}
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+          <div className="h-full bg-gradient-to-r from-indigo-500 to-blue-600 transition-all duration-300" style={{width: '0%'}} id="reading-progress"></div>
+        </div>
+
         {/* Article Content */}
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <article className="prose prose-lg max-w-none">
+          <article className="prose prose-lg prose-indigo max-w-none">
             
             {/* Comparison Overview */}
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6 mb-8">
@@ -144,24 +163,66 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>The Current State of Legal Document Review</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                  <FileText className="w-6 h-6 text-indigo-600" />
+                </div>
+                The Current State of Legal Document Review
+              </h2>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <Clock className="w-5 h-5 text-red-600 mr-2" />
+                    Time and Cost Issues
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Review time</span>
+                      <span className="text-sm font-bold text-red-600">3-8 hours</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Attorney rates</span>
+                      <span className="text-sm font-bold text-red-600">$200-$800+/hr</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Total cost</span>
+                      <span className="text-sm font-bold text-red-600">$1,500-$5,000</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">Turnaround</span>
+                      <span className="text-sm font-bold text-red-600">3-10 days</span>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>Traditional Legal Review Challenges</h3>
-            <p><strong>Time and Cost Issues</strong>:</p>
-            <ul>
-              <li>Average contract review time: 3-8 hours per document</li>
-              <li>Typical attorney hourly rates: $200-$800+ per hour</li>
-              <li>Standard contract review cost: $1,500-$5,000 per document</li>
-              <li>Turnaround time: 3-10 business days</li>
-            </ul>
-
-            <p><strong>Quality and Consistency Problems</strong>:</p>
-            <ul>
-              <li>Human fatigue affects accuracy after 2-3 hours</li>
-              <li>Different attorneys may interpret contracts differently</li>
-              <li>Rush jobs often result in overlooked issues</li>
-              <li>Junior attorneys may miss complex risks</li>
-            </ul>
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <AlertTriangle className="w-5 h-5 text-orange-600 mr-2" />
+                    Quality & Consistency Issues
+                  </h3>
+                  <ul className="space-y-3 text-sm text-gray-700">
+                    <li className="flex items-start p-3 bg-white rounded-lg">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Human fatigue affects accuracy after 2-3 hours</span>
+                    </li>
+                    <li className="flex items-start p-3 bg-white rounded-lg">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Different attorneys may interpret contracts differently</span>
+                    </li>
+                    <li className="flex items-start p-3 bg-white rounded-lg">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Rush jobs often result in overlooked issues</span>
+                    </li>
+                    <li className="flex items-start p-3 bg-white rounded-lg">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Junior attorneys may miss complex risks</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
             <h3>The AI Revolution in Legal Review</h3>
             <p><strong>Emerging Capabilities</strong>:</p>

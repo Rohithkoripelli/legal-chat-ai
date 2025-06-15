@@ -4,6 +4,20 @@ import { DocumentHead } from '../../components/SEO/DocumentHead';
 import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle } from 'lucide-react';
 
 const NDAAnalysisPage: React.FC = () => {
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      const progressBar = document.getElementById('reading-progress');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const handleDownloadPDF = () => {
     const element = document.createElement('a');
     const file = new Blob([`NDA Analysis Guide: AI-Powered Non-Disclosure Agreement Review
@@ -105,9 +119,14 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
           </div>
         </div>
 
+        {/* Reading Progress Bar */}
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+          <div className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style={{width: '0%'}} id="reading-progress"></div>
+        </div>
+
         {/* Article Content */}
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <article className="prose prose-lg max-w-none">
+          <article className="prose prose-lg prose-purple max-w-none">
             
             {/* Master NDA Analysis Overview */}
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
@@ -144,30 +163,76 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>What is an NDA and Why Does It Matter?</h2>
-            <p>
-              A Non-Disclosure Agreement (NDA), also called a confidentiality agreement, is a legal contract 
-              that establishes confidential relationships between parties. It ensures that information shared 
-              during business discussions, partnerships, or employment relationships remains private and protected.
-            </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                  <Shield className="w-6 h-6 text-purple-600" />
+                </div>
+                What is an NDA and Why Does It Matter?
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                A Non-Disclosure Agreement (NDA), also called a confidentiality agreement, is a legal contract 
+                that establishes confidential relationships between parties. It ensures that information shared 
+                during business discussions, partnerships, or employment relationships remains private and protected.
+              </p>
+            </div>
 
-            <h3>The Cost of Poor NDA Management</h3>
-            <p><strong>Business Risks Without Proper NDAs</strong>:</p>
-            <ul>
-              <li>Trade secret theft: Average loss of $12 million per incident</li>
-              <li>Competitive disadvantage from leaked strategies</li>
-              <li>Loss of patent eligibility for disclosed inventions</li>
-              <li>Damage to business relationships and reputation</li>
-              <li>Legal disputes and litigation costs</li>
-            </ul>
+            <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-8 mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <AlertTriangle className="w-8 h-8 text-red-600 mr-3" />
+                The Cost of Poor NDA Management
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-white rounded-lg p-6">
+                  <h4 className="font-bold text-red-900 mb-4">Business Risks Without Proper NDAs</h4>
+                  <ul className="space-y-3 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span><strong>Trade secret theft</strong>: Average loss of $12 million per incident</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Competitive disadvantage from leaked strategies</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Loss of patent eligibility for disclosed inventions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Damage to business relationships and reputation</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span>Legal disputes and litigation costs</span>
+                    </li>
+                  </ul>
+                </div>
 
-            <p><strong>Statistics That Matter</strong>:</p>
-            <ul>
-              <li>87% of businesses use NDAs regularly</li>
-              <li>Only 23% have their NDAs professionally reviewed</li>
-              <li>45% of trade secret theft occurs through former employees</li>
-              <li>Average cost of trade secret litigation: $750,000-$2.5 million</li>
-            </ul>
+                <div className="bg-white rounded-lg p-6">
+                  <h4 className="font-bold text-purple-900 mb-4">Statistics That Matter</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Use NDAs regularly</span>
+                      <span className="text-sm font-bold text-purple-600">87%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Professionally reviewed</span>
+                      <span className="text-sm font-bold text-red-600">23%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                      <span className="text-sm font-medium text-gray-700">Theft via ex-employees</span>
+                      <span className="text-sm font-bold text-orange-600">45%</span>
+                    </div>
+                    <div className="text-center p-3 bg-red-50 rounded-lg border border-red-200">
+                      <span className="text-xs text-gray-600">Avg. litigation cost</span><br>
+                      <span className="text-sm font-bold text-red-600">$750K-$2.5M</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <h2>Types of NDAs: Understanding Your Options</h2>
 
