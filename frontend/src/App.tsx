@@ -34,6 +34,12 @@
   import HelpPage from './pages/HelpPage';
 import ResourcesPage from './pages/ResourcesPage';
 
+// Import individual article pages
+import AIContractAnalysisPage from './pages/articles/AIContractAnalysisPage';
+import StartupLegalChecklistPage from './pages/articles/StartupLegalChecklistPage';
+import NDAAnalysisPage from './pages/articles/NDAAnalysisPage';
+import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
+
   type Page = 'landing' | 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
   // Feature data for navigation - KEEPING YOUR EXISTING STRUCTURE
@@ -880,6 +886,12 @@ import ResourcesPage from './pages/ResourcesPage';
             
             {/* Resources Page */}
             <Route path="/resources" element={<ResourcesPage />} />
+            
+            {/* Individual Article Pages */}
+            <Route path="/resources/ai-contract-analysis-guide" element={<AIContractAnalysisPage />} />
+            <Route path="/resources/startup-legal-checklist" element={<StartupLegalChecklistPage />} />
+            <Route path="/resources/nda-analysis-guide" element={<NDAAnalysisPage />} />
+            <Route path="/resources/ai-vs-human-legal-review" element={<AIvsHumanReviewPage />} />
 
             {/* Premium Routes - Show upgrade prompt for guests */}
             <Route 
