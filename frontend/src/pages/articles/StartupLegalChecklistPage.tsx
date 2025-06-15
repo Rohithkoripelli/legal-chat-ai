@@ -1,7 +1,7 @@
 // src/pages/articles/StartupLegalChecklistPage.tsx
 import React from 'react';
 import { DocumentHead } from '../../components/SEO/DocumentHead';
-import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle, Users } from 'lucide-react';
 
 const StartupLegalChecklistPage: React.FC = () => {
   React.useEffect(() => {
@@ -444,134 +444,416 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>Phase 2: Foundational Legal Documents</h2>
-
-            <h3>Operating Agreement (LLC) or Bylaws (Corporation)</h3>
-            
-            <p><strong>Why It's Critical</strong>:</p>
-            <ul>
-              <li>Defines ownership percentages and voting rights</li>
-              <li>Establishes management structure and decision-making processes</li>
-              <li>Prevents disputes between founders</li>
-              <li>Required by many banks and investors</li>
-            </ul>
-
-            <p><strong>Key Provisions to Include</strong>:</p>
-            <ul>
-              <li>Member/shareholder rights and responsibilities</li>
-              <li>Profit and loss distribution</li>
-              <li>Management structure and voting procedures</li>
-              <li>Transfer restrictions and buyout provisions</li>
-              <li>Dissolution procedures</li>
-            </ul>
-
-            <p><strong>Cost Comparison</strong>:</p>
-            <ul>
-              <li><strong>Attorney-drafted</strong>: $2,000-$5,000</li>
-              <li><strong>AI-assisted with legal review</strong>: $500-$1,500</li>
-              <li><strong>DIY templates</strong>: $50-$200 (higher risk)</li>
-            </ul>
-
-            <h3>Founders' Agreement</h3>
-            <p><strong>Essential Elements</strong>:</p>
-            <ul>
-              <li>Equity distribution and vesting schedules</li>
-              <li>Roles and responsibilities of each founder</li>
-              <li>Decision-making authority and dispute resolution</li>
-              <li>Intellectual property assignment</li>
-              <li>Confidentiality and non-compete provisions</li>
-              <li>Exit procedures and buyout terms</li>
-            </ul>
-
-            <h2>Phase 3: Intellectual Property Protection</h2>
-
-            <h3>Trademark Your Brand</h3>
-            <p><strong>What to Trademark</strong>:</p>
-            <ul>
-              <li>Business name and tagline</li>
-              <li>Logo and brand designs</li>
-              <li>Product names</li>
-              <li>Domain names (if distinctive)</li>
-            </ul>
-
-            <p><strong>Timeline and Costs</strong>:</p>
-            <ul>
-              <li><strong>Filing fee</strong>: $225-$400 per class</li>
-              <li><strong>Processing time</strong>: 8-12 months</li>
-              <li><strong>Attorney fees</strong>: $1,000-$2,000 (optional but recommended)</li>
-            </ul>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-              <p className="text-blue-800 font-medium">
-                🤖 AI Assistance: Use AI tools to conduct comprehensive trademark searches and assess registration likelihood before filing.
-              </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Phase 2:</span> Foundational Legal Documents
+              </h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <FileText className="w-6 h-6 text-blue-600" />
+                    </div>
+                    Operating Agreement (LLC) or Bylaws (Corporation)
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm font-medium text-blue-900 mb-4">🎯 Why It's Critical:</p>
+                      <div className="space-y-3">
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Defines ownership percentages and voting rights</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Establishes management structure and decision-making processes</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Prevents disputes between founders</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Required by many banks and investors</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-blue-900 mb-4">📋 Key Provisions to Include:</p>
+                      <div className="space-y-3">
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Member/shareholder rights and responsibilities</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Profit and loss distribution</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Management structure and voting procedures</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Transfer restrictions and buyout provisions</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Dissolution procedures</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <p className="text-sm font-medium text-blue-900 mb-4">💰 Cost Comparison:</p>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-red-800">Attorney-drafted</p>
+                          <p className="text-lg font-bold text-red-600">$2,000-$5,000</p>
+                          <p className="text-xs text-red-600">Premium quality</p>
+                        </div>
+                      </div>
+                      <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-yellow-800">AI-assisted + Review</p>
+                          <p className="text-lg font-bold text-yellow-600">$500-$1,500</p>
+                          <p className="text-xs text-yellow-600">Best value</p>
+                        </div>
+                      </div>
+                      <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                        <div className="text-center">
+                          <p className="text-sm font-bold text-orange-800">DIY templates</p>
+                          <p className="text-lg font-bold text-orange-600">$50-$200</p>
+                          <p className="text-xs text-orange-600">Higher risk</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <Users className="w-6 h-6 text-green-600" />
+                    </div>
+                    Founders' Agreement
+                  </h3>
+                  
+                  <p className="text-sm font-medium text-green-900 mb-4">🔑 Essential Elements:</p>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Equity distribution and vesting schedules</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Roles and responsibilities of each founder</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Decision-making authority and dispute resolution</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Intellectual property assignment</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Confidentiality and non-compete provisions</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Exit procedures and buyout terms</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <h3>Copyright Protection</h3>
-            <p><strong>Automatically Protected</strong>:</p>
-            <ul>
-              <li>Website content and marketing materials</li>
-              <li>Software code and documentation</li>
-              <li>Creative works and designs</li>
-              <li>Training materials and processes</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Phase 3:</span> Intellectual Property Protection
+              </h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                      <Shield className="w-6 h-6 text-purple-600" />
+                    </div>
+                    Trademark Your Brand
+                  </h3>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-purple-900 mb-4">™ What to Trademark:</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700 font-medium">Business name and tagline</span>
+                      </div>
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700 font-medium">Logo and brand designs</span>
+                      </div>
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700 font-medium">Product names</span>
+                      </div>
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700 font-medium">Domain names (if distinctive)</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-purple-900 mb-4">📅 Timeline and Costs:</p>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm font-medium text-gray-700">Filing fee</span>
+                        <span className="text-sm font-bold text-purple-600">$225-$400 per class</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm font-medium text-gray-700">Processing time</span>
+                        <span className="text-sm font-bold text-purple-600">8-12 months</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm font-medium text-gray-700">Attorney fees</span>
+                        <span className="text-sm font-bold text-purple-600">$1,000-$2,000</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 border border-blue-300">
+                    <p className="text-blue-800 font-medium text-sm">
+                      🤖 <strong>AI Assistance:</strong> Use AI tools to conduct comprehensive trademark searches and assess registration likelihood before filing.
+                    </p>
+                  </div>
+                </div>
 
-            <h2>Phase 4: Employment and HR Compliance</h2>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <FileText className="w-6 h-6 text-green-600" />
+                    </div>
+                    Copyright Protection
+                  </h3>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-green-900 mb-4">© Automatically Protected:</p>
+                    <div className="space-y-3">
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700 font-medium">Website content and marketing materials</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700 font-medium">Software code and documentation</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700 font-medium">Creative works and designs</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700 font-medium">Training materials and processes</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-100 rounded-lg p-4 border border-green-300">
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-green-800 mb-1">✨ Automatic Protection</p>
+                      <p className="text-xs text-green-700">No registration required - protection starts immediately upon creation</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>Employment Law Compliance</h3>
-            <p><strong>Required Policies</strong>:</p>
-            <ul>
-              <li>Equal employment opportunity (EEO) policy</li>
-              <li>Anti-harassment and discrimination policy</li>
-              <li>Workplace safety procedures (OSHA compliance)</li>
-              <li>Leave policies (FMLA, state-specific requirements)</li>
-              <li>Social media and technology use policies</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">Phase 4:</span> Employment and HR Compliance
+              </h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6 border border-red-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                      <Shield className="w-6 h-6 text-red-600" />
+                    </div>
+                    Employment Law Compliance
+                  </h3>
+                  
+                  <p className="text-sm font-medium text-red-900 mb-4">📜 Required Policies:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Equal employment opportunity (EEO) policy</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Anti-harassment and discrimination policy</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Workplace safety procedures (OSHA compliance)</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Leave policies (FMLA, state-specific requirements)</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Social media and technology use policies</span>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>Employee Benefits and Equity</h3>
-            <p><strong>Common Benefits to Consider</strong>:</p>
-            <ul>
-              <li>Health insurance options</li>
-              <li>Retirement plans (401k, Simple IRA)</li>
-              <li>Flexible work arrangements</li>
-              <li>Professional development budgets</li>
-              <li>Employee stock option plans (ESOPs)</li>
-            </ul>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <Users className="w-6 h-6 text-blue-600" />
+                    </div>
+                    Employee Benefits and Equity
+                  </h3>
+                  
+                  <p className="text-sm font-medium text-blue-900 mb-4">🎁 Common Benefits to Consider:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Health insurance options</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Retirement plans (401k, Simple IRA)</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Flexible work arrangements</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Professional development budgets</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Employee stock option plans (ESOPs)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h2>Using AI to Streamline Legal Compliance</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Using AI to Streamline</span> Legal Compliance
+              </h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8 mb-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <Brain className="w-6 h-6 text-green-600" />
+                    </div>
+                    AI-Powered Document Creation
+                  </h3>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-green-900 mb-4">✨ Benefits of AI Legal Tools:</p>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                        <span className="text-sm font-medium text-gray-700">Speed</span>
+                        <span className="text-sm font-bold text-green-600">Minutes vs Hours</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                        <span className="text-sm font-medium text-gray-700">Cost</span>
+                        <span className="text-sm font-bold text-green-600">80-90% Less</span>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg border border-green-200">
+                        <span className="text-sm font-medium text-gray-700">Built on thousands of legal templates</span>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg border border-green-200">
+                        <span className="text-sm font-medium text-gray-700">Tailored to your specific business needs</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium text-green-900 mb-4">🛠️ What AI Can Help With:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Terms of service and privacy policies</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Employment agreements and handbooks</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Customer contracts and NDAs</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Vendor agreements and purchase orders</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Corporate resolutions and board minutes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>AI-Powered Document Creation</h3>
-            <p><strong>Benefits of AI Legal Tools</strong>:</p>
-            <ul>
-              <li><strong>Speed</strong>: Generate contracts in minutes, not hours</li>
-              <li><strong>Cost</strong>: 80-90% less expensive than attorney drafting</li>
-              <li><strong>Accuracy</strong>: Built on thousands of legal document templates</li>
-              <li><strong>Customization</strong>: Tailored to your specific business needs</li>
-            </ul>
-
-            <p><strong>What AI Can Help With</strong>:</p>
-            <ul>
-              <li>Terms of service and privacy policies</li>
-              <li>Employment agreements and handbooks</li>
-              <li>Customer contracts and NDAs</li>
-              <li>Vendor agreements and purchase orders</li>
-              <li>Corporate resolutions and board minutes</li>
-            </ul>
-
-            <h3>When to Still Use Attorneys</h3>
-            <p><strong>Complex Matters Requiring Legal Counsel</strong>:</p>
-            <ul>
-              <li>Raising venture capital or angel investment</li>
-              <li>Mergers, acquisitions, and strategic partnerships</li>
-              <li>Intellectual property disputes and litigation</li>
-              <li>Regulatory investigations and compliance issues</li>
-              <li>Complex employment law matters</li>
-            </ul>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 my-6">
-              <p className="text-yellow-800 font-medium">
-                ⚖️ Best Practice: Use AI for routine documents and attorney review for complex, high-stakes matters.
-              </p>
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                      <Users className="w-6 h-6 text-orange-600" />
+                    </div>
+                    When to Still Use Attorneys
+                  </h3>
+                  
+                  <p className="text-sm font-medium text-orange-900 mb-4">⚖️ Complex Matters Requiring Legal Counsel:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Raising venture capital or angel investment</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Mergers, acquisitions, and strategic partnerships</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Intellectual property disputes and litigation</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Regulatory investigations and compliance issues</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Complex employment law matters</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg p-6 border border-yellow-300">
+                <p className="text-yellow-800 font-medium text-center">
+                  ⚖️ <strong>Best Practice:</strong> Use AI for routine documents and attorney review for complex, high-stakes matters.
+                </p>
+              </div>
             </div>
 
             <h2>Cost-Effective Legal Strategies for Startups</h2>

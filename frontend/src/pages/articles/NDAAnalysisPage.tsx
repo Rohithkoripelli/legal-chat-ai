@@ -415,58 +415,177 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h3>Permitted Uses and Restrictions</h3>
-            <p><strong>Clearly Define Permitted Uses</strong>:</p>
-            <ul>
-              <li>Evaluation for potential business relationship</li>
-              <li>Performance of specific contracted services</li>
-              <li>Due diligence for investment or acquisition</li>
-              <li>Development of joint products or services</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Permitted Uses and Restrictions</h3>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                    Clearly Define Permitted Uses
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Evaluation for potential business relationship</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Performance of specific contracted services</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Due diligence for investment or acquisition</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Development of joint products or services</span>
+                    </div>
+                  </div>
+                </div>
 
-            <p><strong>Common Restrictions</strong>:</p>
-            <ul>
-              <li>No reverse engineering or decompilation</li>
-              <li>No disclosure to third parties without consent</li>
-              <li>No use for competitive advantage</li>
-              <li>No independent development of similar solutions</li>
-            </ul>
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6 border border-red-200">
+                  <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                    </div>
+                    Common Restrictions
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">No reverse engineering or decompilation</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">No disclosure to third parties without consent</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">No use for competitive advantage</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">No independent development of similar solutions</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h2>Red Flags: Problematic NDA Terms</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="text-red-600">🚩</span> Red Flags: Problematic NDA Terms
+              </h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-orange-600" />
+                    </div>
+                    ⚠️ Overly Broad Definitions
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm font-medium text-orange-900 mb-4">🔍 Warning Signs:</p>
+                      <div className="space-y-3">
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">"All information disclosed" language</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">No specific categories or examples</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Unlimited scope and duration</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Vague or ambiguous terminology</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-red-900 mb-4">💥 Why It's Problematic:</p>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                          <span className="text-sm text-red-800 font-medium">May be unenforceable in court</span>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                          <span className="text-sm text-red-800 font-medium">Creates unnecessary legal risk</span>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                          <span className="text-sm text-red-800 font-medium">Inhibits normal business operations</span>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                          <span className="text-sm text-red-800 font-medium">Damages business relationships</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>⚠️ Overly Broad Definitions</h3>
-            <p><strong>Warning Signs</strong>:</p>
-            <ul>
-              <li>"All information disclosed" language</li>
-              <li>No specific categories or examples</li>
-              <li>Unlimited scope and duration</li>
-              <li>Vague or ambiguous terminology</li>
-            </ul>
-
-            <p><strong>Why It's Problematic</strong>:</p>
-            <ul>
-              <li>May be unenforceable in court</li>
-              <li>Creates unnecessary legal risk</li>
-              <li>Inhibits normal business operations</li>
-              <li>Damages business relationships</li>
-            </ul>
-
-            <h3>⚠️ Unreasonable Restrictions</h3>
-            <p><strong>Problematic Clauses</strong>:</p>
-            <ul>
-              <li>Perpetual non-compete provisions</li>
-              <li>Restrictions on hiring or recruiting</li>
-              <li>Overly broad non-solicitation terms</li>
-              <li>Unlimited liability and damages</li>
-            </ul>
-
-            <p><strong>Business Impact</strong>:</p>
-            <ul>
-              <li>Limits future business opportunities</li>
-              <li>Restricts talent acquisition</li>
-              <li>Creates ongoing legal exposure</li>
-              <li>May violate employment laws</li>
-            </ul>
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6 border border-red-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    ⚠️ Unreasonable Restrictions
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm font-medium text-red-900 mb-4">📋 Problematic Clauses:</p>
+                      <div className="space-y-3">
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Perpetual non-compete provisions</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Restrictions on hiring or recruiting</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Overly broad non-solicitation terms</span>
+                        </div>
+                        <div className="flex items-start p-3 bg-white rounded-lg border border-red-200">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700">Unlimited liability and damages</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-red-900 mb-4">🏢 Business Impact:</p>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                          <span className="text-sm text-red-800 font-medium">Limits future business opportunities</span>
+                        </div>
+                        <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                          <span className="text-sm text-red-800 font-medium">Restricts talent acquisition</span>
+                        </div>
+                        <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                          <span className="text-sm text-red-800 font-medium">Creates ongoing legal exposure</span>
+                        </div>
+                        <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                          <span className="text-sm text-red-800 font-medium">May violate employment laws</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <h2>AI-Powered NDA Analysis: What to Look For</h2>
 
