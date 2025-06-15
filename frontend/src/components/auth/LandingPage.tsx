@@ -1103,7 +1103,7 @@ const LandingPage: React.FC<{
                   {/* CTA Buttons - Responsive Stack */}
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
                     <button 
-                      className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center min-w-0"
                       onClick={() => {
                         // Check if guest documents exist
                         const guestDocs = sessionStorage.getItem('guestDocuments');
@@ -1120,7 +1120,7 @@ const LandingPage: React.FC<{
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </button>
                     <button 
-                      className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
                       onClick={() => {
                         // Check if guest documents exist
                         const guestDocs = sessionStorage.getItem('guestDocuments');
@@ -1136,7 +1136,7 @@ const LandingPage: React.FC<{
                       <span className="truncate">Legal Documents Analysis</span>
                     </button>
                     <button 
-                      className="w-full sm:w-auto bg-green-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg text-sm sm:text-lg font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      className="w-full sm:w-auto bg-green-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center min-w-0"
                       onClick={() => window.location.href = '/create-document'}
                     >
                       <span className="truncate">AI Document Generator</span>
@@ -1473,14 +1473,14 @@ const LandingPage: React.FC<{
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
-                className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                className="bg-white text-blue-600 px-6 py-3 rounded-lg text-base font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
                 onClick={() => window.location.href = '/documents'}
               >
                 Start Free Analysis - No Signup
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
               <button 
-                className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
+                className="bg-green-600 text-white px-6 py-3 rounded-lg text-base font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
                 onClick={onSignUp || (() => window.location.href = '/sign-up')}
               >
                 Create Free Account

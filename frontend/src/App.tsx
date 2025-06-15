@@ -1,7 +1,7 @@
   // frontend/src/App.tsx - UPDATED WITH REACT ROUTER WHILE PRESERVING EXISTING FUNCTIONALITY
   import React, { useState, useEffect } from 'react';
   import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-  import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain, Menu, X, Home, CheckCircle } from 'lucide-react';
+  import { FileText, MessageSquare, AlertTriangle, BarChart3, ClipboardList, Star, Users, Crown, ArrowRight, Brain, Menu, X, Home, CheckCircle, BookOpen } from 'lucide-react';
   import { Analytics } from '@vercel/analytics/react';
   import { useClerkAuth } from './hooks/useClerk';
   import LandingPage from './components/auth/LandingPage';
@@ -32,6 +32,7 @@
   import StartupLegalDocumentsPage from './pages/StartupLegalDocumentsPage';
   import FreeLegalAIPage from './pages/FreeLegalAIPage';
   import HelpPage from './pages/HelpPage';
+import ResourcesPage from './pages/ResourcesPage';
 
   type Page = 'landing' | 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
@@ -113,6 +114,7 @@
       { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn, showOnlyForGuests: true },
       { label: 'Contract Analysis', path: '/contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: false, isPremium: false, showOnlyForSignedIn: true },
+      { label: 'Resources', path: '/resources', icon: <BookOpen className="h-4 w-4" />, guestAllowed: true, isPremium: false },
       { label: 'Dashboard', path: '/dashboard', icon: <BarChart3 className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
       { label: 'Generator', path: '/create-document', icon: <ClipboardList className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
       { label: 'Premium', path: '/premium', icon: <Crown className="h-5 w-5" />, guestAllowed: true, isPremium: true, showOnlyForGuests: true }
@@ -169,12 +171,12 @@
                       }
                       onClose();
                     }}
-                    className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors group"
+                    className="w-full flex items-center space-x-3 px-4 py-2.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors group"
                   >
                     <span className="text-gray-500 group-hover:text-blue-600 transition-colors">
                       {item.icon}
                     </span>
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium text-sm">{item.label}</span>
                     {!isSignedIn && (item.label === 'Documents' || item.label === 'AI Chat' || item.label === 'Contract Analysis') && (
                       <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                         FREE
@@ -627,7 +629,7 @@
                     <FileText className="h-7 w-7 text-white" />
                   </div>
                   <div className="hidden sm:block">
-                    <h1 className="text-2xl font-bold text-gray-900">Legal Chat AI</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Legal AI</h1>
                     <p className="text-sm text-gray-600">
                       {isSignedIn ? 'Professional AI Legal Assistant' : 'Free AI Legal Document Analysis'}
                     </p>
@@ -710,6 +712,23 @@
                     </span>
                   </button>
                 ))}
+
+                {/* Resources button for all users */}
+                <button
+                  onClick={() => navigate('/resources')}
+                  className={`
+                    flex items-center space-x-1 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                    ${location.pathname === '/resources'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }
+                  `}
+                  title="Legal resources and guides"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  <span className="hidden xl:inline">Resources</span>
+                  <span className="xl:hidden">Info</span>
+                </button>
 
                 {/* Premium features dropdown for guests to save space */}
                 {!isSignedIn && (
@@ -856,6 +875,9 @@
             <Route path="/startup-legal-documents" element={<StartupLegalDocumentsPage />} />
             <Route path="/free-legal-ai" element={<FreeLegalAIPage />} />
             <Route path="/help" element={<HelpPage />} />
+            
+            {/* Resources Page */}
+            <Route path="/resources" element={<ResourcesPage />} />
 
             {/* Premium Routes - Show upgrade prompt for guests */}
             <Route 
@@ -938,7 +960,7 @@
                 <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                   <FileText className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-lg font-semibold text-gray-900">Legal Chat AI</span>
+                <span className="text-lg font-semibold text-gray-900">Legal AI</span>
               </div>
               <p className="text-gray-600 mb-4">
                 {isSignedIn
