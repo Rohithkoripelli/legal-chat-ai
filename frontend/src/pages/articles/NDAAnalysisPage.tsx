@@ -234,71 +234,185 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>Types of NDAs: Understanding Your Options</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Types of NDAs: Understanding Your Options</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <div className="flex items-start mb-6">
+                    <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <span className="text-white font-bold text-lg">1</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Unilateral (One-Way) NDA</h3>
+                      <p className="text-sm text-gray-600 mb-4">Single direction information sharing</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-blue-900 mb-3">📋 When to Use:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-blue-200">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Interviewing potential employees</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-blue-200">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Discussions with potential investors</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-blue-200">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Vendor evaluations and RFP processes</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-blue-200">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Customer demonstrations of proprietary technology</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-blue-900 mb-3">⚡ Key Characteristics:</p>
+                    <div className="space-y-2">
+                      <div className="p-2 bg-white rounded-lg border border-blue-200">
+                        <span className="text-sm text-gray-700">• Only one party discloses confidential information</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-blue-200">
+                        <span className="text-sm text-gray-700">• Simpler structure and terms</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-blue-200">
+                        <span className="text-sm text-gray-700">• Easier to negotiate and implement</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-blue-200">
+                        <span className="text-sm text-gray-700">• Lower risk for the disclosing party</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 border border-blue-300">
+                    <p className="text-blue-800 font-medium text-sm">
+                      📝 <strong>Example:</strong> A startup pitching to potential investors would use a unilateral NDA to protect their business plan and financial projections.
+                    </p>
+                  </div>
+                </div>
 
-            <h3>1. Unilateral (One-Way) NDA</h3>
-            <p><strong>When to Use</strong>:</p>
-            <ul>
-              <li>Interviewing potential employees</li>
-              <li>Discussions with potential investors</li>
-              <li>Vendor evaluations and RFP processes</li>
-              <li>Customer demonstrations of proprietary technology</li>
-            </ul>
-
-            <p><strong>Key Characteristics</strong>:</p>
-            <ul>
-              <li>Only one party discloses confidential information</li>
-              <li>Simpler structure and terms</li>
-              <li>Easier to negotiate and implement</li>
-              <li>Lower risk for the disclosing party</li>
-            </ul>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-              <p className="text-blue-800 font-medium">
-                📝 Example Scenario: A startup pitching to potential investors would use a unilateral NDA to protect their business plan and financial projections.
-              </p>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <div className="flex items-start mb-6">
+                    <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <span className="text-white font-bold text-lg">2</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Bilateral (Mutual) NDA</h3>
+                      <p className="text-sm text-gray-600 mb-4">Two-way information exchange</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-purple-900 mb-3">📋 When to Use:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Joint ventures and partnerships</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Merger and acquisition discussions</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Technology licensing negotiations</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-white rounded-lg border border-purple-200">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Strategic alliance formations</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium text-purple-900 mb-3">⚡ Key Characteristics:</p>
+                    <div className="space-y-2">
+                      <div className="p-2 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm text-gray-700">• Both parties exchange confidential information</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm text-gray-700">• More complex terms and obligations</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm text-gray-700">• Requires careful balance of interests</span>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-purple-200">
+                        <span className="text-sm text-gray-700">• Higher negotiation complexity</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <h3>2. Bilateral (Mutual) NDA</h3>
-            <p><strong>When to Use</strong>:</p>
-            <ul>
-              <li>Joint ventures and partnerships</li>
-              <li>Merger and acquisition discussions</li>
-              <li>Technology licensing negotiations</li>
-              <li>Strategic alliance formations</li>
-            </ul>
-
-            <p><strong>Key Characteristics</strong>:</p>
-            <ul>
-              <li>Both parties exchange confidential information</li>
-              <li>More complex terms and obligations</li>
-              <li>Requires careful balance of interests</li>
-              <li>Higher negotiation complexity</li>
-            </ul>
-
-            <h2>Critical Elements of an Effective NDA</h2>
-
-            <h3>Definition of Confidential Information</h3>
-            <p><strong>Comprehensive Definition Should Include</strong>:</p>
-            <ul>
-              <li>Technical data, algorithms, and source code</li>
-              <li>Business plans, strategies, and financial information</li>
-              <li>Customer lists, pricing, and market research</li>
-              <li>Personnel information and organizational charts</li>
-              <li>Any information marked as "confidential" or "proprietary"</li>
-            </ul>
-
-            <p><strong>Common Pitfalls to Avoid</strong>:</p>
-            <ul>
-              <li><strong>Too broad</strong>: "All information exchanged" may be unenforceable</li>
-              <li><strong>Too narrow</strong>: May leave important information unprotected</li>
-              <li><strong>Vague language</strong>: Unclear definitions lead to disputes</li>
-            </ul>
-
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 my-6">
-              <p className="text-green-800 font-medium">
-                🤖 AI Analysis Tip: Use AI tools to compare your confidentiality definitions against industry standards and identify potential gaps or overreach.
-              </p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Critical Elements of an Effective NDA</h2>
+              
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                    <Shield className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  Definition of Confidential Information
+                </h3>
+                
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm font-medium text-indigo-900 mb-4">✅ Comprehensive Definition Should Include:</p>
+                    <div className="space-y-3">
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-indigo-200">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Technical data, algorithms, and source code</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-indigo-200">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Business plans, strategies, and financial information</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-indigo-200">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Customer lists, pricing, and market research</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-indigo-200">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Personnel information and organizational charts</span>
+                      </div>
+                      <div className="flex items-start p-3 bg-white rounded-lg border border-indigo-200">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Any information marked as "confidential" or "proprietary"</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium text-red-900 mb-4">⚠️ Common Pitfalls to Avoid:</p>
+                    <div className="space-y-3">
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <p className="text-sm font-bold text-red-800 mb-1">Too Broad</p>
+                        <p className="text-xs text-red-700">"All information exchanged" may be unenforceable</p>
+                      </div>
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <p className="text-sm font-bold text-red-800 mb-1">Too Narrow</p>
+                        <p className="text-xs text-red-700">May leave important information unprotected</p>
+                      </div>
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <p className="text-sm font-bold text-red-800 mb-1">Vague Language</p>
+                        <p className="text-xs text-red-700">Unclear definitions lead to disputes</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-4 mt-6 border border-green-300">
+                  <p className="text-green-800 font-medium text-sm">
+                    🤖 <strong>AI Analysis Tip:</strong> Use AI tools to compare your confidentiality definitions against industry standards and identify potential gaps or overreach.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <h3>Permitted Uses and Restrictions</h3>

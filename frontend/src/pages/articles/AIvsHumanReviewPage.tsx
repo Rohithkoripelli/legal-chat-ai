@@ -345,53 +345,141 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>When to Use AI vs Human Review</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">When to Use AI vs Human Review</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                    </div>
+                    ✅ When AI is the Better Choice
+                  </h3>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-blue-900 mb-3">🚀 High-Volume, Routine Reviews</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">Processing 100+ vendor agreements monthly</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
+                          <span className="text-gray-700">Consistent quality, immediate results, cost-effective</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">SaaS company reviewing standard customer agreements</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-blue-900 mb-3">🔍 Initial Risk Assessment</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">Quick evaluation before detailed human review</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
+                          <span className="text-gray-700">Rapid identification of high-risk documents</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">M&A due diligence document triage</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-blue-900 mb-3">🛡️ Compliance Monitoring</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">Ensuring contracts meet regulatory requirements</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
+                          <span className="text-gray-700">Comprehensive, up-to-date compliance checking</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">Healthcare company ensuring HIPAA compliance</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>✅ When AI is the Better Choice</h3>
-
-            <h4>High-Volume, Routine Reviews</h4>
-            <ul>
-              <li><strong>Scenario</strong>: Processing 100+ vendor agreements monthly</li>
-              <li><strong>Why AI</strong>: Consistent quality, immediate results, cost-effective</li>
-              <li><strong>Example</strong>: SaaS company reviewing standard customer agreements</li>
-            </ul>
-
-            <h4>Initial Risk Assessment</h4>
-            <ul>
-              <li><strong>Scenario</strong>: Quick evaluation before detailed human review</li>
-              <li><strong>Why AI</strong>: Rapid identification of high-risk documents</li>
-              <li><strong>Example</strong>: M&A due diligence document triage</li>
-            </ul>
-
-            <h4>Compliance Monitoring</h4>
-            <ul>
-              <li><strong>Scenario</strong>: Ensuring contracts meet regulatory requirements</li>
-              <li><strong>Why AI</strong>: Comprehensive, up-to-date compliance checking</li>
-              <li><strong>Example</strong>: Healthcare company ensuring HIPAA compliance</li>
-            </ul>
-
-            <h3>✅ When Human Review is Essential</h3>
-
-            <h4>Complex, High-Stakes Negotiations</h4>
-            <ul>
-              <li><strong>Scenario</strong>: $50M+ deals with strategic implications</li>
-              <li><strong>Why Human</strong>: Strategic thinking and relationship management</li>
-              <li><strong>Example</strong>: Major acquisition or joint venture agreements</li>
-            </ul>
-
-            <h4>Novel Legal Issues</h4>
-            <ul>
-              <li><strong>Scenario</strong>: First-of-kind transactions or emerging legal areas</li>
-              <li><strong>Why Human</strong>: Creative legal analysis and precedent research</li>
-              <li><strong>Example</strong>: Cryptocurrency or blockchain technology agreements</li>
-            </ul>
-
-            <h4>Relationship-Critical Contracts</h4>
-            <ul>
-              <li><strong>Scenario</strong>: Key partnerships requiring delicate negotiation</li>
-              <li><strong>Why Human</strong>: Relationship dynamics and communication skills</li>
-              <li><strong>Example</strong>: Strategic partnership with major customer</li>
-            </ul>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <Users className="w-5 h-5 text-green-600" />
+                    </div>
+                    ✅ When Human Review is Essential
+                  </h3>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                      <h4 className="font-bold text-green-900 mb-3">🏆 Complex, High-Stakes Negotiations</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">$50M+ deals with strategic implications</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
+                          <span className="text-gray-700">Strategic thinking and relationship management</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">Major acquisition or joint venture agreements</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                      <h4 className="font-bold text-green-900 mb-3">🔥 Novel Legal Issues</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">First-of-kind transactions or emerging legal areas</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
+                          <span className="text-gray-700">Creative legal analysis and precedent research</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">Cryptocurrency or blockchain technology agreements</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                      <h4 className="font-bold text-green-900 mb-3">🤝 Relationship-Critical Contracts</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
+                          <span className="text-gray-700">Key partnerships requiring delicate negotiation</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
+                          <span className="text-gray-700">Relationship dynamics and communication skills</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
+                          <span className="text-gray-700">Strategic partnership with major customer</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <h2>The Hybrid Approach: Best of Both Worlds</h2>
 

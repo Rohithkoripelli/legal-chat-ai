@@ -1,7 +1,7 @@
 // src/pages/articles/StartupLegalChecklistPage.tsx
 import React from 'react';
 import { DocumentHead } from '../../components/SEO/DocumentHead';
-import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield } from 'lucide-react';
+import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle } from 'lucide-react';
 
 const StartupLegalChecklistPage: React.FC = () => {
   React.useEffect(() => {
@@ -172,78 +172,277 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>Why Legal Compliance Matters for Startups</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Why Legal Compliance Matters for Startups</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6 border border-red-200">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">The Cost of Getting It Wrong</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Average legal dispute cost</span>
+                        <span className="text-sm font-bold text-red-600">$45K-$150K</span>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Regulatory penalty range</span>
+                        <span className="text-sm font-bold text-red-600">$5K-$500K+</span>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Time lost to legal issues</span>
+                        <span className="text-sm font-bold text-red-600">3-6 months</span>
+                      </div>
+                    </div>
+                    <div className="bg-red-100 rounded-lg p-4 border border-red-300">
+                      <div className="text-center">
+                        <p className="text-xs text-red-700 mb-1">Investor Due Diligence</p>
+                        <p className="text-lg font-bold text-red-800">73% cite legal compliance as top factor</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>The Cost of Getting It Wrong</h3>
-            <ul>
-              <li><strong>Average legal dispute cost</strong>: $45,000-$150,000</li>
-              <li><strong>Regulatory penalty range</strong>: $5,000-$500,000+</li>
-              <li><strong>Time lost to legal issues</strong>: 3-6 months of business operations</li>
-              <li><strong>Investor concerns</strong>: 73% of investors cite legal compliance as a top due diligence factor</li>
-            </ul>
-
-            <h3>The Benefits of Getting It Right</h3>
-            <ul>
-              <li>Attract investors with confidence</li>
-              <li>Protect personal assets</li>
-              <li>Avoid costly legal disputes</li>
-              <li>Scale business operations smoothly</li>
-              <li>Build customer and partner trust</li>
-            </ul>
-
-            <h2>Phase 1: Business Formation and Structure</h2>
-
-            <h3>Choose Your Business Entity</h3>
-
-            <h4>LLC (Limited Liability Company)</h4>
-            <ul>
-              <li><strong>Best for</strong>: Solo founders, service businesses, simple structures</li>
-              <li><strong>Pros</strong>: Simple management, tax flexibility, personal liability protection</li>
-              <li><strong>Cons</strong>: Limited investment options, self-employment taxes</li>
-              <li><strong>Cost</strong>: $50-$500 state filing fee</li>
-            </ul>
-
-            <h4>Corporation (C-Corp)</h4>
-            <ul>
-              <li><strong>Best for</strong>: Venture-backed startups, multiple founders, equity compensation</li>
-              <li><strong>Pros</strong>: Investor-friendly, stock options, perpetual existence</li>
-              <li><strong>Cons</strong>: Double taxation, complex compliance requirements</li>
-              <li><strong>Cost</strong>: $100-$800 state filing fee + ongoing compliance costs</li>
-            </ul>
-
-            <h4>S-Corporation</h4>
-            <ul>
-              <li><strong>Best for</strong>: Small profitable businesses, avoiding self-employment taxes</li>
-              <li><strong>Pros</strong>: Pass-through taxation, salary savings</li>
-              <li><strong>Cons</strong>: Ownership restrictions, limited to 100 shareholders</li>
-              <li><strong>Cost</strong>: $100-$800 filing fee + tax elections</li>
-            </ul>
-
-            <h3>Register Your Business Name</h3>
-            <p><strong>Steps to Complete</strong>:</p>
-            <ol>
-              <li><strong>Check name availability</strong> with your state's business registry</li>
-              <li><strong>Conduct trademark search</strong> using USPTO database</li>
-              <li><strong>Register domain name</strong> and social media handles</li>
-              <li><strong>File Articles of Incorporation/Organization</strong></li>
-              <li><strong>Consider trademark registration</strong> ($225-$400 per class)</li>
-            </ol>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-              <p className="text-blue-800 font-medium">
-                💡 Pro Tip: Use AI legal tools to quickly search for potential naming conflicts and trademark issues across multiple databases.
-              </p>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">The Benefits of Getting It Right</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Attract investors with confidence</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Protect personal assets</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Avoid costly legal disputes</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Scale business operations smoothly</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700 font-medium">Build customer and partner trust</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <h3>Obtain Required Licenses and Permits</h3>
-            <p><strong>Common Requirements</strong>:</p>
-            <ul>
-              <li>Business license (city/county level)</li>
-              <li>Professional licenses (if applicable)</li>
-              <li>Industry-specific permits</li>
-              <li>Sales tax permit (if selling products)</li>
-              <li>Employer Identification Number (EIN) from IRS</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">Phase 1:</span> Business Formation and Structure
+              </h2>
+              
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Business Entity</h3>
+              
+              <div className="grid gap-6">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <div className="flex items-start mb-4">
+                    <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <Shield className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">LLC (Limited Liability Company)</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="bg-white rounded-lg p-4 border border-blue-200">
+                          <p className="text-sm font-medium text-blue-900 mb-2">✅ Best For</p>
+                          <p className="text-sm text-gray-700">Solo founders, service businesses, simple structures</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-blue-200">
+                          <p className="text-sm font-medium text-green-700 mb-2">✅ Pros</p>
+                          <p className="text-sm text-gray-700">Simple management, tax flexibility, personal liability protection</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-blue-200">
+                          <p className="text-sm font-medium text-red-700 mb-2">⚠️ Cons</p>
+                          <p className="text-sm text-gray-700">Limited investment options, self-employment taxes</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-blue-200">
+                          <p className="text-sm font-medium text-purple-700 mb-2">💰 Cost</p>
+                          <p className="text-sm text-gray-700">$50-$500 state filing fee</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <div className="flex items-start mb-4">
+                    <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">Corporation (C-Corp)</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="bg-white rounded-lg p-4 border border-purple-200">
+                          <p className="text-sm font-medium text-purple-900 mb-2">✅ Best For</p>
+                          <p className="text-sm text-gray-700">Venture-backed startups, multiple founders, equity compensation</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-purple-200">
+                          <p className="text-sm font-medium text-green-700 mb-2">✅ Pros</p>
+                          <p className="text-sm text-gray-700">Investor-friendly, stock options, perpetual existence</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-purple-200">
+                          <p className="text-sm font-medium text-red-700 mb-2">⚠️ Cons</p>
+                          <p className="text-sm text-gray-700">Double taxation, complex compliance requirements</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-purple-200">
+                          <p className="text-sm font-medium text-purple-700 mb-2">💰 Cost</p>
+                          <p className="text-sm text-gray-700">$100-$800 state filing fee + ongoing compliance costs</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <div className="flex items-start mb-4">
+                    <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">S-Corporation</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="bg-white rounded-lg p-4 border border-green-200">
+                          <p className="text-sm font-medium text-green-900 mb-2">✅ Best For</p>
+                          <p className="text-sm text-gray-700">Small profitable businesses, avoiding self-employment taxes</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-green-200">
+                          <p className="text-sm font-medium text-green-700 mb-2">✅ Pros</p>
+                          <p className="text-sm text-gray-700">Pass-through taxation, salary savings</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-green-200">
+                          <p className="text-sm font-medium text-red-700 mb-2">⚠️ Cons</p>
+                          <p className="text-sm text-gray-700">Ownership restrictions, limited to 100 shareholders</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-green-200">
+                          <p className="text-sm font-medium text-purple-700 mb-2">💰 Cost</p>
+                          <p className="text-sm text-gray-700">$100-$800 filing fee + tax elections</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                      <FileText className="w-5 h-5 text-orange-600" />
+                    </div>
+                    Register Your Business Name
+                  </h3>
+                  
+                  <p className="text-gray-700 mb-4 font-medium">Steps to Complete:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-white font-bold text-xs">1</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Check name availability</p>
+                        <p className="text-xs text-gray-600">with your state's business registry</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-white font-bold text-xs">2</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Conduct trademark search</p>
+                        <p className="text-xs text-gray-600">using USPTO database</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-white font-bold text-xs">3</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Register domain & social media</p>
+                        <p className="text-xs text-gray-600">secure your online presence</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-white font-bold text-xs">4</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">File Articles of Incorporation</p>
+                        <p className="text-xs text-gray-600">official business registration</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-white font-bold text-xs">5</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Consider trademark registration</p>
+                        <p className="text-xs text-gray-600">$225-$400 per class</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 mt-6 border border-blue-300">
+                    <p className="text-blue-800 font-medium text-sm">
+                      💡 <strong>Pro Tip:</strong> Use AI legal tools to quickly search for potential naming conflicts and trademark issues across multiple databases.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                      <CheckCircle className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    Required Licenses & Permits
+                  </h3>
+                  
+                  <p className="text-gray-700 mb-4 font-medium">Common Requirements:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                      <span className="text-sm font-medium text-gray-900">Business license (city/county level)</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                      <span className="text-sm font-medium text-gray-900">Professional licenses (if applicable)</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                      <span className="text-sm font-medium text-gray-900">Industry-specific permits</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                      <span className="text-sm font-medium text-gray-900">Sales tax permit (if selling products)</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-indigo-200">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                      <span className="text-sm font-medium text-gray-900">Employer Identification Number (EIN)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <h2>Phase 2: Foundational Legal Documents</h2>
 
