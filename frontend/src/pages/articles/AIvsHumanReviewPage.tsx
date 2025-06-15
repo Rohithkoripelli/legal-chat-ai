@@ -426,7 +426,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
 
             <p><strong>Use AI When</strong>:</p>
             <ul>
-              <li>Contract volume > 20 per month</li>
+              <li>Contract volume &gt; 20 per month</li>
               <li>Routine, standardized agreements</li>
               <li>Budget constraints are significant</li>
               <li>Speed is critical for business operations</li>
@@ -435,7 +435,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
 
             <p><strong>Use Human Review When</strong>:</p>
             <ul>
-              <li>Contract value > $500,000</li>
+              <li>Contract value &gt; $500,000</li>
               <li>Novel or complex legal issues</li>
               <li>Strategic business relationships</li>
               <li>Regulatory scrutiny is high</li>
