@@ -1143,6 +1143,17 @@ const LandingPage: React.FC<{
                     </button>
                   </div>
 
+                  {/* Resources Link Below CTA Buttons */}
+                  <div className="mt-6 text-center">
+                    <button
+                      onClick={() => window.location.href = '/resources'}
+                      className="text-gray-600 hover:text-blue-600 text-sm font-medium inline-flex items-center transition-colors"
+                    >
+                      <FileText className="w-4 h-4 mr-1" />
+                      Browse Legal AI Guides & Resources
+                    </button>
+                  </div>
+
                   {/* Mobile-specific additional spacing */}
                   <div className="block sm:hidden mt-8"></div>
                 </div>
@@ -1460,7 +1471,85 @@ const LandingPage: React.FC<{
           </div>
         </section>
 
+        {/* RESOURCES SECTION */}
+        <section className="max-w-7xl mx-auto px-6 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Learn More About AI Legal Analysis
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Comprehensive guides and expert insights to help you understand AI-powered legal document analysis
+            </p>
+          </div>
 
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="text-blue-600 mb-4">
+                <FileText className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Contract Analysis Guide</h3>
+              <p className="text-gray-600 text-sm mb-4">Complete guide to AI contract analysis, cost savings, and implementation strategies.</p>
+              <button
+                onClick={() => window.location.href = '/resources#ai-contract-analysis-guide'}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm inline-flex items-center"
+              >
+                Read Guide <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="text-green-600 mb-4">
+                <CheckCircle className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Startup Legal Checklist</h3>
+              <p className="text-gray-600 text-sm mb-4">8-phase legal compliance guide for startups with AI-powered cost reduction strategies.</p>
+              <button
+                onClick={() => window.location.href = '/resources#startup-legal-checklist'}
+                className="text-green-600 hover:text-green-700 font-medium text-sm inline-flex items-center"
+              >
+                Read Guide <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="text-purple-600 mb-4">
+                <Shield className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">NDA Analysis Guide</h3>
+              <p className="text-gray-600 text-sm mb-4">Master NDA analysis with AI tools, risk identification, and negotiation strategies.</p>
+              <button
+                onClick={() => window.location.href = '/resources#nda-analysis-guide'}
+                className="text-purple-600 hover:text-purple-700 font-medium text-sm inline-flex items-center"
+              >
+                Read Guide <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="text-indigo-600 mb-4">
+                <Users className="h-8 w-8" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI vs Human Review</h3>
+              <p className="text-gray-600 text-sm mb-4">Comprehensive comparison guide with ROI calculations and implementation best practices.</p>
+              <button
+                onClick={() => window.location.href = '/resources#ai-vs-human-legal-review'}
+                className="text-indigo-600 hover:text-indigo-700 font-medium text-sm inline-flex items-center"
+              >
+                Read Guide <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={() => window.location.href = '/resources'}
+              className="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors inline-flex items-center"
+            >
+              <FileText className="w-5 h-5 mr-2" />
+              Browse All Resources
+            </button>
+          </div>
+        </section>
 
         {/* UPDATED FINAL CTA SECTION */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">
