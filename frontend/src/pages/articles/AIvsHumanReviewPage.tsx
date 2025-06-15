@@ -1,7 +1,7 @@
 // src/pages/articles/AIvsHumanReviewPage.tsx
 import React from 'react';
 import { DocumentHead } from '../../components/SEO/DocumentHead';
-import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Users, TrendingUp, DollarSign } from 'lucide-react';
+import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Users, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 
 const AIvsHumanReviewPage: React.FC = () => {
   React.useEffect(() => {

@@ -226,7 +226,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                       <span className="text-sm font-bold text-orange-600">45%</span>
                     </div>
                     <div className="text-center p-3 bg-red-50 rounded-lg border border-red-200">
-                      <span className="text-xs text-gray-600">Avg. litigation cost</span><br>
+                      <span className="text-xs text-gray-600">Avg. litigation cost</span><br />
                       <span className="text-sm font-bold text-red-600">$750K-$2.5M</span>
                     </div>
                   </div>
