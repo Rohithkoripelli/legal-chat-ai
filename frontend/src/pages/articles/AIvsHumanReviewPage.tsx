@@ -522,57 +522,72 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                     ✅ When AI is the Better Choice
                   </h3>
                   
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-bold text-blue-900 mb-3">🚀 High-Volume, Routine Reviews</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">Processing 100+ vendor agreements monthly</span>
+                      <h4 className="font-bold text-blue-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">1</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
-                          <span className="text-gray-700">Consistent quality, immediate results, cost-effective</span>
+                        High-Volume, Routine Reviews
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Processing 100+ vendor agreements monthly</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">SaaS company reviewing standard customer agreements</span>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Consistent quality, immediate results, cost-effective</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: SaaS company reviewing standard customer agreements</span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-bold text-blue-900 mb-3">🔍 Initial Risk Assessment</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">Quick evaluation before detailed human review</span>
+                      <h4 className="font-bold text-blue-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">2</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
-                          <span className="text-gray-700">Rapid identification of high-risk documents</span>
+                        Initial Risk Assessment
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Quick evaluation before detailed human review</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">M&A due diligence document triage</span>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Rapid identification of high-risk documents</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: M&A due diligence document triage</span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-bold text-blue-900 mb-3">🛡️ Compliance Monitoring</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">Ensuring contracts meet regulatory requirements</span>
+                      <h4 className="font-bold text-blue-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">3</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why AI:</span>
-                          <span className="text-gray-700">Comprehensive, up-to-date compliance checking</span>
+                        Compliance Monitoring
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Ensuring contracts meet regulatory requirements</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">Healthcare company ensuring HIPAA compliance</span>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Comprehensive, up-to-date compliance checking</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-blue-50 rounded-lg">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: Healthcare company ensuring HIPAA compliance</span>
                         </div>
                       </div>
                     </div>
@@ -587,57 +602,72 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                     ✅ When Human Review is Essential
                   </h3>
                   
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-bold text-green-900 mb-3">🏆 Complex, High-Stakes Negotiations</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">$50M+ deals with strategic implications</span>
+                      <h4 className="font-bold text-green-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">1</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
-                          <span className="text-gray-700">Strategic thinking and relationship management</span>
+                        Complex, High-Stakes Negotiations
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">$50M+ deals with strategic implications</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">Major acquisition or joint venture agreements</span>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Strategic thinking and relationship management</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: Major acquisition or joint venture agreements</span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-bold text-green-900 mb-3">🔥 Novel Legal Issues</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">First-of-kind transactions or emerging legal areas</span>
+                      <h4 className="font-bold text-green-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">2</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
-                          <span className="text-gray-700">Creative legal analysis and precedent research</span>
+                        Novel Legal Issues
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">First-of-kind transactions or emerging legal areas</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">Cryptocurrency or blockchain technology agreements</span>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Creative legal analysis and precedent research</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: Cryptocurrency or blockchain technology agreements</span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-bold text-green-900 mb-3">🤝 Relationship-Critical Contracts</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Scenario:</span>
-                          <span className="text-gray-700">Key partnerships requiring delicate negotiation</span>
+                      <h4 className="font-bold text-green-900 mb-3 flex items-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-bold text-xs">3</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Why Human:</span>
-                          <span className="text-gray-700">Relationship dynamics and communication skills</span>
+                        Relationship-Critical Contracts
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Key partnerships requiring delicate negotiation</span>
                         </div>
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-600 w-20 flex-shrink-0">Example:</span>
-                          <span className="text-gray-700">Strategic partnership with major customer</span>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Relationship dynamics and communication skills</span>
+                        </div>
+                        <div className="flex items-center p-2 bg-green-50 rounded-lg">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Example: Strategic partnership with major customer</span>
                         </div>
                       </div>
                     </div>
