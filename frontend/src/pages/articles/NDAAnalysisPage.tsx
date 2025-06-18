@@ -1,7 +1,7 @@
 // src/pages/articles/NDAAnalysisPage.tsx
 import React from 'react';
 import { DocumentHead } from '../../components/SEO/DocumentHead';
-import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Clock, FileText, CheckCircle, Brain, Download, Share2, Shield, AlertTriangle, Users } from 'lucide-react';
 
 const NDAAnalysisPage: React.FC = () => {
   React.useEffect(() => {
