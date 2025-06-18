@@ -873,7 +873,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                   <div className="space-y-3">
                     <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                      <span className="text-sm text-gray-700">Contract volume > 20 per month</span>
+                      <span className="text-sm text-gray-700">Contract volume {'>'}  20 per month</span>
                     </div>
                     <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
@@ -905,7 +905,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                   <div className="space-y-3">
                     <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      <span className="text-sm text-gray-700">Contract value > $500,000</span>
+                      <span className="text-sm text-gray-700">Contract value {'>'}  $500,000</span>
                     </div>
                     <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
