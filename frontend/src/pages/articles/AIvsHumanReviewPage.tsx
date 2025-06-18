@@ -224,124 +224,289 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h3>The AI Revolution in Legal Review</h3>
-            <p><strong>Emerging Capabilities</strong>:</p>
-            <ul>
-              <li>Natural language processing understands legal terminology</li>
-              <li>Machine learning identifies patterns across thousands of contracts</li>
-              <li>Automated risk scoring and assessment</li>
-              <li>Real-time analysis and reporting</li>
-            </ul>
-
-            <p><strong>Rapid Adoption Statistics</strong>:</p>
-            <ul>
-              <li>69% of legal departments are exploring AI tools</li>
-              <li>42% of law firms have implemented AI solutions</li>
-              <li>$1.2 billion invested in legal AI technology in 2024</li>
-              <li>85% improvement in document review efficiency reported</li>
-            </ul>
-
-            <h2>Head-to-Head Comparison: AI vs Human Legal Review</h2>
-
-            <h3>⚡ Speed and Efficiency</h3>
-            
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-bold text-blue-900 mb-2">🤖 AI Legal Review</h4>
-                  <ul className="text-blue-800 text-sm space-y-1">
-                    <li>• Analysis time: 2-5 minutes per contract</li>
-                    <li>• Batch processing: 100+ documents simultaneously</li>
-                    <li>• Availability: 24/7 instant processing</li>
-                    <li>• Consistency: Same quality regardless of volume</li>
-                  </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">The AI Revolution in Legal Review</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                    </div>
+                    Emerging Capabilities
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Natural language processing understands legal terminology</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Machine learning identifies patterns across thousands of contracts</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Automated risk scoring and assessment</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Real-time analysis and reporting</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-700 mb-2">👨‍💼 Human Legal Review</h4>
-                  <ul className="text-gray-600 text-sm space-y-1">
-                    <li>• Analysis time: 2-8 hours per contract</li>
-                    <li>• Sequential processing: One document at a time</li>
-                    <li>• Availability: Business hours, appointment required</li>
-                    <li>• Consistency: Quality may vary with fatigue</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="mt-4 text-center">
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                  🏆 Winner: AI (95% faster processing time)
-                </span>
-              </div>
-            </div>
 
-            <h3>💰 Cost Comparison</h3>
-            
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 my-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-bold text-green-900 mb-2">🤖 AI Legal Review</h4>
-                  <ul className="text-green-800 text-sm space-y-1">
-                    <li>• Per document: $10-$100 depending on complexity</li>
-                    <li>• Monthly subscription: $50-$500 for unlimited use</li>
-                    <li>• Enterprise solutions: $1,000-$10,000 annually</li>
-                    <li>• Hidden costs: Minimal setup and training</li>
-                  </ul>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <TrendingUp className="w-5 h-5 text-green-600" />
+                    </div>
+                    Rapid Adoption Statistics
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                      <span className="text-sm font-medium text-gray-700">Legal departments exploring AI</span>
+                      <span className="text-sm font-bold text-green-600">69%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                      <span className="text-sm font-medium text-gray-700">Law firms with AI solutions</span>
+                      <span className="text-sm font-bold text-green-600">42%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                      <span className="text-sm font-medium text-gray-700">Investment in legal AI (2024)</span>
+                      <span className="text-sm font-bold text-green-600">$1.2B</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-green-200">
+                      <span className="text-sm font-medium text-gray-700">Efficiency improvement</span>
+                      <span className="text-sm font-bold text-green-600">85%</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-700 mb-2">👨‍💼 Human Legal Review</h4>
-                  <ul className="text-gray-600 text-sm space-y-1">
-                    <li>• Per document: $1,500-$5,000 average</li>
-                    <li>• Hourly rates: $200-$800+ per hour</li>
-                    <li>• Retainer fees: $5,000-$25,000 upfront</li>
-                    <li>• Hidden costs: Research time, revisions, communication</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="mt-4 text-center">
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                  🏆 Winner: AI (90% cost reduction)
-                </span>
               </div>
             </div>
 
-            <h3>🎯 Accuracy and Quality</h3>
-            
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 my-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-bold text-blue-900 mb-2">🤖 AI Strengths</h4>
-                  <ul className="text-blue-800 text-sm space-y-1">
-                    <li>• Consistent application of analysis criteria</li>
-                    <li>• No fatigue-related errors or oversights</li>
-                    <li>• Comprehensive clause identification</li>
-                    <li>• Built-in industry standard comparisons</li>
-                  </ul>
-                  <h4 className="font-bold text-blue-900 mb-2 mt-4">🤖 AI Limitations</h4>
-                  <ul className="text-red-700 text-sm space-y-1">
-                    <li>• May miss nuanced contextual issues</li>
-                    <li>• Limited understanding of business strategy</li>
-                    <li>• Cannot assess relationship dynamics</li>
-                  </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Head-to-Head Comparison: AI vs Human Legal Review</h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <Clock className="w-6 h-6 text-green-600" />
+                    </div>
+                    ⚡ Speed and Efficiency
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                      <h4 className="font-bold text-blue-900 mb-3">🤖 AI Legal Review</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Analysis time: 2-5 minutes per contract</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Batch processing: 100+ documents simultaneously</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Availability: 24/7 instant processing</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Consistency: Same quality regardless of volume</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-green-200">
+                      <h4 className="font-bold text-gray-700 mb-3">👨‍💼 Human Legal Review</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Analysis time: 2-8 hours per contract</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Sequential processing: One document at a time</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Availability: Business hours, appointment required</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Consistency: Quality may vary with fatigue</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center">
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      🏆 Winner: AI (95% faster processing time)
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-green-900 mb-2">👨‍💼 Human Strengths</h4>
-                  <ul className="text-green-800 text-sm space-y-1">
-                    <li>• Deep contextual understanding</li>
-                    <li>• Strategic business advice</li>
-                    <li>• Relationship and negotiation insights</li>
-                    <li>• Creative problem-solving abilities</li>
-                  </ul>
-                  <h4 className="font-bold text-green-900 mb-2 mt-4">👨‍💼 Human Limitations</h4>
-                  <ul className="text-red-700 text-sm space-y-1">
-                    <li>• Fatigue affects accuracy over time</li>
-                    <li>• Subjective interpretations may vary</li>
-                    <li>• Potential for human error and oversight</li>
-                  </ul>
+
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <DollarSign className="w-6 h-6 text-blue-600" />
+                    </div>
+                    💰 Cost Comparison
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-green-900 mb-3">🤖 AI Legal Review</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Per document: $10-$100 depending on complexity</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Monthly subscription: $50-$500 for unlimited use</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Enterprise solutions: $1,000-$10,000 annually</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Hidden costs: Minimal setup and training</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-gray-700 mb-3">👨‍💼 Human Legal Review</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Per document: $1,500-$5,000 average</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Hourly rates: $200-$800+ per hour</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Retainer fees: $5,000-$25,000 upfront</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Hidden costs: Research time, revisions, communication</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center">
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      🏆 Winner: AI (90% cost reduction)
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-4 text-center">
-                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
-                  🤝 Result: Tie (complementary strengths)
-                </span>
+
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-purple-600" />
+                    </div>
+                    🎯 Accuracy and Quality
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-purple-200">
+                      <h4 className="font-bold text-blue-900 mb-3">🤖 AI Strengths</h4>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Consistent application of analysis criteria</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">No fatigue-related errors or oversights</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Comprehensive clause identification</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Built-in industry standard comparisons</span>
+                        </div>
+                      </div>
+                      
+                      <h4 className="font-bold text-red-900 mb-3">🤖 AI Limitations</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">May miss nuanced contextual issues</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Limited understanding of business strategy</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Cannot assess relationship dynamics</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-purple-200">
+                      <h4 className="font-bold text-green-900 mb-3">👨‍💼 Human Strengths</h4>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Deep contextual understanding</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Strategic business advice</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Relationship and negotiation insights</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Creative problem-solving abilities</span>
+                        </div>
+                      </div>
+                      
+                      <h4 className="font-bold text-red-900 mb-3">👨‍💼 Human Limitations</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Fatigue affects accuracy over time</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Subjective interpretations may vary</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Potential for human error and oversight</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center">
+                      <Users className="w-4 h-4 mr-2" />
+                      🤝 Result: Tie (complementary strengths)
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -481,191 +646,535 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>The Hybrid Approach: Best of Both Worlds</h2>
-
-            <h3>🔄 AI-First, Human-Second Workflow</h3>
-
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 my-6">
-              <h4 className="font-bold text-green-900 mb-4">Recommended Hybrid Process:</h4>
-              <ol className="text-green-800 space-y-2">
-                <li><strong>Step 1: AI Initial Analysis</strong>
-                  <ul className="ml-4 mt-1 space-y-1">
-                    <li>• Upload contracts to AI platform</li>
-                    <li>• Receive automated risk assessment and summary</li>
-                    <li>• Identify high-risk or unusual provisions</li>
-                    <li>• Generate initial negotiation points</li>
-                  </ul>
-                </li>
-                <li><strong>Step 2: Human Strategic Review</strong>
-                  <ul className="ml-4 mt-1 space-y-1">
-                    <li>• Focus on AI-identified risk areas</li>
-                    <li>• Provide business context and strategy</li>
-                    <li>• Develop negotiation approach</li>
-                    <li>• Make final approval decisions</li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-
-            <p><strong>Benefits of Hybrid Approach</strong>:</p>
-            <ul>
-              <li>70% reduction in attorney time</li>
-              <li>More thorough risk identification</li>
-              <li>Cost-effective use of legal resources</li>
-              <li>Faster turnaround times</li>
-            </ul>
-
-            <h3>📊 Real-World Hybrid Success Stories</h3>
-
-            <h4>Case Study 1: Mid-Size Technology Company</h4>
-            <ul>
-              <li><strong>Challenge</strong>: 200+ vendor contracts annually</li>
-              <li><strong>Solution</strong>: AI pre-screening + attorney review for high-risk items</li>
-              <li><strong>Results</strong>: 65% cost reduction, 80% faster processing, improved risk management</li>
-            </ul>
-
-            <h4>Case Study 2: Private Equity Firm</h4>
-            <ul>
-              <li><strong>Challenge</strong>: Due diligence document review for acquisitions</li>
-              <li><strong>Solution</strong>: AI document analysis + attorney strategic assessment</li>
-              <li><strong>Results</strong>: 50% faster due diligence, better risk identification, improved deal outcomes</li>
-            </ul>
-
-            <h2>Cost-Benefit Analysis Framework</h2>
-
-            <h3>📈 ROI Calculation Model</h3>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-6">
-              <h4 className="font-bold text-blue-900 mb-4">Annual Cost Comparison:</h4>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">The Hybrid Approach: Best of Both Worlds</h2>
               
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h5 className="font-semibold text-red-700 mb-2">Traditional All-Human Approach:</h5>
-                  <ul className="text-blue-800 text-sm space-y-1">
-                    <li>• Contract volume: 500 contracts/year</li>
-                    <li>• Average cost per contract: $2,500</li>
-                    <li>• <strong>Total annual cost: $1,250,000</strong></li>
-                    <li>• Average processing time: 5 days per contract</li>
-                  </ul>
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    🔄 AI-First, Human-Second Workflow
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-green-200">
+                    <h4 className="font-bold text-green-900 mb-4">Recommended Hybrid Process:</h4>
+                    <div className="space-y-4">
+                      <div className="bg-green-50 rounded-lg p-4">
+                        <h5 className="font-bold text-green-900 mb-2">Step 1: AI Initial Analysis</h5>
+                        <div className="space-y-2">
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Upload contracts to AI platform</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Receive automated risk assessment and summary</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Identify high-risk or unusual provisions</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Generate initial negotiation points</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <h5 className="font-bold text-blue-900 mb-2">Step 2: Human Strategic Review</h5>
+                        <div className="space-y-2">
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Focus on AI-identified risk areas</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Provide business context and strategy</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Develop negotiation approach</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-700">Make final approval decisions</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-green-200 mt-4">
+                    <h4 className="font-bold text-green-900 mb-3">Benefits of Hybrid Approach:</h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                        <span className="text-sm font-medium text-gray-700">Attorney time reduction</span>
+                        <span className="text-sm font-bold text-green-600">70%</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                        <span className="text-sm font-medium text-gray-700">Risk identification</span>
+                        <span className="text-sm font-bold text-green-600">More thorough</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                        <span className="text-sm font-medium text-gray-700">Resource efficiency</span>
+                        <span className="text-sm font-bold text-green-600">Cost-effective</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                        <span className="text-sm font-medium text-gray-700">Turnaround time</span>
+                        <span className="text-sm font-bold text-green-600">Faster</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div>
-                  <h5 className="font-semibold text-green-700 mb-2">Hybrid AI + Human Approach:</h5>
-                  <ul className="text-blue-800 text-sm space-y-1">
-                    <li>• AI platform cost: $50,000/year</li>
-                    <li>• Reduced attorney time (60% savings): $500,000</li>
-                    <li>• <strong>Total annual cost: $550,000</strong></li>
-                    <li>• Average processing time: 1.5 days per contract</li>
-                  </ul>
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <TrendingUp className="w-6 h-6 text-blue-600" />
+                    </div>
+                    📊 Real-World Hybrid Success Stories
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-blue-900 mb-3">Case Study 1: Mid-Size Technology Company</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-blue-50 rounded-lg">
+                          <p className="text-sm font-medium text-blue-900">Challenge:</p>
+                          <p className="text-sm text-gray-700">200+ vendor contracts annually</p>
+                        </div>
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm font-medium text-green-900">Solution:</p>
+                          <p className="text-sm text-gray-700">AI pre-screening + attorney review for high-risk items</p>
+                        </div>
+                        <div className="p-3 bg-yellow-50 rounded-lg">
+                          <p className="text-sm font-medium text-yellow-900">Results:</p>
+                          <p className="text-sm text-gray-700">65% cost reduction, 80% faster processing, improved risk management</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <h4 className="font-bold text-blue-900 mb-3">Case Study 2: Private Equity Firm</h4>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-blue-50 rounded-lg">
+                          <p className="text-sm font-medium text-blue-900">Challenge:</p>
+                          <p className="text-sm text-gray-700">Due diligence document review for acquisitions</p>
+                        </div>
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm font-medium text-green-900">Solution:</p>
+                          <p className="text-sm text-gray-700">AI document analysis + attorney strategic assessment</p>
+                        </div>
+                        <div className="p-3 bg-yellow-50 rounded-lg">
+                          <p className="text-sm font-medium text-yellow-900">Results:</p>
+                          <p className="text-sm text-gray-700">50% faster due diligence, better risk identification, improved deal outcomes</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="mt-4 p-4 bg-green-100 rounded-lg">
-                <h5 className="font-bold text-green-900 mb-2">Net Benefits:</h5>
-                <ul className="text-green-800 space-y-1">
-                  <li>• <strong>Annual savings: $700,000 (56% reduction)</strong></li>
-                  <li>• <strong>Time savings: 70% faster processing</strong></li>
-                  <li>• Improved accuracy and risk identification</li>
-                  <li>• Better scalability and consistency</li>
-                </ul>
               </div>
             </div>
 
-            <h3>💡 Decision Framework</h3>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Cost-Benefit Analysis Framework</h2>
+              
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                    <DollarSign className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  📈 ROI Calculation Model
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-white rounded-lg p-4 border border-indigo-200">
+                    <h4 className="font-semibold text-red-700 mb-3">Traditional All-Human Approach:</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Contract volume</span>
+                        <span className="text-sm font-bold">500/year</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Avg cost per contract</span>
+                        <span className="text-sm font-bold">$2,500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-red-50 rounded">
+                        <span className="text-sm font-bold text-gray-900">Total annual cost</span>
+                        <span className="text-sm font-bold text-red-600">$1,250,000</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Processing time</span>
+                        <span className="text-sm font-bold">5 days</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-indigo-200">
+                    <h4 className="font-semibold text-green-700 mb-3">Hybrid AI + Human Approach:</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">AI platform cost</span>
+                        <span className="text-sm font-bold">$50,000/year</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Reduced attorney time</span>
+                        <span className="text-sm font-bold">$500,000</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                        <span className="text-sm font-bold text-gray-900">Total annual cost</span>
+                        <span className="text-sm font-bold text-green-600">$550,000</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700">Processing time</span>
+                        <span className="text-sm font-bold">1.5 days</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-lg p-4 border border-green-300">
+                  <h4 className="font-bold text-green-900 mb-3">Net Benefits:</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                      <span className="text-sm font-bold text-gray-900">Annual savings</span>
+                      <span className="text-sm font-bold text-green-600">$700,000 (56%)</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                      <span className="text-sm font-bold text-gray-900">Time savings</span>
+                      <span className="text-sm font-bold text-green-600">70% faster</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-green-50 rounded-lg">
+                      <span className="text-sm text-gray-700">Improved accuracy and risk identification</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-green-50 rounded-lg">
+                      <span className="text-sm text-gray-700">Better scalability and consistency</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <p><strong>Use AI When</strong>:</p>
-            <ul>
-              <li>Contract volume &gt; 20 per month</li>
-              <li>Routine, standardized agreements</li>
-              <li>Budget constraints are significant</li>
-              <li>Speed is critical for business operations</li>
-              <li>Compliance monitoring is required</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">💡 Decision Framework</h2>
+              
+              <div className="grid lg:grid-cols-3 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                    </div>
+                    Use AI When
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Contract volume > 20 per month</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Routine, standardized agreements</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Budget constraints are significant</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Speed is critical for operations</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Compliance monitoring required</span>
+                    </div>
+                  </div>
+                </div>
 
-            <p><strong>Use Human Review When</strong>:</p>
-            <ul>
-              <li>Contract value &gt; $500,000</li>
-              <li>Novel or complex legal issues</li>
-              <li>Strategic business relationships</li>
-              <li>Regulatory scrutiny is high</li>
-              <li>Litigation risk is significant</li>
-            </ul>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <Users className="w-5 h-5 text-green-600" />
+                    </div>
+                    Use Human Review When
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Contract value > $500,000</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Novel or complex legal issues</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Strategic business relationships</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Regulatory scrutiny is high</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-green-200">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Litigation risk is significant</span>
+                    </div>
+                  </div>
+                </div>
 
-            <p><strong>Use Hybrid Approach When</strong>:</p>
-            <ul>
-              <li>Contract volume is high but includes complex agreements</li>
-              <li>Cost reduction is important but quality cannot be compromised</li>
-              <li>Internal legal resources are limited</li>
-              <li>Scalability and consistency are priorities</li>
-            </ul>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600" />
+                    </div>
+                    Use Hybrid Approach When
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">High volume with complex agreements</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Cost reduction important but quality can't be compromised</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Internal legal resources are limited</span>
+                    </div>
+                    <div className="flex items-start p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-700">Scalability and consistency are priorities</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h2>Implementation Best Practices</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Implementation Best Practices</h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-orange-600" />
+                    </div>
+                    🚀 Getting Started with AI Legal Review
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-3 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-orange-200">
+                      <h4 className="font-bold text-orange-900 mb-3">Phase 1: Assessment and Planning</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">1</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Audit current contract review processes and costs</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">2</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Identify routine vs. complex contract categories</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">3</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Evaluate available AI platforms and vendors</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">4</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Develop implementation timeline and budget</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-orange-200">
+                      <h4 className="font-bold text-orange-900 mb-3">Phase 2: Pilot Program</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">1</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Select 20-50 representative contracts for testing</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">2</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Run parallel AI and human reviews for comparison</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">3</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Measure accuracy, time savings, and cost reduction</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">4</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Refine processes based on pilot results</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-orange-200">
+                      <h4 className="font-bold text-orange-900 mb-3">Phase 3: Gradual Rollout</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">1</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Start with routine, low-risk contract categories</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">2</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Train team on new workflows and processes</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">3</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Establish quality control and oversight procedures</span>
+                        </div>
+                        <div className="flex items-start">
+                          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                            <span className="text-white font-bold text-xs">4</span>
+                          </div>
+                          <span className="text-sm text-gray-700">Gradually expand to more complex contract types</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                      <Brain className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    🔮 The Future of Legal Review
+                  </h3>
+                  
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-indigo-200">
+                      <h4 className="font-bold text-indigo-900 mb-3">Technological Advances:</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">More sophisticated natural language processing</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Better contextual understanding and reasoning</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Integration with business intelligence systems</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Predictive analytics for contract outcomes</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-indigo-200">
+                      <h4 className="font-bold text-indigo-900 mb-3">Professional Impact:</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Shift from document review to strategic analysis</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">New roles in legal technology management</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Increased focus on client relationship and strategy</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Greater emphasis on legal project management</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>🚀 Getting Started with AI Legal Review</h3>
-
-            <h4>Phase 1: Assessment and Planning</h4>
-            <ol>
-              <li>Audit current contract review processes and costs</li>
-              <li>Identify routine vs. complex contract categories</li>
-              <li>Evaluate available AI platforms and vendors</li>
-              <li>Develop implementation timeline and budget</li>
-            </ol>
-
-            <h4>Phase 2: Pilot Program</h4>
-            <ol>
-              <li>Select 20-50 representative contracts for testing</li>
-              <li>Run parallel AI and human reviews for comparison</li>
-              <li>Measure accuracy, time savings, and cost reduction</li>
-              <li>Refine processes based on pilot results</li>
-            </ol>
-
-            <h4>Phase 3: Gradual Rollout</h4>
-            <ol>
-              <li>Start with routine, low-risk contract categories</li>
-              <li>Train team on new workflows and processes</li>
-              <li>Establish quality control and oversight procedures</li>
-              <li>Gradually expand to more complex contract types</li>
-            </ol>
-
-            <h2>The Future of Legal Review</h2>
-
-            <h3>🔮 The Next 5 Years</h3>
-
-            <p><strong>Technological Advances</strong>:</p>
-            <ul>
-              <li>More sophisticated natural language processing</li>
-              <li>Better contextual understanding and reasoning</li>
-              <li>Integration with business intelligence systems</li>
-              <li>Predictive analytics for contract outcomes</li>
-            </ul>
-
-            <p><strong>Professional Impact</strong>:</p>
-            <ul>
-              <li>Shift from document review to strategic analysis</li>
-              <li>New roles in legal technology management</li>
-              <li>Increased focus on client relationship and strategy</li>
-              <li>Greater emphasis on legal project management</li>
-            </ul>
-
-            <h2>Conclusion: Making the Right Choice</h2>
-            <p>
-              The AI vs. human legal review debate isn't about replacement—it's about optimization. 
-              The most successful organizations are those that strategically combine AI efficiency with 
-              human expertise to create better, faster, and more cost-effective legal review processes.
-            </p>
-
-            <p><strong>Key Decision Factors</strong>:</p>
-            <ol>
-              <li><strong>Volume and Routine Nature</strong>: High-volume, standardized contracts favor AI</li>
-              <li><strong>Complexity and Stakes</strong>: Complex, high-value deals require human expertise</li>
-              <li><strong>Budget and Resources</strong>: Limited budgets benefit from AI cost savings</li>
-              <li><strong>Time Constraints</strong>: Urgent needs favor AI speed</li>
-              <li><strong>Risk Tolerance</strong>: High-risk situations need human judgment</li>
-            </ol>
-
-            <p><strong>The Future is Hybrid</strong>: The most effective legal teams will be those that master 
-            the art of combining AI efficiency with human strategic thinking, creating a competitive advantage 
-            through better, faster, and more cost-effective legal services.</p>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border border-blue-200">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Conclusion: Making the Right Choice</h2>
+              
+              <div className="max-w-3xl mx-auto space-y-6">
+                <div className="bg-white rounded-lg p-6 border border-blue-200">
+                  <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                    The AI vs. human legal review debate isn't about replacement—it's about optimization. 
+                    The most successful organizations are those that strategically combine AI efficiency with 
+                    human expertise to create better, faster, and more cost-effective legal review processes.
+                  </p>
+                </div>
+                
+                <div className="bg-white rounded-lg p-6 border border-blue-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Key Decision Factors:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">1</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Volume and Routine Nature:</strong> High-volume, standardized contracts favor AI</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">2</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Complexity and Stakes:</strong> Complex, high-value deals require human expertise</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">3</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Budget and Resources:</strong> Limited budgets benefit from AI cost savings</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">4</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Time Constraints:</strong> Urgent needs favor AI speed</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">5</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Risk Tolerance:</strong> High-risk situations need human judgment</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-6 border border-green-300">
+                  <p className="text-lg text-gray-800 leading-relaxed font-medium text-center">
+                    <strong>The Future is Hybrid:</strong> The most effective legal teams will be those that master 
+                    the art of combining AI efficiency with human strategic thinking, creating a competitive advantage 
+                    through better, faster, and more cost-effective legal services.
+                  </p>
+                </div>
+              </div>
+            </div>
 
           </article>
 

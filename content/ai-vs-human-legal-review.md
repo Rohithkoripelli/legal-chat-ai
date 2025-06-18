@@ -37,7 +37,7 @@ The legal industry is experiencing a technological revolution. AI-powered legal 
 **Rapid Adoption Statistics**:
 - 69% of legal departments are exploring AI tools
 - 42% of law firms have implemented AI solutions
-- $1.2 billion invested in legal AI technology in 2024
+- $1.2 billion invested in legal AI technology in 2023
 - 85% improvement in document review efficiency reported
 
 ## Head-to-Head Comparison: AI vs Human Legal Review

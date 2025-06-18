@@ -587,135 +587,458 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
               </div>
             </div>
 
-            <h2>AI-Powered NDA Analysis: What to Look For</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">AI-Powered NDA Analysis</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <Brain className="w-5 h-5 text-blue-600" />
+                    </div>
+                    Automated Risk Assessment
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <p className="text-sm font-medium text-blue-900 mb-3">AI Can Identify:</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Unusual or non-standard terms</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Missing critical provisions</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Inconsistent or contradictory clauses</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Industry-specific compliance issues</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-200">
+                      <p className="text-sm font-medium text-blue-900 mb-3">Risk Scoring Factors:</p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center p-2 bg-red-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">High Risk</span>
+                          <span className="text-xs text-red-600">Overly broad scope, unlimited liability</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 bg-yellow-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">Medium Risk</span>
+                          <span className="text-xs text-yellow-600">Unclear definitions, missing exclusions</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                          <span className="text-sm font-medium text-gray-700">Low Risk</span>
+                          <span className="text-xs text-green-600">Standard terms, balanced obligations</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h3>Automated Risk Assessment</h3>
-            <p><strong>AI Can Identify</strong>:</p>
-            <ul>
-              <li>Unusual or non-standard terms</li>
-              <li>Missing critical provisions</li>
-              <li>Inconsistent or contradictory clauses</li>
-              <li>Industry-specific compliance issues</li>
-            </ul>
-
-            <p><strong>Risk Scoring Factors</strong>:</p>
-            <ul>
-              <li><strong>High Risk</strong>: Overly broad scope, unlimited liability</li>
-              <li><strong>Medium Risk</strong>: Unclear definitions, missing exclusions</li>
-              <li><strong>Low Risk</strong>: Standard terms, balanced obligations</li>
-            </ul>
-
-            <h3>Comparative Analysis</h3>
-            <p><strong>AI Benchmarking Against</strong>:</p>
-            <ul>
-              <li>Industry standard agreements</li>
-              <li>Comparable deal terms and structures</li>
-              <li>Regulatory requirements and best practices</li>
-              <li>Historical negotiation outcomes</li>
-            </ul>
-
-            <h2>Industry-Specific NDA Considerations</h2>
-
-            <h3>Technology and Software</h3>
-            <p><strong>Special Protections Needed</strong>:</p>
-            <ul>
-              <li>Source code and algorithms</li>
-              <li>Technical specifications and documentation</li>
-              <li>User data and analytics</li>
-              <li>API specifications and integration methods</li>
-            </ul>
-
-            <p><strong>Key Clauses</strong>:</p>
-            <ul>
-              <li>No reverse engineering provisions</li>
-              <li>Open source software considerations</li>
-              <li>Data privacy and security requirements</li>
-              <li>Intellectual property ownership clarifications</li>
-            </ul>
-
-            <h3>Healthcare and Life Sciences</h3>
-            <p><strong>Regulatory Compliance</strong>:</p>
-            <ul>
-              <li>HIPAA privacy requirements</li>
-              <li>FDA confidentiality regulations</li>
-              <li>Clinical trial data protection</li>
-              <li>Patient information safeguards</li>
-            </ul>
-
-            <h2>NDA Negotiation Strategies</h2>
-
-            <h3>Preparation Phase</h3>
-            <p><strong>Before Negotiation</strong>:</p>
-            <ol>
-              <li><strong>Identify your priorities</strong>: What information needs protection?</li>
-              <li><strong>Understand counterparty needs</strong>: What are their concerns?</li>
-              <li><strong>Research industry standards</strong>: What's typical for similar deals?</li>
-              <li><strong>Set negotiation boundaries</strong>: What terms are non-negotiable?</li>
-            </ol>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
-              <p className="text-blue-800 font-medium">
-                🤖 AI Assistance: Use AI tools to analyze similar NDAs in your industry and identify common negotiation points and outcomes.
-              </p>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                    Comparative Analysis
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-green-200">
+                    <p className="text-sm font-medium text-green-900 mb-3">AI Benchmarking Against:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Industry standard agreements</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Comparable deal terms and structures</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Regulatory requirements and best practices</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Historical negotiation outcomes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <h3>Key Negotiation Points</h3>
-            <p><strong>Scope and Definition</strong>:</p>
-            <ul>
-              <li>Narrow definitions to specific information types</li>
-              <li>Include reasonable exclusions and limitations</li>
-              <li>Balance protection with operational flexibility</li>
-              <li>Consider future business relationship needs</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Industry-Specific NDA Considerations</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                      <Brain className="w-5 h-5 text-purple-600" />
+                    </div>
+                    Technology and Software
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-white rounded-lg p-4 border border-purple-200">
+                      <p className="text-sm font-medium text-purple-900 mb-3">Special Protections Needed:</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Source code and algorithms</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Technical specifications and documentation</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">User data and analytics</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">API specifications and integration methods</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-purple-200">
+                      <p className="text-sm font-medium text-purple-900 mb-3">Key Clauses:</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">No reverse engineering provisions</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Open source software considerations</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Data privacy and security requirements</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-700">Intellectual property ownership clarifications</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <h2>Implementation and Management</h2>
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                      <Shield className="w-5 h-5 text-orange-600" />
+                    </div>
+                    Healthcare and Life Sciences
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-orange-200">
+                    <p className="text-sm font-medium text-orange-900 mb-3">Regulatory Compliance:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">HIPAA privacy requirements</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">FDA confidentiality regulations</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Clinical trial data protection</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                        <span className="text-sm text-gray-700">Patient information safeguards</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>NDA Management System</h3>
-            <ul>
-              <li>Centralized storage and tracking</li>
-              <li>Regular review and update procedures</li>
-              <li>Compliance monitoring and reporting</li>
-              <li>Training and awareness programs</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">NDA Negotiation Strategies</h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                      <FileText className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    Preparation Phase
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-indigo-200">
+                    <p className="text-sm font-medium text-indigo-900 mb-4">Before Negotiation:</p>
+                    <div className="space-y-3">
+                      <div className="flex items-start p-3 bg-indigo-50 rounded-lg">
+                        <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <span className="text-white font-bold text-xs">1</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Identify your priorities</p>
+                          <p className="text-xs text-gray-600">What information needs protection?</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start p-3 bg-indigo-50 rounded-lg">
+                        <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <span className="text-white font-bold text-xs">2</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Understand counterparty needs</p>
+                          <p className="text-xs text-gray-600">What are their concerns?</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start p-3 bg-indigo-50 rounded-lg">
+                        <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <span className="text-white font-bold text-xs">3</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Research industry standards</p>
+                          <p className="text-xs text-gray-600">What's typical for similar deals?</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start p-3 bg-indigo-50 rounded-lg">
+                        <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                          <span className="text-white font-bold text-xs">4</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Set negotiation boundaries</p>
+                          <p className="text-xs text-gray-600">What terms are non-negotiable?</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 mt-6 border border-blue-300">
+                    <p className="text-blue-800 font-medium text-sm">
+                      🤖 <strong>AI Assistance:</strong> Use AI tools to analyze similar NDAs in your industry and identify common negotiation points and outcomes.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    Key Negotiation Points
+                  </h3>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-green-200">
+                    <p className="text-sm font-medium text-green-900 mb-4">Scope and Definition:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Narrow definitions to specific information types</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Include reasonable exclusions and limitations</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Balance protection with operational flexibility</span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <span className="text-sm text-gray-700">Consider future business relationship needs</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>Key Stakeholders</h3>
-            <ul>
-              <li>Legal team for review and approval</li>
-              <li>Business teams for operational compliance</li>
-              <li>IT team for security implementation</li>
-              <li>HR team for employee training</li>
-            </ul>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Implementation and Management</h2>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                    </div>
+                    NDA Management System
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Centralized storage and tracking</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Regular review and update procedures</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Compliance monitoring and reporting</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-blue-200">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Training and awareness programs</span>
+                    </div>
+                  </div>
+                </div>
 
-            <h2>Common NDA Mistakes and How to Avoid Them</h2>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                      <Users className="w-5 h-5 text-purple-600" />
+                    </div>
+                    Key Stakeholders
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Legal team for review and approval</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">Business teams for operational compliance</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">IT team for security implementation</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white rounded-lg border border-purple-200">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">HR team for employee training</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>❌ Mistake 1: Using Generic Templates</h3>
-            <p><strong>The Problem</strong>: One-size-fits-all NDAs don't address specific business needs or industry requirements.</p>
-            <p><strong>The Solution</strong>: Customize NDAs for specific relationships, industries, and information types using AI-powered tools.</p>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Common NDA Mistakes and How to Avoid Them</h2>
+              
+              <div className="space-y-8">
+                <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-6 border border-red-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    ❌ Mistake 1: Using Generic Templates
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <p className="text-sm font-medium text-red-900 mb-2">The Problem:</p>
+                      <p className="text-sm text-gray-700">One-size-fits-all NDAs don't address specific business needs or industry requirements.</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-red-200">
+                      <p className="text-sm font-medium text-green-700 mb-2">The Solution:</p>
+                      <p className="text-sm text-gray-700">Customize NDAs for specific relationships, industries, and information types using AI-powered tools.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6 border border-orange-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-orange-600" />
+                    </div>
+                    ❌ Mistake 2: Inadequate Definition of Confidential Information
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-orange-200">
+                      <p className="text-sm font-medium text-red-900 mb-2">The Problem:</p>
+                      <p className="text-sm text-gray-700">Vague or overly broad definitions lead to disputes and enforceability issues.</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-orange-200">
+                      <p className="text-sm font-medium text-green-700 mb-2">The Solution:</p>
+                      <p className="text-sm text-gray-700">Create specific, detailed definitions that clearly identify protected information categories.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-yellow-50 to-green-50 rounded-lg p-6 border border-yellow-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                      <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                    </div>
+                    ❌ Mistake 3: Ignoring Practical Implementation
+                  </h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4 border border-yellow-200">
+                      <p className="text-sm font-medium text-red-900 mb-2">The Problem:</p>
+                      <p className="text-sm text-gray-700">NDAs that can't be practically implemented or monitored in daily business operations.</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border border-yellow-200">
+                      <p className="text-sm font-medium text-green-700 mb-2">The Solution:</p>
+                      <p className="text-sm text-gray-700">Consider operational realities and create implementable processes and procedures.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <h3>❌ Mistake 2: Inadequate Definition of Confidential Information</h3>
-            <p><strong>The Problem</strong>: Vague or overly broad definitions lead to disputes and enforceability issues.</p>
-            <p><strong>The Solution</strong>: Create specific, detailed definitions that clearly identify protected information categories.</p>
-
-            <h3>❌ Mistake 3: Ignoring Practical Implementation</h3>
-            <p><strong>The Problem</strong>: NDAs that can't be practically implemented or monitored in daily business operations.</p>
-            <p><strong>The Solution</strong>: Consider operational realities and create implementable processes and procedures.</p>
-
-            <h2>Conclusion</h2>
-            <p>
-              NDAs are critical business tools that require careful analysis and management. While they protect 
-              valuable confidential information, poorly structured NDAs can create significant risks and business 
-              limitations. By leveraging AI-powered analysis tools and following best practices, you can create 
-              effective NDAs that balance protection with operational flexibility.
-            </p>
-
-            <p><strong>Key Takeaways</strong>:</p>
-            <ol>
-              <li><strong>Customize for your needs</strong>: Generic templates rarely provide adequate protection</li>
-              <li><strong>Balance protection and flexibility</strong>: Overly restrictive NDAs can harm business relationships</li>
-              <li><strong>Use AI for efficiency</strong>: Automate analysis and monitoring while maintaining legal oversight</li>
-              <li><strong>Plan for implementation</strong>: Consider practical aspects of compliance and enforcement</li>
-              <li><strong>Regular review and updates</strong>: Keep NDAs current with business and legal changes</li>
-            </ol>
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 mb-8 border border-purple-200">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Conclusion</h2>
+              
+              <div className="max-w-3xl mx-auto space-y-6">
+                <div className="bg-white rounded-lg p-6 border border-purple-200">
+                  <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                    NDAs are critical business tools that require careful analysis and management. While they protect 
+                    valuable confidential information, poorly structured NDAs can create significant risks and business 
+                    limitations. By leveraging AI-powered analysis tools and following best practices, you can create 
+                    effective NDAs that balance protection with operational flexibility.
+                  </p>
+                </div>
+                
+                <div className="bg-white rounded-lg p-6 border border-purple-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Key Takeaways:</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">1</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Customize for your needs:</strong> Generic templates rarely provide adequate protection</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">2</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Balance protection and flexibility:</strong> Overly restrictive NDAs can harm business relationships</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">3</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Use AI for efficiency:</strong> Automate analysis and monitoring while maintaining legal oversight</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">4</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Plan for implementation:</strong> Consider practical aspects of compliance and enforcement</p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1">
+                        <span className="text-white font-bold text-xs">5</span>
+                      </div>
+                      <p className="text-gray-700"><strong>Regular review and updates:</strong> Keep NDAs current with business and legal changes</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
           </article>
 
