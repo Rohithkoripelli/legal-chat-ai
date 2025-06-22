@@ -89,7 +89,47 @@ export const getContractAnalysis = async (req: Request, res: Response) => {
     }
 
     console.log('✅ Contract analysis found for user:', userId);
-    res.json(analysis);
+    
+    // Backward compatibility: migrate old riskAnalysis to riskAssessment
+    const analysisObj = analysis.toObject();
+    if (!analysisObj.riskAssessment && (analysisObj as any).riskAnalysis) {
+      console.log('🔄 Migrating old riskAnalysis to riskAssessment structure');
+      analysisObj.riskAssessment = {
+        overallScore: (analysisObj as any).riskAnalysis.overallScore || 50,
+        keyConsiderations: [],
+        missingClauses: [],
+        nonStandardTerms: [],
+        ambiguities: [],
+        riskFactors: (analysisObj as any).riskAnalysis.riskFactors || []
+      };
+    }
+    
+    // Ensure we have default values for missing fields
+    if (!analysisObj.contractSnapshot) {
+      analysisObj.contractSnapshot = {
+        title: analysisObj.documentName || 'Unknown Contract',
+        contractType: 'Unknown Type',
+        effectiveDate: '',
+        expirationDate: '',
+        renewalTerms: 'Manual review required',
+        parties: []
+      };
+    }
+    
+    if (!analysisObj.keyInformationAndClauses) {
+      analysisObj.keyInformationAndClauses = {
+        confidentialityObligations: [],
+        nonCircumvention: [],
+        nonSolicitationOfPersonnel: [],
+        nonCompete: [],
+        intellectualProperty: [],
+        remediesAndEnforcement: [],
+        termsAndTermination: [],
+        limitationAndLiability: []
+      };
+    }
+    
+    res.json(analysisObj);
   } catch (error) {
     console.error('❌ Error fetching contract analysis:', error);
     res.status(500).json({ error: 'Failed to fetch analysis' });
