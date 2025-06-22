@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export interface ContractAnalysis {
   documentId: string;
   documentName: string;
-  userId: string; // ADD THIS FIELD
+  userId: string;
   riskScore: 'LOW' | 'MEDIUM' | 'HIGH';
   executiveSummary: {
     overview: string;
@@ -25,8 +25,87 @@ export interface ContractAnalysis {
     }>;
     recommendedActions: string[];
   };
-  riskAnalysis: {
+  contractSnapshot: {
+    title: string;
+    contractType: string;
+    effectiveDate?: string;
+    expirationDate?: string;
+    renewalTerms?: string;
+    parties: Array<{
+      name: string;
+      role: string;
+      contactInfo?: string;
+    }>;
+  };
+  keyInformationAndClauses: {
+    confidentialityObligations: Array<{
+      party: string;
+      obligation: string;
+      duration?: string;
+      scope: string;
+    }>;
+    nonCircumvention: Array<{
+      description: string;
+      restrictions: string;
+      penalties?: string;
+    }>;
+    nonSolicitationOfPersonnel: Array<{
+      restrictions: string;
+      duration?: string;
+      exceptions?: string;
+    }>;
+    nonCompete: Array<{
+      restrictions: string;
+      duration?: string;
+      geography?: string;
+      exceptions?: string;
+    }>;
+    intellectualProperty: Array<{
+      ownership: string;
+      description: string;
+      restrictions?: string;
+    }>;
+    remediesAndEnforcement: Array<{
+      remedy: string;
+      conditions: string;
+      enforcement?: string;
+    }>;
+    termsAndTermination: Array<{
+      terminationCondition: string;
+      noticePeriod?: string;
+      consequences?: string;
+    }>;
+    limitationAndLiability: Array<{
+      limitation: string;
+      scope: string;
+      exceptions?: string;
+    }>;
+  };
+  riskAssessment: {
     overallScore: number;
+    keyConsiderations: Array<{
+      category: string;
+      consideration: string;
+      impact: 'HIGH' | 'MEDIUM' | 'LOW';
+      recommendation: string;
+    }>;
+    missingClauses: Array<{
+      clause: string;
+      importance: 'HIGH' | 'MEDIUM' | 'LOW';
+      recommendation: string;
+    }>;
+    nonStandardTerms: Array<{
+      term: string;
+      description: string;
+      risk: 'HIGH' | 'MEDIUM' | 'LOW';
+      suggestion: string;
+    }>;
+    ambiguities: Array<{
+      clause: string;
+      ambiguity: string;
+      risk: 'HIGH' | 'MEDIUM' | 'LOW';
+      clarification: string;
+    }>;
     riskFactors: Array<{
       category: 'LIABILITY' | 'TERMINATION' | 'IP' | 'PAYMENT' | 'COMPLIANCE' | 'CONFIDENTIALITY' | 'DATA_PRIVACY' | 'REGULATORY' | 'OTHER';
       severity: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -289,7 +368,74 @@ Format your response with clear line breaks, bullet points, and structured secti
 - Try analysis again later for full AI insights`;
     }
 
-    // STEP 2: Extract Key Terms and Dates (with JSON)
+    // STEP 2: Contract Snapshot (with JSON)
+    const snapshotPrompt = `Extract contract snapshot information from this contract.
+
+Contract Content:
+${truncatedContent}
+
+Return a JSON object with this exact structure:
+{
+  "contractSnapshot": {
+    "title": "Software Development Agreement",
+    "contractType": "Service Agreement",
+    "effectiveDate": "2024-01-01",
+    "expirationDate": "2024-12-31",
+    "renewalTerms": "Automatic renewal for 1 year unless terminated",
+    "parties": [
+      {
+        "name": "Company ABC",
+        "role": "Client",
+        "contactInfo": "123 Main St, City, State"
+      },
+      {
+        "name": "Developer XYZ",
+        "role": "Service Provider"
+      }
+    ]
+  }
+}
+
+Focus on:
+- Contract title and type
+- Effective and expiration dates
+- Renewal terms and conditions
+- All parties involved with their roles`;
+
+    let contractSnapshot = {
+      title: 'Unknown Contract',
+      contractType: 'Unknown Type',
+      effectiveDate: '',
+      expirationDate: '',
+      renewalTerms: '',
+      parties: []
+    };
+
+    try {
+      const snapshotContent = await safeOpenAICall([
+        { 
+          role: 'system', 
+          content: 'You are a contract analyst. Extract contract snapshot information and return valid JSON only.' 
+        },
+        { role: 'user', content: snapshotPrompt }
+      ], 800, 'gpt-3.5-turbo');
+
+      const parsedSnapshot = safeJSONParse(snapshotContent, { contractSnapshot });
+      contractSnapshot = parsedSnapshot.contractSnapshot || contractSnapshot;
+      console.log('✅ Contract snapshot extracted');
+    } catch (snapshotError) {
+      console.warn('❌ Contract snapshot extraction failed:', snapshotError);
+      contractSnapshot = {
+        title: document.originalName || document.name || 'Unknown Contract',
+        contractType: 'Unknown Type',
+        effectiveDate: '',
+        expirationDate: '',
+        renewalTerms: 'Manual review required',
+        parties: []
+      };
+    }
+
+    // STEP 3: Extract Key Terms and Dates (with JSON)
     const extractionPrompt = `Extract key business terms, dates, and obligations from this contract.
 
 Contract Content:
@@ -343,24 +489,156 @@ Focus on:
       console.warn('❌ Key terms extraction failed:', extractError);
     }
 
-    // STEP 3: Risk Analysis (with JSON)
-    const riskPrompt = `Analyze this contract for business and legal risks.
+    // STEP 4: Key Information & Clauses (with JSON)
+    const clausesPrompt = `Extract detailed clause information from this contract.
+
+Contract Content:
+${truncatedContent}
+
+Return a JSON object with this exact structure:
+{
+  "keyInformationAndClauses": {
+    "confidentialityObligations": [
+      {
+        "party": "Both Parties",
+        "obligation": "Maintain confidentiality of proprietary information",
+        "duration": "5 years post-termination",
+        "scope": "All technical and business information"
+      }
+    ],
+    "nonCircumvention": [
+      {
+        "description": "Party cannot bypass the other party to deal directly",
+        "restrictions": "No direct dealings with introduced contacts",
+        "penalties": "Liquidated damages of $50,000"
+      }
+    ],
+    "nonSolicitationOfPersonnel": [
+      {
+        "restrictions": "Cannot hire or solicit employees",
+        "duration": "2 years",
+        "exceptions": "Public job postings"
+      }
+    ],
+    "nonCompete": [
+      {
+        "restrictions": "Cannot compete in same market",
+        "duration": "1 year",
+        "geography": "Within 50 miles",
+        "exceptions": "Existing business lines"
+      }
+    ],
+    "intellectualProperty": [
+      {
+        "ownership": "Work-for-hire belongs to Client",
+        "description": "All developed software and documentation",
+        "restrictions": "Pre-existing IP remains with original owner"
+      }
+    ],
+    "remediesAndEnforcement": [
+      {
+        "remedy": "Injunctive relief",
+        "conditions": "Breach of confidentiality",
+        "enforcement": "Specific performance"
+      }
+    ],
+    "termsAndTermination": [
+      {
+        "terminationCondition": "30 days written notice",
+        "noticePeriod": "30 days",
+        "consequences": "Payment for completed work"
+      }
+    ],
+    "limitationAndLiability": [
+      {
+        "limitation": "Liability capped at contract value",
+        "scope": "Excludes gross negligence",
+        "exceptions": "Confidentiality breaches"
+      }
+    ]
+  }
+}
+
+Extract all relevant clause information. If a section is not present, return an empty array.`;
+
+    let keyInformationAndClauses = {
+      confidentialityObligations: [],
+      nonCircumvention: [],
+      nonSolicitationOfPersonnel: [],
+      nonCompete: [],
+      intellectualProperty: [],
+      remediesAndEnforcement: [],
+      termsAndTermination: [],
+      limitationAndLiability: []
+    };
+
+    try {
+      const clausesContent = await safeOpenAICall([
+        { 
+          role: 'system', 
+          content: 'You are a legal clause analyst. Extract detailed clause information and return valid JSON only.' 
+        },
+        { role: 'user', content: clausesPrompt }
+      ], 1200, 'gpt-3.5-turbo');
+
+      const parsedClauses = safeJSONParse(clausesContent, { keyInformationAndClauses });
+      keyInformationAndClauses = parsedClauses.keyInformationAndClauses || keyInformationAndClauses;
+      console.log('✅ Key clauses extracted');
+    } catch (clausesError) {
+      console.warn('❌ Key clauses extraction failed:', clausesError);
+    }
+
+    // STEP 5: Enhanced Risk Assessment (with JSON)
+    const riskPrompt = `Conduct a comprehensive risk assessment of this contract.
 
 Contract Content:
 ${truncatedContent}
 
 Return a JSON object with this structure:
 {
-  "overallRiskScore": 65,
-  "riskFactors": [
-    {
-      "category": "LIABILITY",
-      "severity": "HIGH",
-      "description": "Unlimited liability exposure for software defects",
-      "clause": "Developer shall be liable for all damages arising from software failures",
-      "recommendation": "Negotiate liability cap at contract value"
-    }
-  ],
+  "riskAssessment": {
+    "overallRiskScore": 65,
+    "keyConsiderations": [
+      {
+        "category": "Financial Risk",
+        "consideration": "Large upfront payment with limited milestone protection",
+        "impact": "HIGH",
+        "recommendation": "Negotiate milestone-based payments with deliverable requirements"
+      }
+    ],
+    "missingClauses": [
+      {
+        "clause": "Force Majeure",
+        "importance": "HIGH",
+        "recommendation": "Add comprehensive force majeure clause to address unforeseen circumstances"
+      }
+    ],
+    "nonStandardTerms": [
+      {
+        "term": "Unlimited liability clause",
+        "description": "Contractor has unlimited liability for all damages",
+        "risk": "HIGH",
+        "suggestion": "Negotiate liability cap at contract value or reasonable multiple"
+      }
+    ],
+    "ambiguities": [
+      {
+        "clause": "Reasonable efforts shall be made",
+        "ambiguity": "Term 'reasonable efforts' is not defined",
+        "risk": "MEDIUM",
+        "clarification": "Define 'reasonable efforts' with specific metrics and timeframes"
+      }
+    ],
+    "riskFactors": [
+      {
+        "category": "LIABILITY",
+        "severity": "HIGH",
+        "description": "Unlimited liability exposure for software defects",
+        "clause": "Developer shall be liable for all damages arising from software failures",
+        "recommendation": "Negotiate liability cap at contract value"
+      }
+    ]
+  },
   "problematicClauses": [
     {
       "clause": "All intellectual property created shall belong to Company",
@@ -372,38 +650,46 @@ Return a JSON object with this structure:
 }
 
 Categories: LIABILITY, TERMINATION, IP, PAYMENT, COMPLIANCE, CONFIDENTIALITY, DATA_PRIVACY, REGULATORY, OTHER
-Severity levels: HIGH, MEDIUM, LOW
+Severity/Risk/Impact levels: HIGH, MEDIUM, LOW
 
-Calculate risk score (1-100) based on:
+Calculate overall risk score (1-100) based on:
 - Liability limitations or lack thereof
 - Financial exposure and payment terms
-- Termination conditions
+- Termination conditions and penalties
 - IP ownership complexity
-- Compliance requirements`;
+- Compliance and regulatory requirements
+- Missing standard protections
+- Ambiguous or unclear terms`;
 
-    let riskData = {
+    let riskAssessmentData = {
       overallRiskScore: 50,
-      riskFactors: [],
-      problematicClauses: []
+      keyConsiderations: [],
+      missingClauses: [],
+      nonStandardTerms: [],
+      ambiguities: [],
+      riskFactors: []
     };
+    let problematicClauses = [];
 
     try {
       const riskContent = await safeOpenAICall([
         { 
           role: 'system', 
-          content: 'You are a legal risk analyst. Identify specific risks and return valid JSON only.' 
+          content: 'You are a comprehensive legal risk analyst. Conduct detailed risk assessment and return valid JSON only.' 
         },
         { role: 'user', content: riskPrompt }
-      ], 1200, 'gpt-3.5-turbo');
+      ], 1400, 'gpt-3.5-turbo');
 
-      riskData = safeJSONParse(riskContent, {
-        overallRiskScore: 50,
-        riskFactors: [],
+      const parsedRiskData = safeJSONParse(riskContent, {
+        riskAssessment: riskAssessmentData,
         problematicClauses: []
       });
-      console.log('✅ Risk analysis completed');
+      
+      riskAssessmentData = parsedRiskData.riskAssessment || riskAssessmentData;
+      problematicClauses = parsedRiskData.problematicClauses || [];
+      console.log('✅ Enhanced risk assessment completed');
     } catch (riskError) {
-      console.warn('❌ Risk analysis failed:', riskError);
+      console.warn('❌ Enhanced risk assessment failed:', riskError);
       // Create intelligent fallback based on content
       const hasLiabilityTerms = truncatedContent.toLowerCase().includes('liability') || 
                                truncatedContent.toLowerCase().includes('damages');
@@ -416,22 +702,35 @@ Calculate risk score (1-100) based on:
       if (hasIPTerms) calculatedRisk += 10;
       if (hasLiabilityTerms) calculatedRisk += 10;
       
-      riskData = {
+      riskAssessmentData = {
         overallRiskScore: Math.min(calculatedRisk, 95),
+        keyConsiderations: [{
+          category: 'Analysis Limitation',
+          consideration: 'Automated analysis encountered technical limitations',
+          impact: 'MEDIUM' as const,
+          recommendation: 'Conduct manual review with legal counsel'
+        }],
+        missingClauses: [{
+          clause: 'Standard Legal Protections',
+          importance: 'MEDIUM' as const,
+          recommendation: 'Review for missing standard clauses during manual analysis'
+        }],
+        nonStandardTerms: [],
+        ambiguities: [],
         riskFactors: [{
           category: hasIPTerms ? 'IP' : hasHighValue ? 'PAYMENT' : 'OTHER',
           severity: calculatedRisk > 65 ? 'HIGH' : calculatedRisk > 45 ? 'MEDIUM' : 'LOW',
           description: `Contract analysis indicates ${hasHighValue ? 'significant financial commitments ($2.85M)' : 'moderate complexity'} ${hasIPTerms ? 'with intellectual property considerations' : ''}.`,
           clause: 'Complete clause analysis requires manual review',
           recommendation: 'Conduct detailed legal review focusing on liability, IP ownership, and payment terms'
-        }],
-        problematicClauses: []
+        }]
       };
+      problematicClauses = [];
     }
 
     // Validate and clean the extracted data
-    const validatedRiskFactors = (riskData.riskFactors && Array.isArray(riskData.riskFactors)) 
-      ? riskData.riskFactors.map((risk: any) => ({
+    const validatedRiskFactors = (riskAssessmentData.riskFactors && Array.isArray(riskAssessmentData.riskFactors)) 
+      ? riskAssessmentData.riskFactors.map((risk: any) => ({
           category: validateRiskCategory(risk.category || 'OTHER'),
           severity: validateSeverity(risk.severity || 'MEDIUM'),
           description: risk.description || 'Risk identified but description unavailable',
@@ -440,8 +739,43 @@ Calculate risk score (1-100) based on:
         }))
       : [];
 
-    const validatedProblematicClauses = (riskData.problematicClauses && Array.isArray(riskData.problematicClauses))
-      ? riskData.problematicClauses.map((clause: any) => ({
+    const validatedKeyConsiderations = (riskAssessmentData.keyConsiderations && Array.isArray(riskAssessmentData.keyConsiderations))
+      ? riskAssessmentData.keyConsiderations.map((consideration: any) => ({
+          category: consideration.category || 'General',
+          consideration: consideration.consideration || 'Consideration details not available',
+          impact: validateSeverity(consideration.impact || 'MEDIUM'),
+          recommendation: consideration.recommendation || 'Review with legal counsel'
+        }))
+      : [];
+
+    const validatedMissingClauses = (riskAssessmentData.missingClauses && Array.isArray(riskAssessmentData.missingClauses))
+      ? riskAssessmentData.missingClauses.map((missing: any) => ({
+          clause: missing.clause || 'Clause name not available',
+          importance: validateSeverity(missing.importance || 'MEDIUM'),
+          recommendation: missing.recommendation || 'Consider adding this clause'
+        }))
+      : [];
+
+    const validatedNonStandardTerms = (riskAssessmentData.nonStandardTerms && Array.isArray(riskAssessmentData.nonStandardTerms))
+      ? riskAssessmentData.nonStandardTerms.map((term: any) => ({
+          term: term.term || 'Term not specified',
+          description: term.description || 'Description not available',
+          risk: validateSeverity(term.risk || 'MEDIUM'),
+          suggestion: term.suggestion || 'Review with legal counsel'
+        }))
+      : [];
+
+    const validatedAmbiguities = (riskAssessmentData.ambiguities && Array.isArray(riskAssessmentData.ambiguities))
+      ? riskAssessmentData.ambiguities.map((ambiguity: any) => ({
+          clause: ambiguity.clause || 'Clause not specified',
+          ambiguity: ambiguity.ambiguity || 'Ambiguity not described',
+          risk: validateSeverity(ambiguity.risk || 'MEDIUM'),
+          clarification: ambiguity.clarification || 'Seek clarification from legal counsel'
+        }))
+      : [];
+
+    const validatedProblematicClauses = (problematicClauses && Array.isArray(problematicClauses))
+      ? problematicClauses.map((clause: any) => ({
           clause: clause.clause || 'Clause text not available',
           issue: clause.issue || 'Issue description not available',
           severity: validateSeverity(clause.severity || 'MEDIUM'),
@@ -475,7 +809,7 @@ Calculate risk score (1-100) based on:
       : [];
 
     // Calculate final risk score
-    const overallRiskScore = Math.min(Math.max(riskData.overallRiskScore || 50, 1), 100);
+    const overallRiskScore = Math.min(Math.max(riskAssessmentData.overallRiskScore || 50, 1), 100);
     const riskScore = overallRiskScore > 70 ? 'HIGH' : overallRiskScore > 40 ? 'MEDIUM' : 'LOW';
 
     // Generate comprehensive recommendations
@@ -494,6 +828,14 @@ Calculate risk score (1-100) based on:
       recommendedActions.push(...highRiskRecommendations);
     }
 
+    if (validatedMissingClauses.length > 0) {
+      const highImportanceMissing = validatedMissingClauses
+        .filter((mc: any) => mc.importance === 'HIGH')
+        .map((mc: any) => mc.recommendation)
+        .slice(0, 1);
+      recommendedActions.push(...highImportanceMissing);
+    }
+
     const getDocumentId = (doc: any): string => {
       return doc._id?.toString() || doc.id?.toString() || 'unknown-id';
     };
@@ -502,16 +844,29 @@ Calculate risk score (1-100) based on:
     const analysis: ContractAnalysis = {
       documentId: getDocumentId(document),
       documentName: document.originalName || document.name || 'Unknown Document',
-      userId, // CRITICAL: Include userId
+      userId,
       riskScore,
       executiveSummary: {
         overview: executiveSummary,
         keyDates: validatedKeyDates,
         obligations: validatedObligations,
-        recommendedActions: [...new Set(recommendedActions)].slice(0, 6)
+        recommendedActions: [...new Set(recommendedActions)].slice(0, 8)
       },
-      riskAnalysis: {
+      contractSnapshot: {
+        title: contractSnapshot.title,
+        contractType: contractSnapshot.contractType,
+        effectiveDate: contractSnapshot.effectiveDate,
+        expirationDate: contractSnapshot.expirationDate,
+        renewalTerms: contractSnapshot.renewalTerms,
+        parties: contractSnapshot.parties || []
+      },
+      keyInformationAndClauses,
+      riskAssessment: {
         overallScore: overallRiskScore,
+        keyConsiderations: validatedKeyConsiderations,
+        missingClauses: validatedMissingClauses,
+        nonStandardTerms: validatedNonStandardTerms,
+        ambiguities: validatedAmbiguities,
         riskFactors: validatedRiskFactors
       },
       keyTerms: validatedKeyTerms,
@@ -539,7 +894,7 @@ Calculate risk score (1-100) based on:
     return {
       documentId: getDocumentId(document),
       documentName: document.originalName || document.name || 'Unknown Document',
-      userId, // INCLUDE userId even in fallback
+      userId,
       riskScore: 'MEDIUM' as const,
       executiveSummary: {
         overview: `**Analysis Status:**
@@ -564,8 +919,35 @@ Calculate risk score (1-100) based on:
           'Try analysis again later'
         ]
       },
-      riskAnalysis: {
+      contractSnapshot: {
+        title: document.originalName || document.name || 'Unknown Contract',
+        contractType: 'Analysis Failed',
+        effectiveDate: '',
+        expirationDate: '',
+        renewalTerms: 'Manual review required',
+        parties: []
+      },
+      keyInformationAndClauses: {
+        confidentialityObligations: [],
+        nonCircumvention: [],
+        nonSolicitationOfPersonnel: [],
+        nonCompete: [],
+        intellectualProperty: [],
+        remediesAndEnforcement: [],
+        termsAndTermination: [],
+        limitationAndLiability: []
+      },
+      riskAssessment: {
         overallScore: 50,
+        keyConsiderations: [{
+          category: 'Analysis Failure',
+          consideration: 'Automated analysis failed - manual review required',
+          impact: 'MEDIUM' as const,
+          recommendation: 'Consult with legal professional'
+        }],
+        missingClauses: [],
+        nonStandardTerms: [],
+        ambiguities: [],
         riskFactors: [{
           category: 'OTHER' as const,
           severity: 'MEDIUM' as const,

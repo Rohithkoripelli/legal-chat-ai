@@ -11,7 +11,16 @@ import {
   Clock,
   TrendingUp,
   AlertCircle,
-  Info
+  Info,
+  Building,
+  Eye,
+  Scale,
+  Lock,
+  UserX,
+  Zap,
+  Hand,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
 
 interface ContractAnalysisResultsProps {
@@ -32,10 +41,89 @@ interface ContractAnalysisResultsProps {
       }>;
       recommendedActions: string[];
     };
-    riskAnalysis: {
+    contractSnapshot: {
+      title: string;
+      contractType: string;
+      effectiveDate?: string;
+      expirationDate?: string;
+      renewalTerms?: string;
+      parties: Array<{
+        name: string;
+        role: string;
+        contactInfo?: string;
+      }>;
+    };
+    keyInformationAndClauses: {
+      confidentialityObligations: Array<{
+        party: string;
+        obligation: string;
+        duration?: string;
+        scope: string;
+      }>;
+      nonCircumvention: Array<{
+        description: string;
+        restrictions: string;
+        penalties?: string;
+      }>;
+      nonSolicitationOfPersonnel: Array<{
+        restrictions: string;
+        duration?: string;
+        exceptions?: string;
+      }>;
+      nonCompete: Array<{
+        restrictions: string;
+        duration?: string;
+        geography?: string;
+        exceptions?: string;
+      }>;
+      intellectualProperty: Array<{
+        ownership: string;
+        description: string;
+        restrictions?: string;
+      }>;
+      remediesAndEnforcement: Array<{
+        remedy: string;
+        conditions: string;
+        enforcement?: string;
+      }>;
+      termsAndTermination: Array<{
+        terminationCondition: string;
+        noticePeriod?: string;
+        consequences?: string;
+      }>;
+      limitationAndLiability: Array<{
+        limitation: string;
+        scope: string;
+        exceptions?: string;
+      }>;
+    };
+    riskAssessment: {
       overallScore: number;
+      keyConsiderations: Array<{
+        category: string;
+        consideration: string;
+        impact: 'HIGH' | 'MEDIUM' | 'LOW';
+        recommendation: string;
+      }>;
+      missingClauses: Array<{
+        clause: string;
+        importance: 'HIGH' | 'MEDIUM' | 'LOW';
+        recommendation: string;
+      }>;
+      nonStandardTerms: Array<{
+        term: string;
+        description: string;
+        risk: 'HIGH' | 'MEDIUM' | 'LOW';
+        suggestion: string;
+      }>;
+      ambiguities: Array<{
+        clause: string;
+        ambiguity: string;
+        risk: 'HIGH' | 'MEDIUM' | 'LOW';
+        clarification: string;
+      }>;
       riskFactors: Array<{
-        category: 'LIABILITY' | 'TERMINATION' | 'IP' | 'PAYMENT' | 'COMPLIANCE' | 'OTHER';
+        category: 'LIABILITY' | 'TERMINATION' | 'IP' | 'PAYMENT' | 'COMPLIANCE' | 'CONFIDENTIALITY' | 'DATA_PRIVACY' | 'REGULATORY' | 'OTHER';
         severity: 'HIGH' | 'MEDIUM' | 'LOW';
         description: string;
         clause: string;
@@ -232,7 +320,7 @@ const ContractAnalysisResults: React.FC<ContractAnalysisResultsProps> = ({ analy
           <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getRiskColor(analysis.riskScore)}`}>
             {getRiskIcon(analysis.riskScore)}
             <span className="ml-2 font-semibold">{analysis.riskScore} RISK</span>
-            <span className="ml-2 text-sm">({analysis.riskAnalysis.overallScore}/100)</span>
+            <span className="ml-2 text-sm">({analysis.riskAssessment.overallScore}/100)</span>
           </div>
         </div>
       </div>
@@ -270,6 +358,80 @@ const ContractAnalysisResults: React.FC<ContractAnalysisResultsProps> = ({ analy
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Contract Snapshot */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center">
+            <Building className="h-5 w-5 mr-2 text-indigo-600" />
+            Contract Snapshot
+          </h2>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Contract Details */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-1">Contract Title</h3>
+                <p className="text-lg font-semibold text-gray-900">{analysis.contractSnapshot.title}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-1">Contract Type</h3>
+                <p className="text-gray-700">{analysis.contractSnapshot.contractType}</p>
+              </div>
+              {analysis.contractSnapshot.renewalTerms && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">Renewal Terms</h3>
+                  <p className="text-gray-700">{analysis.contractSnapshot.renewalTerms}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Key Dates */}
+            <div className="space-y-4">
+              {analysis.contractSnapshot.effectiveDate && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">Effective Date</h3>
+                  <div className="flex items-center text-gray-700">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span>{new Date(analysis.contractSnapshot.effectiveDate).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              )}
+              {analysis.contractSnapshot.expirationDate && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-1">Expiration Date</h3>
+                  <div className="flex items-center text-gray-700">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span>{new Date(analysis.contractSnapshot.expirationDate).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Parties */}
+          {analysis.contractSnapshot.parties.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Parties
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {analysis.contractSnapshot.parties.map((party, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900">{party.name}</h4>
+                    <p className="text-sm text-gray-600 mb-2">{party.role}</p>
+                    {party.contactInfo && (
+                      <p className="text-sm text-gray-500">{party.contactInfo}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -337,19 +499,321 @@ const ContractAnalysisResults: React.FC<ContractAnalysisResultsProps> = ({ analy
         </div>
       </div>
 
-      {/* Risk Analysis */}
+      {/* Key Information & Clauses */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center">
+            <Scale className="h-5 w-5 mr-2 text-purple-600" />
+            Key Information & Clauses
+          </h2>
+        </div>
+        <div className="p-6 space-y-8">
+          {/* Confidentiality Obligations */}
+          {analysis.keyInformationAndClauses.confidentialityObligations.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Lock className="h-5 w-5 mr-2 text-blue-600" />
+                Confidentiality Obligations
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.confidentialityObligations.map((conf, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-medium text-gray-900">{conf.party}</h4>
+                      {conf.duration && (
+                        <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">{conf.duration}</span>
+                      )}
+                    </div>
+                    <p className="text-gray-700 mb-2">{conf.obligation}</p>
+                    <p className="text-sm text-gray-600"><strong>Scope:</strong> {conf.scope}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Non-Circumvention */}
+          {analysis.keyInformationAndClauses.nonCircumvention.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Hand className="h-5 w-5 mr-2 text-orange-600" />
+                Non-Circumvention
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.nonCircumvention.map((nc, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <p className="text-gray-700 mb-2">{nc.description}</p>
+                    <p className="text-sm text-gray-600 mb-2"><strong>Restrictions:</strong> {nc.restrictions}</p>
+                    {nc.penalties && (
+                      <p className="text-sm text-red-600"><strong>Penalties:</strong> {nc.penalties}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Non-Solicitation of Personnel */}
+          {analysis.keyInformationAndClauses.nonSolicitationOfPersonnel.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <UserX className="h-5 w-5 mr-2 text-red-600" />
+                Non-Solicitation of Personnel
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.nonSolicitationOfPersonnel.map((ns, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <p className="text-gray-700 mb-2">{ns.restrictions}</p>
+                    {ns.duration && (
+                      <p className="text-sm text-gray-600 mb-2"><strong>Duration:</strong> {ns.duration}</p>
+                    )}
+                    {ns.exceptions && (
+                      <p className="text-sm text-green-600"><strong>Exceptions:</strong> {ns.exceptions}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Non-Compete */}
+          {analysis.keyInformationAndClauses.nonCompete.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Zap className="h-5 w-5 mr-2 text-yellow-600" />
+                Non-Compete
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.nonCompete.map((nc, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <p className="text-gray-700 mb-2">{nc.restrictions}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {nc.duration && (
+                        <p className="text-sm text-gray-600"><strong>Duration:</strong> {nc.duration}</p>
+                      )}
+                      {nc.geography && (
+                        <p className="text-sm text-gray-600"><strong>Geography:</strong> {nc.geography}</p>
+                      )}
+                    </div>
+                    {nc.exceptions && (
+                      <p className="text-sm text-green-600 mt-2"><strong>Exceptions:</strong> {nc.exceptions}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Intellectual Property */}
+          {analysis.keyInformationAndClauses.intellectualProperty.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <BookOpen className="h-5 w-5 mr-2 text-indigo-600" />
+                Intellectual Property
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.intellectualProperty.map((ip, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-2">{ip.ownership}</h4>
+                    <p className="text-gray-700 mb-2">{ip.description}</p>
+                    {ip.restrictions && (
+                      <p className="text-sm text-orange-600"><strong>Restrictions:</strong> {ip.restrictions}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Remedies and Enforcement */}
+          {analysis.keyInformationAndClauses.remediesAndEnforcement.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2 text-green-600" />
+                Remedies and Enforcement
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.remediesAndEnforcement.map((re, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-2">{re.remedy}</h4>
+                    <p className="text-gray-700 mb-2"><strong>Conditions:</strong> {re.conditions}</p>
+                    {re.enforcement && (
+                      <p className="text-sm text-gray-600"><strong>Enforcement:</strong> {re.enforcement}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Terms and Termination */}
+          {analysis.keyInformationAndClauses.termsAndTermination.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <AlertTriangle className="h-5 w-5 mr-2 text-red-600" />
+                Terms & Termination
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.termsAndTermination.map((tt, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <p className="text-gray-700 mb-2">{tt.terminationCondition}</p>
+                    {tt.noticePeriod && (
+                      <p className="text-sm text-gray-600 mb-2"><strong>Notice Period:</strong> {tt.noticePeriod}</p>
+                    )}
+                    {tt.consequences && (
+                      <p className="text-sm text-orange-600"><strong>Consequences:</strong> {tt.consequences}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Limitation and Liability */}
+          {analysis.keyInformationAndClauses.limitationAndLiability.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Scale className="h-5 w-5 mr-2 text-purple-600" />
+                Limitation and Liability
+              </h3>
+              <div className="space-y-3">
+                {analysis.keyInformationAndClauses.limitationAndLiability.map((ll, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-2">{ll.limitation}</h4>
+                    <p className="text-gray-700 mb-2"><strong>Scope:</strong> {ll.scope}</p>
+                    {ll.exceptions && (
+                      <p className="text-sm text-red-600"><strong>Exceptions:</strong> {ll.exceptions}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Enhanced Risk Assessment */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900 flex items-center">
             <AlertTriangle className="h-5 w-5 mr-2 text-red-600" />
-            Risk Factors
+            Risk Assessment
           </h2>
         </div>
-        <div className="p-6">
-          {analysis.riskAnalysis.riskFactors.length > 0 ? (
-            <div className="space-y-6">
-              {analysis.riskAnalysis.riskFactors.map((risk, index) => (
-                <div key={index} className={`border rounded-lg p-6 ${getRiskColor(risk.severity)} border-l-4`}>
+        <div className="p-6 space-y-8">
+          {/* Key Considerations */}
+          {analysis.riskAssessment.keyConsiderations.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2 text-blue-600" />
+                Key Considerations
+              </h3>
+              <div className="space-y-4">
+                {analysis.riskAssessment.keyConsiderations.map((consideration, index) => (
+                  <div key={index} className={`border rounded-lg p-4 ${getRiskColor(consideration.impact)} border-l-4`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{consideration.category}</h4>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskColor(consideration.impact)}`}>
+                        {consideration.impact}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-3">{consideration.consideration}</p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-blue-800 text-sm"><strong>Recommendation:</strong> {consideration.recommendation}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Missing Clauses */}
+          {analysis.riskAssessment.missingClauses.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <HelpCircle className="h-5 w-5 mr-2 text-orange-600" />
+                Missing Clauses
+              </h3>
+              <div className="space-y-4">
+                {analysis.riskAssessment.missingClauses.map((missing, index) => (
+                  <div key={index} className={`border rounded-lg p-4 ${getRiskColor(missing.importance)} border-l-4`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{missing.clause}</h4>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskColor(missing.importance)}`}>
+                        {missing.importance}
+                      </span>
+                    </div>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <p className="text-yellow-800 text-sm"><strong>Recommendation:</strong> {missing.recommendation}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Non-Standard Terms */}
+          {analysis.riskAssessment.nonStandardTerms.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Eye className="h-5 w-5 mr-2 text-purple-600" />
+                Non-Standard Terms
+              </h3>
+              <div className="space-y-4">
+                {analysis.riskAssessment.nonStandardTerms.map((term, index) => (
+                  <div key={index} className={`border rounded-lg p-4 ${getRiskColor(term.risk)} border-l-4`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{term.term}</h4>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskColor(term.risk)}`}>
+                        {term.risk} RISK
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-3">{term.description}</p>
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                      <p className="text-purple-800 text-sm"><strong>Suggestion:</strong> {term.suggestion}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Ambiguities */}
+          {analysis.riskAssessment.ambiguities.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <HelpCircle className="h-5 w-5 mr-2 text-gray-600" />
+                Ambiguities
+              </h3>
+              <div className="space-y-4">
+                {analysis.riskAssessment.ambiguities.map((ambiguity, index) => (
+                  <div key={index} className={`border rounded-lg p-4 ${getRiskColor(ambiguity.risk)} border-l-4`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{ambiguity.clause}</h4>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskColor(ambiguity.risk)}`}>
+                        {ambiguity.risk} RISK
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-3"><strong>Ambiguity:</strong> {ambiguity.ambiguity}</p>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <p className="text-gray-800 text-sm"><strong>Clarification Needed:</strong> {ambiguity.clarification}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Risk Factors */}
+          {analysis.riskAssessment.riskFactors.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2 text-red-600" />
+                Risk Factors
+              </h3>
+              <div className="space-y-6">
+                {analysis.riskAssessment.riskFactors.map((risk, index) => (
+                  <div key={index} className={`border rounded-lg p-6 ${getRiskColor(risk.severity)} border-l-4`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       {getCategoryIcon(risk.category)}
@@ -385,11 +849,23 @@ const ContractAnalysisResults: React.FC<ContractAnalysisResultsProps> = ({ analy
                       <p className="text-gray-700 leading-relaxed">{risk.recommendation}</p>
                     </div>
                   </div>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
-            <p className="text-gray-500 italic">No risk factors identified</p>
+          )}
+
+          {/* Fallback message when no risk assessment data */}
+          {analysis.riskAssessment.keyConsiderations.length === 0 && 
+           analysis.riskAssessment.missingClauses.length === 0 && 
+           analysis.riskAssessment.nonStandardTerms.length === 0 && 
+           analysis.riskAssessment.ambiguities.length === 0 && 
+           analysis.riskAssessment.riskFactors.length === 0 && (
+            <div className="text-center py-8">
+              <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 italic">No detailed risk assessment data available</p>
+              <p className="text-sm text-gray-400 mt-2">Manual review recommended for comprehensive risk analysis</p>
+            </div>
           )}
         </div>
       </div>

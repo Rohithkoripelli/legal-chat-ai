@@ -120,13 +120,13 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
       .slice(0, 5);
     
     const averageRiskScore = userAnalyses.length > 0 
-      ? userAnalyses.reduce((sum, a) => sum + a.riskAnalysis.overallScore, 0) / userAnalyses.length
+      ? userAnalyses.reduce((sum, a) => sum + a.riskAssessment.overallScore, 0) / userAnalyses.length
       : 0;
     
     // Calculate risk factors from user's analyses only
     const riskFactors: { [key: string]: number } = {};
     userAnalyses.forEach(analysis => {
-      analysis.riskAnalysis.riskFactors.forEach(factor => {
+      analysis.riskAssessment.riskFactors.forEach(factor => {
         riskFactors[factor.category] = (riskFactors[factor.category] || 0) + 1;
       });
     });
@@ -168,9 +168,9 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
         documentId: contract.documentId,
         documentName: contract.documentName,
         riskScore: contract.riskScore,
-        overallScore: contract.riskAnalysis.overallScore,
+        overallScore: contract.riskAssessment.overallScore,
         analyzedAt: contract.analyzedAt,
-        topRiskFactors: contract.riskAnalysis.riskFactors
+        topRiskFactors: contract.riskAssessment.riskFactors
           .filter(rf => rf.severity === 'HIGH')
           .slice(0, 3)
       })),
