@@ -136,6 +136,29 @@ export const getContractAnalysis = async (req: Request, res: Response) => {
   }
 };
 
+// Helper function to safely get risk data from old or new structure
+const getRiskData = (analysis: any) => {
+  // Check if new structure exists
+  if (analysis.riskAssessment) {
+    return {
+      overallScore: analysis.riskAssessment.overallScore || 50,
+      riskFactors: analysis.riskAssessment.riskFactors || []
+    };
+  }
+  // Fallback to old structure
+  if (analysis.riskAnalysis) {
+    return {
+      overallScore: analysis.riskAnalysis.overallScore || 50,
+      riskFactors: analysis.riskAnalysis.riskFactors || []
+    };
+  }
+  // Ultimate fallback
+  return {
+    overallScore: 50,
+    riskFactors: []
+  };
+};
+
 export const getRiskDashboard = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
@@ -160,13 +183,14 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
       .slice(0, 5);
     
     const averageRiskScore = userAnalyses.length > 0 
-      ? userAnalyses.reduce((sum, a) => sum + a.riskAssessment.overallScore, 0) / userAnalyses.length
+      ? userAnalyses.reduce((sum, a) => sum + getRiskData(a).overallScore, 0) / userAnalyses.length
       : 0;
     
     // Calculate risk factors from user's analyses only
     const riskFactors: { [key: string]: number } = {};
     userAnalyses.forEach(analysis => {
-      analysis.riskAssessment.riskFactors.forEach(factor => {
+      const riskData = getRiskData(analysis);
+      riskData.riskFactors.forEach(factor => {
         riskFactors[factor.category] = (riskFactors[factor.category] || 0) + 1;
       });
     });
@@ -204,16 +228,19 @@ export const getRiskDashboard = async (req: Request, res: Response) => {
         medium: mediumRiskCount,
         low: lowRiskCount
       },
-      recentHighRisk: recentHighRisk.map(contract => ({
-        documentId: contract.documentId,
-        documentName: contract.documentName,
-        riskScore: contract.riskScore,
-        overallScore: contract.riskAssessment.overallScore,
-        analyzedAt: contract.analyzedAt,
-        topRiskFactors: contract.riskAssessment.riskFactors
-          .filter(rf => rf.severity === 'HIGH')
-          .slice(0, 3)
-      })),
+      recentHighRisk: recentHighRisk.map(contract => {
+        const riskData = getRiskData(contract);
+        return {
+          documentId: contract.documentId,
+          documentName: contract.documentName,
+          riskScore: contract.riskScore,
+          overallScore: riskData.overallScore,
+          analyzedAt: contract.analyzedAt,
+          topRiskFactors: riskData.riskFactors
+            .filter(rf => rf.severity === 'HIGH')
+            .slice(0, 3)
+        };
+      }),
       topRiskFactors,
       trends: {
         thisMonth,
