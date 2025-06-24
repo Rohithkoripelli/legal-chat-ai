@@ -2,6 +2,13 @@ import express, { Request, Response } from 'express';
 import Document from '../models/Document';
 import { processMessage } from '../services/aiService';
 import { clerkAuthMiddleware } from '../middleware/auth';
+import { 
+  sendMessage, 
+  createConversation, 
+  getConversations, 
+  getConversation, 
+  deleteConversation 
+} from '../controllers/chatController';
 
 const router = express.Router();
 
@@ -117,59 +124,20 @@ Body: ${JSON.stringify(req.body, null, 2)}
 });
 
 // POST /api/chat - Send a message (authenticated users only)
-router.post('/', async (req: Request<{}, {}, AuthenticatedChatBody> & { userId?: string }, res: Response) => {
-  try {
-    console.log('📩 POST /api/chat from authenticated user:', req.userId);
-    const { message, documentIds = [] } = req.body;
+router.post('/', sendMessage);
 
-    if (!req.userId) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
+// Conversation management routes
+// GET /api/chat/conversations - List user conversations
+router.get('/conversations', getConversations);
 
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
+// GET /api/chat/conversations/:id - Get specific conversation with messages
+router.get('/conversations/:id', getConversation);
 
-    console.log(`📩 Received message from user ${req.userId}: "${message}"`);
-    console.log(`🔍 Requested document IDs: ${documentIds.length > 0 ? documentIds.join(', ') : 'none'}`);
+// POST /api/chat/conversations - Create new conversation
+router.post('/conversations', createConversation);
 
-    // CRITICAL SECURITY: Get only user's documents
-    let documents: any[] = [];
-    if (documentIds && documentIds.length > 0) {
-      try {
-        documents = await Document.find({ 
-          _id: { $in: documentIds },
-          userId: req.userId // ONLY USER'S DOCUMENTS
-        });
-        console.log(`📄 Found ${documents.length} documents belonging to user ${req.userId}`);
-      } catch (docError) {
-        console.warn('⚠️ Could not fetch user documents:', docError);
-      }
-    } else {
-      // If no specific documents requested, get all user's documents
-      try {
-        documents = await Document.find({ userId: req.userId });
-        console.log(`📄 Using all ${documents.length} documents from user ${req.userId}`);
-      } catch (docError) {
-        console.warn('⚠️ Could not fetch all user documents:', docError);
-      }
-    }
-
-    // Process message with AI using only user's documents
-    console.log('🤖 Processing authenticated message with AI...');
-    const aiResponse = await processMessage(message, documents);
-    
-    console.log('✅ AI response generated for authenticated user:', req.userId);
-    res.json({ response: aiResponse });
-    
-  } catch (error) {
-    console.error('❌ Error in POST /api/chat for user', req.userId, ':', error);
-    res.status(500).json({ 
-      error: 'I apologize, but I encountered an error while processing your message. Please try again.',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
+// DELETE /api/chat/conversations/:id - Delete conversation
+router.delete('/conversations/:id', deleteConversation);
 
 // GET /api/chat/test - Test if chat API is working (authenticated)
 router.get('/test', (req: AuthenticatedRequest, res: Response) => {

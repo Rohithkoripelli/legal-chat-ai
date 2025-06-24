@@ -6,6 +6,7 @@ export interface IMessage {
   timestamp: Date;
   documentIds?: string[];
   userId?: string;
+  conversationId: string;
 }
 
 const messageSchema = new mongoose.Schema<IMessage>({
@@ -26,6 +27,10 @@ const messageSchema = new mongoose.Schema<IMessage>({
   }],
   userId: {
     type: String
+  },
+  conversationId: {
+    type: String,
+    required: true
   }
 });
 

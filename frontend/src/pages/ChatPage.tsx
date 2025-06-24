@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import MessageList from '../components/chat/MessageList';
 import MessageInput from '../components/chat/MessageInput';
+import ChatWithHistory from '../components/chat/ChatWithHistory';
 import { useChat } from '../hooks/useChat';
 import { useGuestChat } from '../hooks/useGuestChat';
 import { useDocuments } from '../hooks/useDocuments';
@@ -137,6 +138,46 @@ const ChatPage: React.FC = () => {
   const documentCount = isSignedIn ? authDocuments.length : guestDocuments.length;
   const documents = isSignedIn ? authDocuments : guestDocuments;
 
+  // For signed-in users, use the new chat interface with history
+  if (isSignedIn) {
+    return (
+      <>
+        <DocumentHead
+          title="AI Legal Chat Assistant | Personal Legal AI | LegalChatAI"
+          description="Personal AI legal assistant with chat history, unlimited document uploads, and advanced analysis features. Your conversations are saved and secure."
+          keywords="personal legal AI, legal chat history, AI legal assistant, legal conversation history, personal AI lawyer"
+          canonical="https://www.legalchatai.com/chat"
+          jsonLD={{
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Personal AI Legal Chat Assistant",
+            "description": "Personal AI-powered legal consultation with chat history and unlimited uploads",
+            "url": "https://www.legalchatai.com/chat",
+            "about": {
+              "@type": "Service",
+              "name": "Personal AI Legal Chat Assistant",
+              "description": "Personal AI-powered legal consultation with advanced features",
+              "provider": {
+                "@type": "Organization",
+                "name": "LegalChatAI",
+                "url": "https://www.legalchatai.com"
+              },
+              "serviceType": "Personal Legal AI Consultation",
+              "audience": {
+                "@type": "Audience",
+                "audienceType": ["Legal Professionals", "Business Owners", "Individuals"]
+              }
+            }
+          }}
+        />
+        <div className="h-screen overflow-hidden">
+          <ChatWithHistory />
+        </div>
+      </>
+    );
+  }
+
+  // For guest users, use the existing chat interface
   return (
     <>
       <DocumentHead

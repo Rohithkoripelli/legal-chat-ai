@@ -134,3 +134,29 @@ export interface ProtectedApiOptions extends RequestInit {
   requireAuth?: boolean;
   retryOnAuthFailure?: boolean;
 }
+
+// NEW: Conversation types for chat history
+export interface Conversation {
+  _id: string;
+  title: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  messageCount?: number;
+}
+
+// NEW: Conversation with messages
+export interface ConversationWithMessages {
+  conversation: Conversation;
+  messages: Message[];
+}
+
+// NEW: Updated Chat context type with conversation support
+export interface ChatContextTypeWithConversations extends ChatContextType {
+  conversations: Conversation[];
+  currentConversation: Conversation | null;
+  createConversation: (title?: string) => Promise<Conversation>;
+  switchConversation: (conversationId: string) => Promise<void>;
+  deleteConversation: (conversationId: string) => Promise<void>;
+  loadConversations: () => Promise<void>;
+}

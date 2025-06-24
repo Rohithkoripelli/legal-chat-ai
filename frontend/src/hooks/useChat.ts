@@ -1,12 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
-import { Message } from '../types'; // Use your existing types
+import { Message, Conversation, ConversationWithMessages } from '../types';
 
 export const useChat = () => {
   const { getToken, isSignedIn } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Conversation state
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
+  const [conversationsLoading, setConversationsLoading] = useState(false);
 
   const sendMessage = useCallback(async ({ message }: { message: string }) => {
     if (!isSignedIn) {
@@ -69,7 +74,8 @@ export const useChat = () => {
         },
         body: JSON.stringify({ 
           message,
-          documentIds // Include user's document IDs for context
+          documentIds, // Include user's document IDs for context
+          conversationId: currentConversation?._id // Include conversation ID
         }),
       });
 
@@ -84,6 +90,26 @@ export const useChat = () => {
 
       const data = await response.json();
       console.log('✅ Chat response received');
+      
+      // If a new conversation was created, update current conversation
+      if (data.conversationId && !currentConversation) {
+        // Load the new conversation details
+        try {
+          const convResponse = await fetch(`https://legal-chat-ai.onrender.com/api/chat/conversations/${data.conversationId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (convResponse.ok) {
+            const convData = await convResponse.json();
+            setCurrentConversation(convData.conversation);
+            console.log('✅ Set current conversation to new conversation');
+          }
+        } catch (convError) {
+          console.warn('⚠️ Could not load new conversation details:', convError);
+        }
+      }
       
       // Add AI response
       const aiMessage: Message = {
@@ -114,7 +140,129 @@ export const useChat = () => {
     } finally {
       setIsLoading(false);
     }
+  }, [getToken, isSignedIn, currentConversation]);
+
+  // Conversation management functions
+  const loadConversations = useCallback(async () => {
+    if (!isSignedIn) return;
+
+    setConversationsLoading(true);
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch('https://legal-chat-ai.onrender.com/api/chat/conversations', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const conversations = await response.json();
+        setConversations(conversations);
+        console.log('✅ Loaded conversations:', conversations.length);
+      }
+    } catch (error) {
+      console.error('❌ Error loading conversations:', error);
+    } finally {
+      setConversationsLoading(false);
+    }
   }, [getToken, isSignedIn]);
+
+  const createConversation = useCallback(async (title?: string): Promise<Conversation> => {
+    if (!isSignedIn) {
+      throw new Error('Please log in to create conversations');
+    }
+
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch('https://legal-chat-ai.onrender.com/api/chat/conversations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title: title || 'New Conversation' })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create conversation');
+    }
+
+    const conversation = await response.json();
+    setConversations(prev => [conversation, ...prev]);
+    setCurrentConversation(conversation);
+    setMessages([]);
+    
+    console.log('✅ Created new conversation:', conversation._id);
+    return conversation;
+  }, [getToken, isSignedIn]);
+
+  const switchConversation = useCallback(async (conversationId: string) => {
+    if (!isSignedIn) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/chat/conversations/${conversationId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data: ConversationWithMessages = await response.json();
+        setCurrentConversation(data.conversation);
+        setMessages(data.messages.map(msg => ({
+          ...msg,
+          id: msg.id || Date.now() + Math.random(),
+          timestamp: new Date(msg.timestamp)
+        })));
+        console.log('✅ Switched to conversation:', conversationId);
+      }
+    } catch (error) {
+      console.error('❌ Error switching conversation:', error);
+      setError('Failed to load conversation');
+    }
+  }, [getToken, isSignedIn]);
+
+  const deleteConversation = useCallback(async (conversationId: string) => {
+    if (!isSignedIn) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch(`https://legal-chat-ai.onrender.com/api/chat/conversations/${conversationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        setConversations(prev => prev.filter(conv => conv._id !== conversationId));
+        
+        // If deleting current conversation, clear it
+        if (currentConversation?._id === conversationId) {
+          setCurrentConversation(null);
+          setMessages([]);
+        }
+        
+        console.log('✅ Deleted conversation:', conversationId);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting conversation:', error);
+      setError('Failed to delete conversation');
+    }
+  }, [getToken, isSignedIn, currentConversation]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -132,7 +280,19 @@ export const useChat = () => {
     setError(null);
   }, [isSignedIn]);
 
-  // Return interface compatible with existing components
+  // Load conversations when user signs in
+  useEffect(() => {
+    if (isSignedIn) {
+      loadConversations();
+    } else {
+      // Clear conversations when user signs out
+      setConversations([]);
+      setCurrentConversation(null);
+      setMessages([]);
+    }
+  }, [isSignedIn, loadConversations]);
+
+  // Return interface compatible with existing components plus conversation features
   return {
     messages,
     isLoading,
@@ -141,6 +301,15 @@ export const useChat = () => {
     clearMessages,
     initializeSession,
     currentSession: null, // Placeholder for future session management
-    isAuthenticated: isSignedIn
+    isAuthenticated: isSignedIn,
+    
+    // Conversation features
+    conversations,
+    currentConversation,
+    conversationsLoading,
+    loadConversations,
+    createConversation,
+    switchConversation,
+    deleteConversation
   };
 };
