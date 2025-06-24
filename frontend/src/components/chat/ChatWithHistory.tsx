@@ -169,7 +169,7 @@ const ChatWithHistory: React.FC = () => {
                     {documents.length} document{documents.length !== 1 ? 's' : ''} • {currentConversation 
                       ? `${currentConversation.messageCount || 0} messages`
                       : 'Start a new conversation'
-                    }
+                    } • {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
                   </span>
                 </div>
               </div>

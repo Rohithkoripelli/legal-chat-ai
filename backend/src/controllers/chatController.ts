@@ -30,21 +30,29 @@ export const sendMessage = async (req: Request & { userId?: string }, res: Respo
     if (!currentConversationId) {
       // Create new conversation with first few words of message as title
       const title = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+      console.log(`📝 Creating new conversation with title: "${title}"`);
+      
       const newConversation = new Conversation({
         title,
         userId,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        messageCount: 0
       });
-      await newConversation.save();
-      currentConversationId = newConversation._id.toString();
-      console.log(`✅ Created new conversation: ${currentConversationId}`);
+      
+      const savedConversation = await newConversation.save();
+      currentConversationId = savedConversation._id.toString();
+      console.log(`✅ Created new conversation: ${currentConversationId} for user: ${userId}`);
+      console.log('Conversation details:', { id: savedConversation._id, title: savedConversation.title, userId: savedConversation.userId });
     } else {
       // Verify conversation belongs to user
+      console.log(`🔍 Verifying existing conversation: ${conversationId} for user: ${userId}`);
       const existingConversation = await Conversation.findOne({ _id: conversationId, userId });
       if (!existingConversation) {
+        console.log(`❌ Conversation ${conversationId} not found for user ${userId}`);
         return res.status(404).json({ error: 'Conversation not found' });
       }
+      console.log(`✅ Using existing conversation: ${conversationId}`);
     }
 
     // Save user message first
@@ -187,7 +195,11 @@ export const getConversations = async (req: Request & { userId?: string }, res: 
   try {
     const userId = req.userId;
 
+    console.log('\n======== GET CONVERSATIONS ========');
+    console.log('User ID:', userId);
+
     if (!userId) {
+      console.log('❌ User not authenticated');
       return res.status(401).json({ error: 'User not authenticated' });
     }
 
@@ -195,9 +207,12 @@ export const getConversations = async (req: Request & { userId?: string }, res: 
       .sort({ updatedAt: -1 })
       .limit(50);
 
+    console.log(`✅ Found ${conversations.length} conversations for user ${userId}`);
+    console.log('Conversations:', conversations.map(c => ({ id: c._id, title: c.title, messageCount: c.messageCount })));
+
     res.json(conversations);
   } catch (error) {
-    console.error('Error fetching conversations:', error);
+    console.error('❌ Error fetching conversations:', error);
     res.status(500).json({ error: 'Could not fetch conversations' });
   }
 };

@@ -91,7 +91,7 @@ export const useChat = () => {
       const data = await response.json();
       console.log('✅ Chat response received');
       
-      // If a new conversation was created, update current conversation
+      // If a new conversation was created, update current conversation and refresh list
       if (data.conversationId && !currentConversation) {
         // Load the new conversation details
         try {
@@ -105,10 +105,16 @@ export const useChat = () => {
             const convData = await convResponse.json();
             setCurrentConversation(convData.conversation);
             console.log('✅ Set current conversation to new conversation');
+            
+            // Refresh conversations list to show the new conversation
+            await loadConversations();
           }
         } catch (convError) {
           console.warn('⚠️ Could not load new conversation details:', convError);
         }
+      } else if (data.conversationId && currentConversation) {
+        // If continuing existing conversation, refresh conversations to update message count
+        await loadConversations();
       }
       
       // Add AI response
@@ -149,8 +155,12 @@ export const useChat = () => {
     setConversationsLoading(true);
     try {
       const token = await getToken();
-      if (!token) return;
+      if (!token) {
+        console.warn('⚠️ No token available for loading conversations');
+        return;
+      }
 
+      console.log('🔄 Loading conversations...');
       const response = await fetch('https://legal-chat-ai.onrender.com/api/chat/conversations', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -158,10 +168,21 @@ export const useChat = () => {
         }
       });
 
+      console.log('📡 Conversations response status:', response.status);
+
       if (response.ok) {
         const conversations = await response.json();
-        setConversations(conversations);
-        console.log('✅ Loaded conversations:', conversations.length);
+        // Convert date strings to Date objects
+        const processedConversations = conversations.map((conv: any) => ({
+          ...conv,
+          createdAt: new Date(conv.createdAt),
+          updatedAt: new Date(conv.updatedAt)
+        }));
+        setConversations(processedConversations);
+        console.log('✅ Loaded conversations:', processedConversations.length, processedConversations);
+      } else {
+        const errorData = await response.text();
+        console.error('❌ Failed to load conversations:', response.status, errorData);
       }
     } catch (error) {
       console.error('❌ Error loading conversations:', error);
@@ -194,12 +215,18 @@ export const useChat = () => {
     }
 
     const conversation = await response.json();
-    setConversations(prev => [conversation, ...prev]);
-    setCurrentConversation(conversation);
+    // Process conversation dates
+    const processedConversation = {
+      ...conversation,
+      createdAt: new Date(conversation.createdAt),
+      updatedAt: new Date(conversation.updatedAt)
+    };
+    setConversations(prev => [processedConversation, ...prev]);
+    setCurrentConversation(processedConversation);
     setMessages([]);
     
-    console.log('✅ Created new conversation:', conversation._id);
-    return conversation;
+    console.log('✅ Created new conversation:', processedConversation._id);
+    return processedConversation;
   }, [getToken, isSignedIn]);
 
   const switchConversation = useCallback(async (conversationId: string) => {
@@ -218,7 +245,13 @@ export const useChat = () => {
 
       if (response.ok) {
         const data: ConversationWithMessages = await response.json();
-        setCurrentConversation(data.conversation);
+        // Process conversation dates
+        const processedConversation = {
+          ...data.conversation,
+          createdAt: new Date(data.conversation.createdAt),
+          updatedAt: new Date(data.conversation.updatedAt)
+        };
+        setCurrentConversation(processedConversation);
         setMessages(data.messages.map(msg => ({
           ...msg,
           id: msg.id || Date.now() + Math.random(),
@@ -290,7 +323,7 @@ export const useChat = () => {
       setCurrentConversation(null);
       setMessages([]);
     }
-  }, [isSignedIn, loadConversations]);
+  }, [isSignedIn]); // Remove loadConversations from deps to avoid infinite loop
 
   // Return interface compatible with existing components plus conversation features
   return {
