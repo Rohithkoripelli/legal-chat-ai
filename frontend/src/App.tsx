@@ -109,6 +109,7 @@
       { label: 'Home', path: '/', icon: <Home className="h-5 w-5" />, guestAllowed: true, isPremium: false },
       { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn, showOnlyForGuests: true },
+      { label: 'Contract Analysis', path: '/contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: false, isPremium: false, showOnlyForSignedIn: true },
       { label: 'Resources', path: '/resources', icon: <BookOpen className="h-4 w-4" />, guestAllowed: true, isPremium: false },
       { label: 'Dashboard', path: '/dashboard', icon: <BarChart3 className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },
       { label: 'Generator', path: '/create-document', icon: <ClipboardList className="h-5 w-5" />, guestAllowed: false, isPremium: true, showOnlyForSignedIn: true },

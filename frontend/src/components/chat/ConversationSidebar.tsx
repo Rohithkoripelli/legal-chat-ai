@@ -51,7 +51,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   return (
-    <div className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col h-full">
+    <div className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col h-full shadow-lg lg:shadow-none">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">

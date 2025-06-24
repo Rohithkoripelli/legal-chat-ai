@@ -5,7 +5,15 @@ import { useDocuments } from '../../hooks/useDocuments';
 import ConversationSidebar from './ConversationSidebar';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-import { MessageSquare, Brain, AlertCircle, X, ChevronLeft, Menu, Upload, FileText } from 'lucide-react';
+import { MessageSquare, Brain, AlertCircle, X, Upload, FileText } from 'lucide-react';
+
+// Hamburger Menu Component
+const HamburgerIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+  <div className="w-6 h-6 flex flex-col justify-center items-center">
+    <div className={`w-5 h-0.5 bg-current transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1' : ''}`}></div>
+    <div className={`w-5 h-0.5 bg-current transition-all duration-300 mt-1 ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}></div>
+  </div>
+);
 
 const ChatWithHistory: React.FC = () => {
   const { isSignedIn } = useAuth();
@@ -22,9 +30,12 @@ const ChatWithHistory: React.FC = () => {
     deleteConversation
   } = useChat();
 
-  const { documents, loading: documentsLoading, uploadDocument } = useDocuments();
+  const { documents, uploadDocument } = useDocuments();
 
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(() => {
+    // Start with sidebar closed on mobile, open on desktop
+    return window.innerWidth >= 1024;
+  });
   const [localError, setLocalError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -61,6 +72,10 @@ const ChatWithHistory: React.FC = () => {
   const handleCreateConversation = async (title?: string) => {
     try {
       await createConversation(title);
+      // Auto-close sidebar on mobile after creating conversation
+      if (window.innerWidth < 1024) {
+        setSidebarVisible(false);
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create conversation';
       setLocalError(errorMessage);
@@ -70,6 +85,10 @@ const ChatWithHistory: React.FC = () => {
   const handleSwitchConversation = async (conversationId: string) => {
     try {
       await switchConversation(conversationId);
+      // Auto-close sidebar on mobile after selecting conversation
+      if (window.innerWidth < 1024) {
+        setSidebarVisible(false);
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to switch conversation';
       setLocalError(errorMessage);
@@ -248,9 +267,21 @@ const ChatWithHistory: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen bg-gray-100 max-h-screen overflow-hidden">
+    <div className="flex h-screen bg-gray-100 max-h-screen overflow-hidden relative">
+      {/* Mobile Overlay */}
+      {sidebarVisible && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarVisible(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`${sidebarVisible ? 'block' : 'hidden'} lg:block`}>
+      <div className={`
+        fixed top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out
+        lg:relative lg:translate-x-0 lg:z-auto
+        ${sidebarVisible ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
         <ConversationSidebar
           conversations={conversations}
           currentConversation={currentConversation}
@@ -262,40 +293,47 @@ const ChatWithHistory: React.FC = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-white relative">
+      <div className="flex-1 flex flex-col bg-white relative lg:ml-0">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 p-4">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setSidebarVisible(!sidebarVisible)}
-                className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg"
+                className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-white rounded-lg transition-colors"
+                aria-label="Toggle conversation history"
               >
-                {sidebarVisible ? <ChevronLeft size={20} /> : <Menu size={20} />}
+                <HamburgerIcon isOpen={sidebarVisible} />
               </button>
               <div className="p-2 bg-blue-100 rounded-lg">
                 <MessageSquare className="h-5 w-5 text-blue-600" />
               </div>
-              <div>
-                <h2 className="font-semibold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <h2 className="font-semibold text-gray-900 truncate">
                   {currentConversation ? currentConversation.title : 'Legal AI Chat'}
                 </h2>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>
-                    {documents.length} document{documents.length !== 1 ? 's' : ''} • {currentConversation 
-                      ? `${currentConversation.messageCount || 0} messages`
-                      : 'Start a new conversation'
-                    } • {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
+                  <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                  <span className="truncate">
+                    <span className="hidden sm:inline">
+                      {documents.length} document{documents.length !== 1 ? 's' : ''} • {currentConversation 
+                        ? `${currentConversation.messageCount || 0} messages`
+                        : 'Start a new conversation'
+                      } • {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
+                    </span>
+                    <span className="sm:hidden">
+                      {documents.length} docs • {conversations.length} chats
+                    </span>
                   </span>
                 </div>
               </div>
             </div>
             <button
               onClick={() => handleCreateConversation()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex-shrink-0"
             >
-              New Chat
+              <span className="hidden sm:inline">New Chat</span>
+              <span className="sm:hidden">New</span>
             </button>
           </div>
         </div>
@@ -324,8 +362,8 @@ const ChatWithHistory: React.FC = () => {
             /* Empty State - Centered Content with Input */
             <div className="h-full flex flex-col">
               {/* Centered Content */}
-              <div className="flex-1 flex items-center justify-center p-4">
-                <div className="text-center max-w-2xl w-full">
+              <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
+                <div className="text-center max-w-2xl w-full px-2 sm:px-0">
                   <div className="mb-8">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                       <Brain className="h-8 w-8 text-blue-600" />
@@ -371,7 +409,7 @@ const ChatWithHistory: React.FC = () => {
               </div>
               
               {/* Centered Message Input */}
-              <div className="flex justify-center px-6 pb-8">
+              <div className="flex justify-center px-4 sm:px-6 pb-6 sm:pb-8">
                 <div className="w-full max-w-4xl">
                   {renderMessageInput()}
                 </div>
@@ -389,7 +427,7 @@ const ChatWithHistory: React.FC = () => {
               </div>
               
               {/* Fixed Bottom Input */}
-              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-4">
+              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-3 sm:p-4">
                 {renderMessageInput()}
               </div>
             </>
