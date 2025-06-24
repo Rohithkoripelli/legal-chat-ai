@@ -216,6 +216,28 @@ const ChatPage: React.FC = () => {
           </div>
         )}
 
+        {/* Uploaded Documents Display */}
+        {documentCount > 0 && (
+          <div className="border-b border-gray-200 bg-white p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-gray-900">
+                  Uploaded Documents ({documentCount})
+                </span>
+              </div>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(isSignedIn ? authDocuments : guestDocuments).map((doc, index) => (
+                <div key={doc.id || index} className="inline-flex items-center space-x-1 bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs border border-blue-200">
+                  <FileText className="h-3 w-3" />
+                  <span className="max-w-32 truncate">{doc.title || doc.name || `Document ${index + 1}`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Chat Messages Area */}
         <div className="flex-1 overflow-hidden bg-gray-50">
           {messages.length === 0 && !displayError ? (
@@ -284,8 +306,12 @@ const ChatPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="h-full overflow-y-auto">
-              <MessageList messages={messages} />
+            <div className="h-full overflow-y-auto" id="chat-messages-container">
+              <MessageList 
+                messages={messages} 
+                isLoading={isLoading}
+                containerRef="chat-messages-container"
+              />
             </div>
           )}
         </div>

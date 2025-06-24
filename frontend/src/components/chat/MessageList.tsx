@@ -5,20 +5,33 @@ interface MessageListProps {
   messages: Message[];
   isLoading?: boolean;
   hasTextExtractionWarning?: boolean;
+  containerRef?: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextExtractionWarning }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextExtractionWarning, containerRef }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerElementRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to the bottom when messages change
+  // Auto-scroll to the bottom when messages change, but keep it within chat container
   useEffect(() => {
-    // Use requestAnimationFrame to ensure the DOM is updated
-    const timer = requestAnimationFrame(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    });
+    const timer = setTimeout(() => {
+      if (containerRef) {
+        // Scroll within the specific chat container
+        const container = document.getElementById(containerRef);
+        if (container && messagesEndRef.current) {
+          container.scrollTop = container.scrollHeight;
+        }
+      } else {
+        // Fallback to element scrolling
+        messagesEndRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end'
+        });
+      }
+    }, 100); // Small delay to ensure DOM is updated
     
-    return () => cancelAnimationFrame(timer);
-  }, [messages, isLoading]);
+    return () => clearTimeout(timer);
+  }, [messages, isLoading, containerRef]);
 
   // Format text with simple markdown-like syntax
   const formatText = (text: string) => {
@@ -46,7 +59,11 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextE
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ overflowY: 'auto', height: '100%' }}>
+    <div 
+      ref={containerElementRef}
+      className="flex-1 overflow-y-auto p-4 space-y-4" 
+      style={{ overflowY: 'auto', height: '100%' }}
+    >
       {/* Warning about PDF extraction if applicable */}
       {hasTextExtractionWarning && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
