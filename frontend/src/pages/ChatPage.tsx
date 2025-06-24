@@ -167,112 +167,144 @@ const ChatPage: React.FC = () => {
           }
         }}
       />
-      <div className="max-w-6xl mx-auto p-6">
-      {/* MAIN CHAT INTERFACE - MOVED TO TOP */}
-      <div className="bg-white rounded-lg shadow-sm border h-[600px] flex flex-col mb-8">
+      <div className="max-w-4xl mx-auto p-4">
+      {/* MAIN CHAT INTERFACE - IMPROVED UI */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 h-[650px] flex flex-col mb-6 overflow-hidden">
+        {/* Header with Status */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <MessageSquare className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-900">
+                  {isSignedIn ? 'Personal Legal AI Assistant' : 'Free Legal AI Chat'}
+                </h2>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Online • {documentCount} document{documentCount !== 1 ? 's' : ''} loaded</span>
+                </div>
+              </div>
+            </div>
+            {!isSignedIn && (
+              <button
+                onClick={() => window.location.href = '/sign-up'}
+                className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full hover:bg-green-200 transition-colors"
+              >
+                Upgrade Free
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Error Display */}
         {displayError && (
-          <div className="border-b border-red-200 bg-red-50 p-4">
+          <div className="bg-red-50 border-b border-red-100 p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="h-4 w-4 text-red-500" />
-                <span className="text-red-800 font-medium">Error: {displayError}</span>
+                <span className="text-red-700 text-sm font-medium">{displayError}</span>
               </div>
               <button
                 onClick={clearError}
-                className="text-red-600 hover:text-red-800 text-sm"
+                className="text-red-500 hover:text-red-700 text-sm"
               >
-                Dismiss
+                <X className="h-4 w-4" />
               </button>
             </div>
           </div>
         )}
 
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-gray-50">
           {messages.length === 0 && !displayError ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center max-w-lg">
-                <div className="text-gray-400 mb-6">
-                  <MessageSquare className="mx-auto h-16 w-16" />
-                </div>
-                <h3 className="text-xl font-medium text-gray-900 mb-3">
-                  {isSignedIn ? 'Welcome to Your Personal Legal AI!' : 'Welcome to Free Legal Chat AI!'}
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {documentCount > 0 
-                    ? `You have ${documentCount} document${documentCount !== 1 ? 's' : ''} ready for AI analysis. Ask questions about your documents or general legal topics.`
-                    : isSignedIn 
-                      ? 'Ask general legal questions or upload documents for specific analysis. Our AI assistant can help with both!'
-                      : 'Ask general legal questions for free, or upload documents for specific analysis. No signup required!'
-                  }
-                </p>
-                
-                {/* EXAMPLE QUERIES */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Try these example questions:</h4>
-                  <div className="grid md:grid-cols-2 gap-2 text-sm text-gray-600">
-                    <div className="space-y-1">
-                      {documentCount > 0 ? (
-                        <>
-                          <p>• "What are the payment terms in this contract?"</p>
-                          <p>• "Identify any liability clauses"</p>
-                          <p>• "What is the termination notice period?"</p>
-                        </>
-                      ) : (
-                        <>
-                          <p>• "What should I include in an NDA?"</p>
-                          <p>• "What is a force majeure clause?"</p>
-                          <p>• "How do liability limitations work?"</p>
-                        </>
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      {documentCount > 0 ? (
-                        <>
-                          <p>• "Summarize the key obligations"</p>
-                          <p>• "What are the potential risks?"</p>
-                          <p>• "Explain this clause in simple terms"</p>
-                        </>
-                      ) : (
-                        <>
-                          <p>• "What's the difference between LLC and Corp?"</p>
-                          <p>• "How do non-compete clauses work?"</p>
-                          <p>• "What are standard contract terms?"</p>
-                        </>
-                      )}
-                    </div>
+            <div className="h-full flex items-center justify-center p-6">
+              <div className="text-center max-w-md">
+                <div className="mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Brain className="h-10 w-10 text-blue-600" />
                   </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {documentCount > 0 ? 'Ready to Analyze!' : 'Start Chatting with Legal AI'}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {documentCount > 0 
+                      ? `${documentCount} document${documentCount !== 1 ? 's' : ''} loaded. Ask anything about your legal documents.`
+                      : 'Ask legal questions or upload documents for analysis. No signup required!'
+                    }
+                  </p>
+                </div>
+                
+                {/* Quick Start Examples */}
+                <div className="space-y-2 mb-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Quick examples:</h4>
+                  {documentCount > 0 ? (
+                    <div className="space-y-2">
+                      <button 
+                        onClick={() => handleSendMessage('What are the key risks in this contract?')}
+                        className="w-full text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm"
+                      >
+                        📊 "What are the key risks in this contract?"
+                      </button>
+                      <button 
+                        onClick={() => handleSendMessage('Explain the payment terms')}
+                        className="w-full text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm"
+                      >
+                        💰 "Explain the payment terms"
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <button 
+                        onClick={() => handleSendMessage('What should I include in an NDA?')}
+                        className="w-full text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm"
+                      >
+                        📄 "What should I include in an NDA?"
+                      </button>
+                      <button 
+                        onClick={() => handleSendMessage('How do liability clauses work?')}
+                        className="w-full text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm"
+                      >
+                        ⚖️ "How do liability clauses work?"
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {documentCount === 0 && (
                   <button
                     onClick={() => setShowUpload(true)}
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    {isSignedIn ? 'Upload Documents (Optional)' : 'Upload Documents Free (Optional)'}
+                    Upload Documents
                   </button>
                 )}
               </div>
             </div>
           ) : (
-            <MessageList messages={messages} />
+            <div className="h-full overflow-y-auto">
+              <MessageList messages={messages} />
+            </div>
           )}
         </div>
 
         {/* Inline Upload Section */}
         {showUpload && (
-          <div className="border-t border-gray-200 bg-white p-4">
+          <div className="border-t border-gray-200 bg-blue-50 p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-gray-900">Upload Documents</h3>
+              <div className="flex items-center space-x-2">
+                <Upload className="h-4 w-4 text-blue-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Upload Documents</h3>
+              </div>
               <button
                 onClick={() => {
                   setShowUpload(false);
                   setSelectedFiles([]);
                   setUploadError(null);
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 p-1"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -345,39 +377,37 @@ const ChatPage: React.FC = () => {
         )}
 
         {/* Message Input */}
-        <div className="border-t bg-gray-50 p-4">
-          <div>
-            {/* Upload Toggle Button */}
-            <div className="mb-2">
-              <button
-                onClick={() => setShowUpload(!showUpload)}
-                className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
-              >
-                <Upload className="h-3 w-3" />
-                <span>{showUpload ? 'Hide Upload' : 'Upload Documents'}</span>
-                {showUpload ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-              </button>
-            </div>
+        <div className="border-t border-gray-200 bg-white p-4">
+          <div className="space-y-3">
+            {/* Upload Toggle - More Prominent */}
+            {!showUpload && (
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setShowUpload(true)}
+                  className="inline-flex items-center space-x-2 text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>Upload Documents</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+                {documentCount > 0 && (
+                  <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                    {documentCount} document{documentCount !== 1 ? 's' : ''} loaded
+                  </div>
+                )}
+              </div>
+            )}
+            
             <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-            <div className="mt-2 text-center">
-              {documentCount === 0 ? (
-                <p className="text-xs text-gray-500">
-                  💡 You can ask general legal questions, or <button 
-                    onClick={() => setShowUpload(true)}
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >upload documents above</button> for specific analysis!
-                </p>
-              ) : (
-                <p className="text-xs text-gray-500">
-                  💡 Ask questions about your {documentCount} uploaded document{documentCount !== 1 ? 's' : ''} or general legal topics.
-                  {!isSignedIn && (
-                    <span> <button 
-                      onClick={() => window.location.href = '/sign-up'}
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >Create a free account</button> for unlimited features!</span>
-                  )}
-                </p>
-              )}
+            
+            {/* Subtle Help Text */}
+            <div className="text-center">
+              <p className="text-xs text-gray-400">
+                {documentCount === 0 
+                  ? 'Ask legal questions or upload documents for specific analysis'
+                  : `Chat about your ${documentCount} document${documentCount !== 1 ? 's' : ''} or ask general legal questions`
+                }
+              </p>
             </div>
           </div>
         </div>
