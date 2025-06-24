@@ -83,7 +83,9 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
           {messages.map((message, index) => (
             <div
               key={message.id || `msg-${index}-${Date.now()}`}
-              className={`flex items-start gap-2 ${message.isUser ? 'justify-end' : 'justify-start'} mb-4 w-full min-w-0`}
+              className={`flex items-start gap-2 mb-4 w-full min-w-0 ${
+                message.isUser ? 'justify-end flex-row-reverse' : 'justify-start'
+              }`}
             >
               {!message.isUser && (
                 <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
@@ -95,17 +97,23 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
               )}
               
               <div
-                className={`min-w-0 flex-1 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-2 sm:px-3 py-2 ${
+                className={`min-w-0 rounded-lg px-2 sm:px-3 py-2 ${
                   message.isUser
-                    ? 'bg-blue-600 text-white ml-auto'
-                    : 'bg-white border border-gray-200 shadow-sm text-gray-800'
+                    ? 'bg-blue-600 text-white max-w-[calc(100vw-80px)] sm:max-w-xs lg:max-w-md xl:max-w-lg'
+                    : 'bg-white border border-gray-200 shadow-sm text-gray-800 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg'
                 }`}
                 style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'anywhere', hyphens: 'auto' }}
               >
                 {message.isUser ? (
                   <p 
-                    className="text-sm whitespace-pre-wrap"
-                    style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                    className="text-sm"
+                    style={{ 
+                      wordWrap: 'break-word', 
+                      wordBreak: 'break-word', 
+                      overflowWrap: 'anywhere',
+                      whiteSpace: 'pre-wrap',
+                      maxWidth: '100%'
+                    }}
                   >
                     {message.text}
                   </p>
@@ -141,7 +149,7 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
                 </svg>
               </div>
               <div 
-                className="min-w-0 flex-1 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-2 sm:px-3 py-3 bg-white border border-gray-200 shadow-sm text-gray-800" 
+                className="min-w-0 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-2 sm:px-3 py-3 bg-white border border-gray-200 shadow-sm text-gray-800" 
                 style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'anywhere' }}
               >
                 <div className="flex items-center space-x-2">
