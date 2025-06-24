@@ -33,7 +33,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     return new Date(date).toLocaleDateString();
   };
 
-  const truncateTitle = (title: string, maxLength: number = 30) => {
+  const truncateTitle = (title: string, maxLength: number = 35) => {
     return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
   };
 
@@ -51,7 +51,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   return (
-    <div className="w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-full">
+    <div className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
