@@ -316,121 +316,129 @@ const ChatPage: React.FC = () => {
           )}
         </div>
 
-        {/* Inline Upload Section */}
-        {showUpload && (
-          <div className="border-t border-gray-200 bg-blue-50 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-2">
-                <Upload className="h-4 w-4 text-blue-600" />
-                <h3 className="text-sm font-semibold text-gray-900">Upload Documents</h3>
-              </div>
-              <button
-                onClick={() => {
-                  setShowUpload(false);
-                  setSelectedFiles([]);
-                  setUploadError(null);
-                }}
-                className="text-gray-400 hover:text-gray-600 p-1"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              <div
-                className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors cursor-pointer"
-                onClick={() => document.getElementById('chat-file-input')?.click()}
-              >
-                <Upload className="mx-auto h-6 w-6 text-gray-400 mb-2" />
-                <p className="text-xs text-gray-600">Click to select files or drag and drop</p>
-                <p className="text-xs text-gray-500">
-                  {isSignedIn ? 'Unlimited uploads • PDF, Word, Text, RTF' : 'Max 3 files • PDF, Word, Text, RTF'}
-                </p>
-                <input
-                  id="chat-file-input"
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx,.txt,.rtf"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </div>
-
-              {selectedFiles.length > 0 && (
-                <div className="space-y-2">
-                  {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded text-xs">
-                      <div className="flex items-center space-x-2">
-                        <FileText className="h-3 w-3 text-blue-600" />
-                        <span className="truncate">{file.name}</span>
-                        <span className="text-gray-500">({formatFileSize(file.size)})</span>
-                      </div>
-                      <button
-                        onClick={() => removeFile(index)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={uploadFiles}
-                      disabled={uploading}
-                      className="flex-1 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    >
-                      {uploading ? 'Uploading...' : `Upload ${selectedFiles.length} file${selectedFiles.length !== 1 ? 's' : ''}`}
-                    </button>
-                    <button
-                      onClick={() => setSelectedFiles([])}
-                      disabled={uploading}
-                      className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {uploadError && (
-                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-2 rounded text-xs">
-                  <AlertCircle className="h-3 w-3" />
-                  <span>{uploadError}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Message Input */}
         <div className="border-t border-gray-200 bg-white p-4">
           <div className="space-y-3">
-            {/* Upload Toggle - More Prominent */}
-            {!showUpload && (
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setShowUpload(true)}
-                  className="inline-flex items-center space-x-2 text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                >
-                  <Upload className="h-4 w-4" />
-                  <span>Upload Documents</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-                {documentCount > 0 && (
-                  <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    {documentCount} document{documentCount !== 1 ? 's' : ''} loaded
+            {/* Message Input with File Upload */}
+            <MessageInput 
+              onSendMessage={handleSendMessage} 
+              isLoading={isLoading}
+              onFileUpload={() => setShowUpload(true)}
+              showFileUpload={true}
+            />
+            
+            {/* File Upload Section - Collapsible */}
+            {showUpload && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <Upload className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-900">Upload Documents</span>
                   </div>
-                )}
+                  <button
+                    onClick={() => {
+                      setShowUpload(false);
+                      setSelectedFiles([]);
+                      setUploadError(null);
+                    }}
+                    className="text-gray-400 hover:text-gray-600 p-1"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                    onClick={() => document.getElementById('chat-file-input')?.click()}
+                  >
+                    <Upload className="mx-auto h-5 w-5 text-gray-400 mb-2" />
+                    <p className="text-xs text-gray-600">Click to select files or drag and drop</p>
+                    <p className="text-xs text-gray-500">
+                      {isSignedIn ? 'Unlimited uploads • PDF, Word, Text, RTF' : 'Max 3 files • PDF, Word, Text, RTF'}
+                    </p>
+                    <input
+                      id="chat-file-input"
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,.txt,.rtf"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                  </div>
+
+                  {selectedFiles.length > 0 && (
+                    <div className="space-y-2">
+                      {selectedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-white p-2 rounded border text-xs">
+                          <div className="flex items-center space-x-2">
+                            <FileText className="h-3 w-3 text-blue-600" />
+                            <span className="truncate">{file.name}</span>
+                            <span className="text-gray-500">({formatFileSize(file.size)})</span>
+                          </div>
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={uploadFiles}
+                          disabled={uploading}
+                          className="flex-1 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
+                          {uploading ? 'Uploading...' : `Upload ${selectedFiles.length} file${selectedFiles.length !== 1 ? 's' : ''}`}
+                        </button>
+                        <button
+                          onClick={() => setSelectedFiles([])}
+                          disabled={uploading}
+                          className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {uploadError && (
+                    <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-2 rounded text-xs">
+                      <AlertCircle className="h-3 w-3" />
+                      <span>{uploadError}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             
-            <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+            {/* Uploaded Files Display - Below Message Input */}
+            {documentCount > 0 && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center space-x-2 mb-2">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-900">
+                    Uploaded Files ({documentCount})
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(isSignedIn ? authDocuments : guestDocuments).map((doc, index) => (
+                    <div key={doc.id || index} className="inline-flex items-center space-x-1 bg-white text-gray-700 px-2 py-1 rounded text-xs border border-gray-300">
+                      <FileText className="h-3 w-3 text-blue-600" />
+                      <span className="max-w-32 truncate">{doc.title || doc.name || `Document ${index + 1}`}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
-            {/* Subtle Help Text */}
+            {/* Help Text */}
             <div className="text-center">
               <p className="text-xs text-gray-400">
                 {documentCount === 0 
-                  ? 'Ask legal questions or upload documents for specific analysis'
+                  ? 'Ask legal questions or use the 📎 icon to upload documents for analysis'
                   : `Chat about your ${documentCount} document${documentCount !== 1 ? 's' : ''} or ask general legal questions`
                 }
               </p>

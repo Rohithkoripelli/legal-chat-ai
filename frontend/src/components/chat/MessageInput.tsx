@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Paperclip } from 'lucide-react';
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  onFileUpload?: () => void;
+  showFileUpload?: boolean;
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, isLoading }) => {
+const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, isLoading, onFileUpload, showFileUpload }) => {
   const [message, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,21 +35,34 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, isLoading })
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t bg-white p-4">
-      <div className="flex gap-2">
-        <input
-          ref={inputRef}
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask a question about your legal documents..."
-          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-          disabled={isLoading}
-        />
+    <form onSubmit={handleSubmit} className="">
+      <div className="flex gap-2 items-end">
+        <div className="flex-1 relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask a question about your legal documents..."
+            className={`w-full rounded-lg border border-gray-300 px-4 py-3 ${showFileUpload ? 'pr-12' : 'pr-4'} focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200`}
+            disabled={isLoading}
+          />
+          {/* File Upload Clip Icon */}
+          {showFileUpload && (
+            <button
+              type="button"
+              onClick={onFileUpload}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+              title="Upload documents"
+            >
+              <Paperclip size={20} />
+            </button>
+          )}
+        </div>
         <button
           type="submit"
           disabled={!message.trim() || isLoading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="rounded-lg bg-blue-600 px-4 py-3 text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-opacity-50 border-t-white"></div>
