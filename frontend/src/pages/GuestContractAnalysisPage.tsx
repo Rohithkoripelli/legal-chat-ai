@@ -432,7 +432,7 @@ const GuestContractAnalysisPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">{analysis.riskAnalysis.overallScore}</div>
+                <div className="text-3xl font-bold text-gray-900">{analysis.riskAnalysis?.overallScore || 0}</div>
                 <div className="text-sm text-gray-600">Risk Score</div>
               </div>
               <div className="h-16 w-px bg-gray-300"></div>
@@ -532,9 +532,9 @@ const GuestContractAnalysisPage: React.FC = () => {
         {/* Risk Factors */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Risk Factors</h2>
-          {analysis.riskAnalysis.riskFactors.length > 0 ? (
+          {(analysis.riskAnalysis?.riskFactors?.length || 0) > 0 ? (
             <div className="space-y-4">
-              {analysis.riskAnalysis.riskFactors.map((factor, index) => (
+              {analysis.riskAnalysis?.riskFactors?.map((factor, index) => (
                 <div key={index} className={`border-l-4 p-4 rounded-r-lg ${
                   factor.severity === 'HIGH' ? 'border-red-400 bg-red-50' :
                   factor.severity === 'MEDIUM' ? 'border-yellow-400 bg-yellow-50' :
