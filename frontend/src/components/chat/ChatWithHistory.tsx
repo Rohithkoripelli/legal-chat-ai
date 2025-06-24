@@ -417,8 +417,8 @@ const ChatWithHistory: React.FC = () => {
             </div>
           ) : (
             /* Conversation Mode - Normal Layout */
-            <>
-              <div className="h-full overflow-y-auto" id="chat-messages-container" style={{ paddingBottom: '120px' }}>
+            <div className="flex flex-col h-full">
+              <div className="flex-1 overflow-y-auto min-h-0" id="chat-messages-container">
                 <MessageList 
                   messages={messages} 
                   isLoading={isLoading}
@@ -427,10 +427,10 @@ const ChatWithHistory: React.FC = () => {
               </div>
               
               {/* Fixed Bottom Input */}
-              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2 sm:p-4">
+              <div className="flex-shrink-0 border-t border-gray-200 bg-white p-2 sm:p-4">
                 {renderMessageInput()}
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
