@@ -61,8 +61,8 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
   return (
     <div 
       ref={containerElementRef}
-      className="flex-1 overflow-y-auto p-4 space-y-4" 
-      style={{ overflowY: 'auto', height: '100%' }}
+      className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4" 
+      style={{ overflowY: 'auto', height: '100%', WebkitOverflowScrolling: 'touch' }}
     >
       {/* Warning about PDF extraction if applicable */}
       {hasTextExtractionWarning && (
@@ -95,7 +95,7 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
               )}
               
               <div
-                className={`max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-4 py-2 ${
+                className={`max-w-[280px] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-3 sm:px-4 py-2 ${
                   message.isUser
                     ? 'bg-blue-600 text-white'
                     : 'bg-white border border-gray-200 shadow-sm text-gray-800'
@@ -133,7 +133,7 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
                   <path d="M12 3h.393a7.5 7.5 0 0 1 7.92 8.037l-.113.813a7.5 7.5 0 0 1-10.522 5.93l-.281-.113-.256.275A6.5 6.5 0 0 1 2.5 20.5V16" />
                 </svg>
               </div>
-              <div className="max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-4 py-3 bg-white border border-gray-200 shadow-sm text-gray-800">
+              <div className="max-w-[280px] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-3 sm:px-4 py-3 bg-white border border-gray-200 shadow-sm text-gray-800">
                 <div className="flex items-center space-x-2">
                   <div className="h-2 w-2 bg-gray-300 rounded-full animate-bounce"></div>
                   <div className="h-2 w-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
