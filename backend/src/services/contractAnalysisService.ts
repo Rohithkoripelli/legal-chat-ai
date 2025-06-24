@@ -262,7 +262,7 @@ const validateImportance = (importance: string) => {
 };
 
 // Enhanced OpenAI API call
-const safeOpenAICall = async (messages: any[], maxTokens: number = 1000, model: string = 'gpt-3.5-turbo'): Promise<string> => {
+const safeOpenAICall = async (messages: any[], maxTokens: number = 1000, model: string = 'gpt-4o'): Promise<string> => {
   try {
     console.log(`🤖 Making OpenAI API call with model: ${model}`);
     
@@ -345,7 +345,7 @@ Format your response with clear line breaks, bullet points, and structured secti
           content: 'You are a senior contract analyst. Provide detailed, specific analysis based on the actual contract content.'
         },
         { role: 'user', content: summaryPrompt }
-      ], 800, 'gpt-3.5-turbo');
+      ], 800, 'gpt-4o');
       
       console.log('✅ Executive summary generated');
     } catch (summaryError) {
@@ -418,7 +418,7 @@ Focus on:
           content: 'You are a contract analyst. Extract contract snapshot information and return valid JSON only.' 
         },
         { role: 'user', content: snapshotPrompt }
-      ], 800, 'gpt-3.5-turbo');
+      ], 800, 'gpt-4o');
 
       const parsedSnapshot = safeJSONParse(snapshotContent, { contractSnapshot });
       contractSnapshot = parsedSnapshot.contractSnapshot || contractSnapshot;
@@ -481,7 +481,7 @@ Focus on:
           content: 'You are a contract analyst. Extract key information and return valid JSON only.' 
         },
         { role: 'user', content: extractionPrompt }
-      ], 1000, 'gpt-3.5-turbo');
+      ], 1000, 'gpt-4o');
 
       extractedData = safeJSONParse(extractionContent, { keyTerms: [], keyDates: [], obligations: [] });
       console.log('✅ Key terms and dates extracted');
@@ -579,7 +579,7 @@ Extract all relevant clause information. If a section is not present, return an 
           content: 'You are a legal clause analyst. Extract detailed clause information and return valid JSON only.' 
         },
         { role: 'user', content: clausesPrompt }
-      ], 1200, 'gpt-3.5-turbo');
+      ], 1200, 'gpt-4o');
 
       const parsedClauses = safeJSONParse(clausesContent, { keyInformationAndClauses });
       keyInformationAndClauses = parsedClauses.keyInformationAndClauses || keyInformationAndClauses;
@@ -678,7 +678,7 @@ Calculate overall risk score (1-100) based on:
           content: 'You are a comprehensive legal risk analyst. Conduct detailed risk assessment and return valid JSON only.' 
         },
         { role: 'user', content: riskPrompt }
-      ], 1400, 'gpt-3.5-turbo');
+      ], 1400, 'gpt-4o');
 
       const parsedRiskData = safeJSONParse(riskContent, {
         riskAssessment: riskAssessmentData,
@@ -1017,7 +1017,7 @@ Format with clear line breaks, bullet points, and structured sections for easy r
         role: 'user',
         content: prompt
       }
-    ], 1200, 'gpt-3.5-turbo');
+    ], 1200, 'gpt-4o');
 
     return summary;
     

@@ -131,10 +131,10 @@ export const processMessage = async (
     console.log(`Using ${usingVectorSearch ? 'VECTOR SEARCH' : 'TRADITIONAL'} context retrieval`);
     
     // Call OpenAI API with enhanced model selection
-    let model = 'gpt-4';
+    let model = 'gpt-4o';
     let maxTokens = 1000;
     
-    // Try GPT-4 first, fall back to GPT-3.5 if needed
+    // Try GPT-4o first, fall back to GPT-3.5 if needed
     try {
       const response = await openai.chat.completions.create({
         model: model,
@@ -151,8 +151,8 @@ export const processMessage = async (
       
       return formatAIResponse(aiResponse, usingVectorSearch);
       
-    } catch (gpt4Error: any) {
-      console.warn('GPT-4 failed, trying GPT-3.5-turbo:', gpt4Error.message);
+    } catch (gpt4oError: any) {
+      console.warn('GPT-4o failed, trying GPT-3.5-turbo:', gpt4oError.message);
       
       // Fallback to GPT-3.5
       model = 'gpt-3.5-turbo';
