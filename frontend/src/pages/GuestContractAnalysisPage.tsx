@@ -1,6 +1,6 @@
 // src/pages/GuestContractAnalysisPage.tsx
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users } from 'lucide-react';
+import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 interface GuestDocument {
   id: string;
@@ -60,6 +60,10 @@ const GuestContractAnalysisPage: React.FC = () => {
   const [analysis, setAnalysis] = useState<ContractAnalysis | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
 
@@ -238,6 +242,67 @@ const GuestContractAnalysisPage: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Upload handlers for inline upload
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      if (files.length > 3) {
+        setUploadError('Free users can upload up to 3 documents at once. Sign up for unlimited uploads!');
+        return;
+      }
+      setSelectedFiles(files);
+      setUploadError(null);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(files => files.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      selectedFiles.forEach(file => {
+        formData.append('documents', file);
+      });
+
+      const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const result = await response.json();
+      const uploadedDocs: GuestDocument[] = result.documents.map((doc: any) => ({
+        id: doc.id,
+        name: doc.name,
+        size: doc.size,
+        type: doc.type,
+        uploadedAt: new Date(doc.uploadedAt),
+        content: doc.content
+      }));
+
+      setGuestDocuments(prev => [...prev, ...uploadedDocs]);
+      sessionStorage.setItem('guestDocuments', JSON.stringify([...guestDocuments, ...uploadedDocs]));
+      
+      setSelectedFiles([]);
+      setShowUpload(false);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
   };
 
   // Function to format the executive summary with proper structure
@@ -612,6 +677,97 @@ const GuestContractAnalysisPage: React.FC = () => {
 
       {/* Document Selection or Upload */}
       <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
+        {/* Inline Upload Section */}
+        {showUpload && (
+          <div className="border border-blue-200 rounded-lg p-6 mb-6 bg-blue-50">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Upload New Documents (Free)</h3>
+              <button
+                onClick={() => {
+                  setShowUpload(false);
+                  setSelectedFiles([]);
+                  setUploadError(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                onClick={() => document.getElementById('guest-contract-file-input')?.click()}
+              >
+                <Upload className="mx-auto h-8 w-8 text-gray-400 mb-3" />
+                <p className="text-gray-600 mb-2">Click to select files or drag and drop</p>
+                <p className="text-sm text-gray-500">Free: Up to 3 documents • PDF, Word (.doc, .docx), Text (.txt), RTF</p>
+                <input
+                  id="guest-contract-file-input"
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.txt,.rtf"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+
+              {selectedFiles.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-900">Selected Files:</h4>
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                      <div className="flex items-center space-x-3">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="text-sm font-medium">{file.name}</p>
+                          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeFile(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={uploadFiles}
+                      disabled={uploading}
+                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+                    >
+                      {uploading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <span>Upload {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} for Free</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setSelectedFiles([])}
+                      disabled={uploading}
+                      className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {uploadError && (
+                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                  <AlertCircle className="h-5 w-5" />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {guestDocuments.length === 0 ? (
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
@@ -621,23 +777,15 @@ const GuestContractAnalysisPage: React.FC = () => {
               No Documents Found
             </h2>
             <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-              You need to upload documents first before you can analyze them. 
-              Visit the document upload page to get started.
+              Upload documents to start analyzing them with AI. No signup required - analyze up to 3 documents for free!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 <Upload className="h-5 w-5 mr-2" />
-                Upload Documents
-              </button>
-              <button
-                onClick={() => window.location.href = '/documents'}
-                className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
-              >
-                <FileText className="h-5 w-5 mr-2" />
-                Quick Upload Here
+                Upload Documents Free
               </button>
             </div>
           </div>
@@ -685,7 +833,7 @@ const GuestContractAnalysisPage: React.FC = () => {
 
             <div className="mt-8 text-center">
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 <Upload className="h-4 w-4 mr-2" />

@@ -15,9 +15,7 @@
   import { ChatProvider } from './contexts/ChatContext';
 
   // Import your enhanced pages
-  import DocumentsPage from './pages/DocumentPage';
   import ChatPage from './pages/ChatPage';
-  import GuestDocumentsPage from './pages/GuestDocumentsPage';
   import GuestContractAnalysisPage from './pages/GuestContractAnalysisPage';
   import SignedInContractAnalysisPage from './pages/SignedInContractAnalysisPage';
 
@@ -40,19 +38,10 @@ import StartupLegalChecklistPage from './pages/articles/StartupLegalChecklistPag
 import NDAAnalysisPage from './pages/articles/NDAAnalysisPage';
 import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
 
-  type Page = 'landing' | 'documents' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
+  type Page = 'landing' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
   // Feature data for navigation - KEEPING YOUR EXISTING STRUCTURE
   const features = [
-    {
-      id: 'documents' as Page,
-      path: '/documents',
-      label: 'Documents',
-      icon: <FileText className="h-5 w-5" />,
-      description: 'Upload and analyze legal documents',
-      guestAllowed: true,
-      isPremium: false
-    },
     {
       id: 'chat' as Page,
       path: '/chat',
@@ -116,7 +105,6 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
     // Mobile navigation items to match desktop
     const mobileNavItems = [
       { label: 'Home', path: '/', icon: <Home className="h-5 w-5" />, guestAllowed: true, isPremium: false },
-      { label: 'Documents', path: '/documents', icon: <FileText className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'AI Chat', path: '/chat', icon: <MessageSquare className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn },
       { label: 'Contract Analysis', path: '/guest-contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: true, isPremium: false, showFree: !isSignedIn, showOnlyForGuests: true },
       { label: 'Contract Analysis', path: '/contract-analysis', icon: <Brain className="h-5 w-5" />, guestAllowed: false, isPremium: false, showOnlyForSignedIn: true },
@@ -183,7 +171,7 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
                       {item.icon}
                     </span>
                     <span className="font-medium text-sm">{item.label}</span>
-                    {!isSignedIn && (item.label === 'Documents' || item.label === 'AI Chat' || item.label === 'Contract Analysis') && (
+                    {!isSignedIn && (item.label === 'AI Chat' || item.label === 'Contract Analysis') && (
                       <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                         FREE
                       </span>
@@ -237,9 +225,9 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
     const location = useLocation();
     
     useEffect(() => {
-      // If user is signed in and on home page WITHOUT the explicit parameter, redirect to documents
+      // If user is signed in and on home page WITHOUT the explicit parameter, redirect to chat
       if (isSignedIn && !location.search.includes('explicit')) {
-        navigate('/documents', { replace: true });
+        navigate('/chat', { replace: true });
       }
     }, [isSignedIn, navigate, location.search]);
 
@@ -546,7 +534,7 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => window.location.href = '/chat'}
                 className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors"
               >
                 Try Free Document Upload
@@ -576,7 +564,6 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
     // Convert URL path to Page type for compatibility with existing navigation
     const getPageFromPath = (pathname: string): Page => {
       switch (pathname) {
-        case '/documents': return 'documents';
         case '/chat': return 'chat';
         case '/risk-analysis': return 'contracts';
         case '/dashboard': return 'dashboard';
@@ -839,17 +826,6 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsOfServicePage />} />
 
-            {/* Document Routes */}
-            <Route 
-              path="/documents" 
-              element={
-                isSignedIn ? (
-                  <DocumentsPage onNavigateToChat={() => navigate('/chat')} />
-                ) : (
-                  <GuestDocumentsPage />
-                )
-              }
-            />
 
             {/* Chat Route */}
             <Route path="/chat" element={<ChatPage />} />

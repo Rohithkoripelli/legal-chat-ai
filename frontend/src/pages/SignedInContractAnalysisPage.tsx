@@ -1,16 +1,9 @@
 // src/pages/SignedInContractAnalysisPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
-import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, BarChart3 } from 'lucide-react';
-
-interface UserDocument {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  uploadedAt: string;
-  content?: string;
-}
+import { useDocuments } from '../hooks/useDocuments';
+import { Document } from '../types';
+import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, BarChart3, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 interface ContractAnalysis {
   documentId: string;
@@ -79,55 +72,69 @@ interface ContractAnalysis {
 
 const SignedInContractAnalysisPage: React.FC = () => {
   const { getToken, isSignedIn } = useAuth();
-  const [userDocuments, setUserDocuments] = useState<UserDocument[]>([]);
-  const [selectedDocument, setSelectedDocument] = useState<UserDocument | null>(null);
+  const { documents: userDocuments, uploadDocument, refetch } = useDocuments();
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [analysis, setAnalysis] = useState<ContractAnalysis | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
 
   // Load user documents
   useEffect(() => {
     if (isSignedIn) {
-      fetchUserDocuments();
-    }
-  }, [isSignedIn]);
-
-  const fetchUserDocuments = async () => {
-    if (!isSignedIn) return;
-
-    try {
-      const token = await getToken();
-      if (!token) {
-        throw new Error('No authentication token');
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/documents`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch documents: ${response.status}`);
-      }
-
-      const documents = await response.json();
-      console.log('📄 Fetched documents:', documents);
-      console.log('📄 First document structure:', documents[0]);
-      setUserDocuments(documents);
-    } catch (err) {
-      console.error('Error fetching user documents:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load documents');
-    } finally {
+      // Documents are automatically loaded by useDocuments hook
       setLoading(false);
+    }
+  }, [isSignedIn, userDocuments]);
+
+  // Upload handlers for inline upload
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      setSelectedFiles(files);
+      setUploadError(null);
     }
   };
 
-  const analyzeContract = async (document: UserDocument) => {
+  const removeFile = (index: number) => {
+    setSelectedFiles(files => files.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      for (const file of selectedFiles) {
+        await uploadDocument(file);
+      }
+      
+      setSelectedFiles([]);
+      setShowUpload(false);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const analyzeContract = async (document: Document) => {
     setAnalyzing(true);
     setError(null);
     setSelectedDocument(document);
@@ -263,14 +270,6 @@ const SignedInContractAnalysisPage: React.FC = () => {
       case 'LOW': return <CheckCircle className="h-5 w-5" />;
       default: return <FileText className="h-5 w-5" />;
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   // Function to format the executive summary with proper structure
@@ -673,6 +672,97 @@ const SignedInContractAnalysisPage: React.FC = () => {
 
       {/* Document Selection or Upload */}
       <section className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-12">
+        {/* Inline Upload Section */}
+        {showUpload && (
+          <div className="border border-blue-200 rounded-lg p-6 mb-6 bg-blue-50">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Upload New Documents</h3>
+              <button
+                onClick={() => {
+                  setShowUpload(false);
+                  setSelectedFiles([]);
+                  setUploadError(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                onClick={() => document.getElementById('contract-file-input')?.click()}
+              >
+                <Upload className="mx-auto h-8 w-8 text-gray-400 mb-3" />
+                <p className="text-gray-600 mb-2">Click to select files or drag and drop</p>
+                <p className="text-sm text-gray-500">Unlimited uploads • PDF, Word (.doc, .docx), Text (.txt), RTF</p>
+                <input
+                  id="contract-file-input"
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.txt,.rtf"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+
+              {selectedFiles.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-900">Selected Files:</h4>
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                      <div className="flex items-center space-x-3">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="text-sm font-medium">{file.name}</p>
+                          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeFile(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={uploadFiles}
+                      disabled={uploading}
+                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+                    >
+                      {uploading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <span>Upload {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''}</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setSelectedFiles([])}
+                      disabled={uploading}
+                      className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {uploadError && (
+                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                  <AlertCircle className="h-5 w-5" />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {userDocuments.length === 0 ? (
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
@@ -682,12 +772,11 @@ const SignedInContractAnalysisPage: React.FC = () => {
               No Documents Found
             </h2>
             <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-              You need to upload documents first before you can analyze them. 
-              Visit the document upload page to get started.
+              Upload documents to start analyzing them with AI. Your documents will be securely stored and ready for analysis.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 <Upload className="h-5 w-5 mr-2" />
@@ -723,7 +812,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
                       </h3>
                       <div className="flex flex-col space-y-1 text-sm text-gray-500">
                         <span>Size: {formatFileSize(document.size)}</span>
-                        <span>Uploaded: {new Date(document.uploadedAt).toLocaleDateString()}</span>
+                        <span>Uploaded: {document.uploadedAt.toLocaleDateString()}</span>
                       </div>
                       <div className="mt-4">
                         <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
@@ -739,7 +828,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
 
             <div className="mt-8 text-center">
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 <Upload className="h-4 w-4 mr-2" />

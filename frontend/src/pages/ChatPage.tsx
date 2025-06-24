@@ -7,7 +7,7 @@ import { useGuestChat } from '../hooks/useGuestChat';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '@clerk/clerk-react';
 import { DocumentHead } from '../components/SEO/DocumentHead';
-import { MessageSquare, FileText, Shield, Zap, CheckCircle, ArrowRight, Upload, Brain, Clock, Star, AlertCircle, Users } from 'lucide-react';
+import { MessageSquare, FileText, Shield, Zap, CheckCircle, ArrowRight, Upload, Brain, Clock, Star, AlertCircle, Users, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 const ChatPage: React.FC = () => {
   const { isSignedIn } = useAuth();
@@ -15,13 +15,17 @@ const ChatPage: React.FC = () => {
   // Use different hooks based on authentication status
   const authenticatedChat = useChat();
   const guestChat = useGuestChat();
-  const { documents: authDocuments, loading: documentsLoading } = useDocuments();
+  const { documents: authDocuments, loading: documentsLoading, uploadDocument } = useDocuments();
   
   // Choose the appropriate chat interface
   const { messages, isLoading, error, sendMessage } = isSignedIn ? authenticatedChat : guestChat;
   
   const [localError, setLocalError] = useState<string | null>(null);
   const [guestDocuments, setGuestDocuments] = useState<any[]>([]);
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // Load guest documents if not signed in
   useEffect(() => {
@@ -50,6 +54,81 @@ const ChatPage: React.FC = () => {
 
   const clearError = () => {
     setLocalError(null);
+  };
+
+  // Upload handlers for inline upload
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      setSelectedFiles(files);
+      setUploadError(null);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(files => files.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      if (isSignedIn) {
+        // Use authenticated upload
+        for (const file of selectedFiles) {
+          await uploadDocument(file);
+        }
+        // Documents will be automatically refreshed by the hook
+      } else {
+        // Use guest upload
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
+        const formData = new FormData();
+        selectedFiles.forEach(file => {
+          formData.append('documents', file);
+        });
+
+        const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const result = await response.json();
+        const uploadedDocs = result.documents.map((doc: any) => ({
+          id: doc.id,
+          name: doc.name,
+          size: doc.size,
+          type: doc.type,
+          uploadedAt: new Date(doc.uploadedAt),
+          content: doc.content
+        }));
+
+        setGuestDocuments(prev => [...prev, ...uploadedDocs]);
+        sessionStorage.setItem('guestDocuments', JSON.stringify([...guestDocuments, ...uploadedDocs]));
+      }
+      
+      setSelectedFiles([]);
+      setShowUpload(false);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const displayError = localError || error;
@@ -168,7 +247,7 @@ const ChatPage: React.FC = () => {
 
                 {documentCount === 0 && (
                   <button
-                    onClick={() => window.location.href = '/documents'}
+                    onClick={() => setShowUpload(true)}
                     className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     <Upload className="h-4 w-4 mr-2" />
@@ -182,17 +261,111 @@ const ChatPage: React.FC = () => {
           )}
         </div>
 
+        {/* Inline Upload Section */}
+        {showUpload && (
+          <div className="border-t border-gray-200 bg-white p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-900">Upload Documents</h3>
+              <button
+                onClick={() => {
+                  setShowUpload(false);
+                  setSelectedFiles([]);
+                  setUploadError(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                onClick={() => document.getElementById('chat-file-input')?.click()}
+              >
+                <Upload className="mx-auto h-6 w-6 text-gray-400 mb-2" />
+                <p className="text-xs text-gray-600">Click to select files or drag and drop</p>
+                <p className="text-xs text-gray-500">
+                  {isSignedIn ? 'Unlimited uploads • PDF, Word, Text, RTF' : 'Max 3 files • PDF, Word, Text, RTF'}
+                </p>
+                <input
+                  id="chat-file-input"
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.txt,.rtf"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+
+              {selectedFiles.length > 0 && (
+                <div className="space-y-2">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded text-xs">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-3 w-3 text-blue-600" />
+                        <span className="truncate">{file.name}</span>
+                        <span className="text-gray-500">({formatFileSize(file.size)})</span>
+                      </div>
+                      <button
+                        onClick={() => removeFile(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={uploadFiles}
+                      disabled={uploading}
+                      className="flex-1 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {uploading ? 'Uploading...' : `Upload ${selectedFiles.length} file${selectedFiles.length !== 1 ? 's' : ''}`}
+                    </button>
+                    <button
+                      onClick={() => setSelectedFiles([])}
+                      disabled={uploading}
+                      className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {uploadError && (
+                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-2 rounded text-xs">
+                  <AlertCircle className="h-3 w-3" />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Message Input */}
         <div className="border-t bg-gray-50 p-4">
           <div>
+            {/* Upload Toggle Button */}
+            <div className="mb-2">
+              <button
+                onClick={() => setShowUpload(!showUpload)}
+                className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <Upload className="h-3 w-3" />
+                <span>{showUpload ? 'Hide Upload' : 'Upload Documents'}</span>
+                {showUpload ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </button>
+            </div>
             <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
             <div className="mt-2 text-center">
               {documentCount === 0 ? (
                 <p className="text-xs text-gray-500">
                   💡 You can ask general legal questions, or <button 
-                    onClick={() => window.location.href = '/documents'}
+                    onClick={() => setShowUpload(true)}
                     className="text-blue-600 hover:text-blue-800 underline"
-                  >upload documents</button> for specific analysis!
+                  >upload documents above</button> for specific analysis!
                 </p>
               ) : (
                 <p className="text-xs text-gray-500">
@@ -410,7 +583,7 @@ const ChatPage: React.FC = () => {
           {isSignedIn ? (
             <>
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
                 <Upload className="h-5 w-5 mr-2" />
@@ -434,7 +607,7 @@ const ChatPage: React.FC = () => {
                 Create Free Account
               </button>
               <button
-                onClick={() => window.location.href = '/documents'}
+                onClick={() => setShowUpload(true)}
                 className="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-green-600"
               >
                 <Upload className="h-5 w-5 mr-2" />
