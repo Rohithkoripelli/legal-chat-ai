@@ -112,7 +112,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
                 Share Article
               </button>
               <button
-                onClick={() => window.location.href = '/contract-analysis'}
+onClick={() => window.location.href = '/guest-contract-analysis'}
                 className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 <Brain className="w-4 h-4 mr-2" />
@@ -878,7 +878,7 @@ Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.location.href = '/contract-analysis'}
+onClick={() => window.location.href = '/guest-contract-analysis'}
                 className="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
                 <Brain className="w-4 h-4 mr-2" />

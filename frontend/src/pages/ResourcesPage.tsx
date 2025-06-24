@@ -95,7 +95,7 @@ const ResourcesPage: React.FC = () => {
                   Browse Resources
                 </button>
                 <button
-                  onClick={() => window.location.href = '/contract-analysis'}
+                  onClick={() => window.location.href = '/guest-contract-analysis'}
                   className="bg-blue-500/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-base font-semibold hover:bg-blue-500/30 transition-colors border-2 border-white/20 hover:border-white/40"
                 >
                   Try AI Tools
@@ -205,7 +205,7 @@ const ResourcesPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.location.href = '/contract-analysis'}
+                onClick={() => window.location.href = '/guest-contract-analysis'}
                 className="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
                 <Brain className="w-4 h-4 mr-2" />
