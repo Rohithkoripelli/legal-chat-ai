@@ -14,29 +14,31 @@
   import DocumentTest from './components/test/DocumentTest';
   import { ChatProvider } from './contexts/ChatContext';
 
-  // Import your enhanced pages
-  import ChatPage from './pages/ChatPage';
-  import GuestContractAnalysisPage from './pages/GuestContractAnalysisPage';
-  import SignedInContractAnalysisPage from './pages/SignedInContractAnalysisPage';
+  // Lazy load pages for better mobile performance
+  const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+  const GuestContractAnalysisPage = React.lazy(() => import('./pages/GuestContractAnalysisPage'));
+  const SignedInContractAnalysisPage = React.lazy(() => import('./pages/SignedInContractAnalysisPage'));
 
-  // Import the legal pages
-  import { PrivacyPolicyPage, AboutUsPage, TermsOfServicePage } from './components/auth/LegalPages';
+  // Lazy load legal pages
+  const PrivacyPolicyPage = React.lazy(() => import('./components/auth/LegalPages').then(module => ({ default: module.PrivacyPolicyPage })));
+  const AboutUsPage = React.lazy(() => import('./components/auth/LegalPages').then(module => ({ default: module.AboutUsPage })));
+  const TermsOfServicePage = React.lazy(() => import('./components/auth/LegalPages').then(module => ({ default: module.TermsOfServicePage })));
 
-  // Import the new SEO-optimized pages
-  import NDAAnalyzerPage from './pages/NDAAnalyzerPage';
-  import LegalDocumentReviewPage from './pages/LegalDocumentReviewPage';
-  import ContractRiskAssessmentPage from './pages/ContractRiskAssessmentPage';
-  import EmploymentAgreementAnalysisPage from './pages/EmploymentAgreementAnalysisPage';
-  import StartupLegalDocumentsPage from './pages/StartupLegalDocumentsPage';
-  import FreeLegalAIPage from './pages/FreeLegalAIPage';
-  import HelpPage from './pages/HelpPage';
-import ResourcesPage from './pages/ResourcesPage';
+  // Lazy load SEO pages (less critical)
+  const NDAAnalyzerPage = React.lazy(() => import('./pages/NDAAnalyzerPage'));
+  const LegalDocumentReviewPage = React.lazy(() => import('./pages/LegalDocumentReviewPage'));
+  const ContractRiskAssessmentPage = React.lazy(() => import('./pages/ContractRiskAssessmentPage'));
+  const EmploymentAgreementAnalysisPage = React.lazy(() => import('./pages/EmploymentAgreementAnalysisPage'));
+  const StartupLegalDocumentsPage = React.lazy(() => import('./pages/StartupLegalDocumentsPage'));
+  const FreeLegalAIPage = React.lazy(() => import('./pages/FreeLegalAIPage'));
+  const HelpPage = React.lazy(() => import('./pages/HelpPage'));
+  const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 
-// Import individual article pages
-import AIContractAnalysisPage from './pages/articles/AIContractAnalysisPage';
-import StartupLegalChecklistPage from './pages/articles/StartupLegalChecklistPage';
-import NDAAnalysisPage from './pages/articles/NDAAnalysisPage';
-import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
+  // Lazy load article pages (least critical)
+  const AIContractAnalysisPage = React.lazy(() => import('./pages/articles/AIContractAnalysisPage'));
+  const StartupLegalChecklistPage = React.lazy(() => import('./pages/articles/StartupLegalChecklistPage'));
+  const NDAAnalysisPage = React.lazy(() => import('./pages/articles/NDAAnalysisPage'));
+  const AIvsHumanReviewPage = React.lazy(() => import('./pages/articles/AIvsHumanReviewPage'));
 
   type Page = 'landing' | 'chat' | 'contracts' | 'dashboard' | 'create-document' | 'test';
 
@@ -806,7 +808,15 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
 
         {/* Main Content with Routes */}
         <main className="min-h-screen">
-          <Routes>
+          <React.Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            </div>
+          }>
+            <Routes>
             {/* Public Routes */}
             <Route path="/" element={
               <HomePageWrapper 
@@ -938,7 +948,8 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
 
             {/* Catch all route - redirect to home */}
             <Route path="*" element={<LandingPage />} />
-          </Routes>
+            </Routes>
+          </React.Suspense>
         </main>
 
         {/* Footer - PRESERVING YOUR EXISTING FOOTER */}

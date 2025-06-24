@@ -20,9 +20,49 @@
   background: #94a3b8;
 }
 
-/* Smooth transitions */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+/* Performance-optimized transitions - only for interactive elements */
+button, .interactive, .hover-effect {
+  transition-property: color, background-color, border-color, opacity, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Enable hardware acceleration for better scrolling */
+  body {
+    -webkit-overflow-scrolling: touch;
+    transform: translate3d(0,0,0);
+  }
+  
+  /* Optimize text rendering on mobile */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+  
+  /* Disable complex animations on mobile */
+  .no-mobile-animation {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Reduce motion for better mobile performance */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* CSS containment for better performance */
+.chat-container {
+  contain: layout style paint;
+}
+
+.message-list {
+  contain: layout style;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo, useMemo } from 'react';
 import { Message } from '../../types'; // Use your existing types
 
 interface MessageListProps {
@@ -8,7 +8,7 @@ interface MessageListProps {
   containerRef?: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextExtractionWarning, containerRef }) => {
+const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, hasTextExtractionWarning, containerRef }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerElementRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +33,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextE
     return () => clearTimeout(timer);
   }, [messages, isLoading, containerRef]);
 
-  // Format text with simple markdown-like syntax
-  const formatText = (text: string) => {
+  // Format text with simple markdown-like syntax - memoized for performance
+  const formatText = useMemo(() => (text: string) => {
     // Convert markdown-style formatting to HTML
     let formattedText = text
       // Bold text
@@ -56,7 +56,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextE
     }
 
     return formattedText;
-  };
+  }, []);
 
   return (
     <div 
@@ -150,6 +150,6 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading, hasTextE
       )}
     </div>
   );
-};
+});
 
 export default MessageList;
