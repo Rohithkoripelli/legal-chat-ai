@@ -1105,35 +1105,11 @@ const LandingPage: React.FC<{
                     <button 
                       className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-blue-700 transition-colors inline-flex items-center justify-center min-w-0"
                       onClick={() => {
-                        // Check if guest documents exist
-                        const guestDocs = sessionStorage.getItem('guestDocuments');
-                        const hasDocuments = guestDocs && JSON.parse(guestDocs).length > 0;
-                        
-                        if (hasDocuments) {
-                          window.location.href = '/chat';
-                        } else {
-                          window.location.href = '/documents';
-                        }
+                        window.location.href = '/chat';
                       }}
                     >
                       <span className="truncate">Get Instant Insights</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
-                    </button>
-                    <button 
-                      className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
-                      onClick={() => {
-                        // Check if guest documents exist
-                        const guestDocs = sessionStorage.getItem('guestDocuments');
-                        const hasDocuments = guestDocs && JSON.parse(guestDocs).length > 0;
-                        
-                        if (hasDocuments) {
-                          window.location.href = '/guest-contract-analysis';
-                        } else {
-                          window.location.href = '/documents';
-                        }
-                      }}
-                    >
-                      <span className="truncate">Legal Documents Analysis</span>
                     </button>
                     <button 
                       className="w-full sm:w-auto bg-green-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center min-w-0"
