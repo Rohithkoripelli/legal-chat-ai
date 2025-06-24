@@ -642,8 +642,8 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
                   <span>Home</span>
                 </button>
 
-                {/* Show only core features to prevent overflow */}
-                {features.slice(0, isSignedIn ? 5 : 2).map((feature) => (
+                {/* Show only appropriate features based on auth status */}
+                {features.filter(feature => isSignedIn || feature.guestAllowed).slice(0, isSignedIn ? 5 : 1).map((feature) => (
                   <button
                     key={feature.id}
                     onClick={() => navigate(feature.path)}
