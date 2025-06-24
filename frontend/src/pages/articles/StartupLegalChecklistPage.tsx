@@ -28,7 +28,7 @@ Starting a business is exciting, but navigating the legal requirements can be ov
 
 [Full article content would be included here in a production implementation]
 
-Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
+Visit https://www.legalchatai.com/guest-contract-analysis to try our AI tools.
 `], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = 'startup-legal-checklist-2025.txt';

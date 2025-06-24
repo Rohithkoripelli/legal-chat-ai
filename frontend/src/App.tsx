@@ -52,15 +52,6 @@ import AIvsHumanReviewPage from './pages/articles/AIvsHumanReviewPage';
       isPremium: false
     },
     {
-      id: 'contracts' as Page,
-      path: '/contract-analysis',
-      label: 'Contract Analysis',
-      icon: <Brain className="h-5 w-5" />,
-      description: 'AI-powered contract analysis and risk assessment',
-      guestAllowed: false,
-      isPremium: false
-    },
-    {
       id: 'dashboard' as Page,
       path: '/dashboard',
       label: 'Dashboard',

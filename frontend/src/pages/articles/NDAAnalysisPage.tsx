@@ -28,7 +28,7 @@ Non-Disclosure Agreements (NDAs) are among the most commonly used legal document
 
 [Full article content would be included here in a production implementation]
 
-Visit https://www.legalchatai.com/contract-analysis to try our AI tools.
+Visit https://www.legalchatai.com/guest-contract-analysis to try our AI tools.
 `], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = 'nda-analysis-guide-2025.txt';
