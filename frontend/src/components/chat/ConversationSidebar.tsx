@@ -54,7 +54,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     <div className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
           <button
             onClick={() => onCreateConversation()}
@@ -64,6 +64,14 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             <Plus size={20} />
           </button>
         </div>
+        {/* New Conversation Button - Prominent */}
+        <button
+          onClick={() => onCreateConversation()}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+        >
+          <Plus size={16} />
+          New Conversation
+        </button>
       </div>
 
       {/* Conversations List */}
@@ -135,17 +143,6 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             ))}
           </div>
         )}
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 bg-white">
-        <button
-          onClick={() => onCreateConversation()}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus size={16} />
-          New Conversation
-        </button>
       </div>
     </div>
   );
