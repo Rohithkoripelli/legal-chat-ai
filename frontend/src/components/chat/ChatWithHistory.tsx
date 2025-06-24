@@ -364,14 +364,14 @@ const ChatWithHistory: React.FC = () => {
               {/* Centered Content */}
               <div className="flex-1 flex items-center justify-center p-3 sm:p-4 min-h-0">
                 <div className="text-center max-w-2xl w-full px-2 sm:px-0">
-                  <div className="mb-6 sm:mb-8">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+                  <div className="mb-4 sm:mb-8">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                      <Brain className="h-7 w-7 sm:h-8 sm:w-8 text-blue-600" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3">
+                    <h3 className="text-lg sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3">
                       {currentConversation ? 'Continue Your Conversation' : 'What can I help you with?'}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6">
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-3 sm:mb-6">
                       {documents.length > 0 
                         ? `${documents.length} document${documents.length !== 1 ? 's' : ''} loaded. Ask anything about your legal documents.`
                         : 'Ask legal questions, analyze contracts, or upload documents for review.'
@@ -381,24 +381,24 @@ const ChatWithHistory: React.FC = () => {
                   
                   {/* Quick Start Examples */}
                   {documents.length > 0 && (
-                    <div className="space-y-2 mb-4 sm:mb-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">Quick examples:</h4>
-                      <div className="space-y-2">
+                    <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-6">
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">Quick examples:</h4>
+                      <div className="space-y-1.5 sm:space-y-2">
                         <button 
                           onClick={() => handleSendMessage('What are the key risks in my contracts?')}
-                          className="w-full text-left p-2.5 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
+                          className="w-full text-left p-2 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
                         >
                           📊 "What are the key risks in my contracts?"
                         </button>
                         <button 
                           onClick={() => handleSendMessage('Explain the payment terms')}
-                          className="w-full text-left p-2.5 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
+                          className="w-full text-left p-2 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
                         >
                           💰 "Explain the payment terms"
                         </button>
                         <button 
                           onClick={() => handleSendMessage('What should I include in an NDA?')}
-                          className="w-full text-left p-2.5 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
+                          className="w-full text-left p-2 sm:p-3 bg-white rounded border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-xs sm:text-sm shadow-sm"
                         >
                           📄 "What should I include in an NDA?"
                         </button>
@@ -409,7 +409,7 @@ const ChatWithHistory: React.FC = () => {
               </div>
               
               {/* Centered Message Input */}
-              <div className="flex justify-center px-4 sm:px-6 pb-4 sm:pb-8">
+              <div className="flex justify-center px-3 sm:px-6 pb-6 sm:pb-8">
                 <div className="w-full max-w-4xl">
                   {renderMessageInput()}
                 </div>
@@ -418,7 +418,7 @@ const ChatWithHistory: React.FC = () => {
           ) : (
             /* Conversation Mode - Normal Layout */
             <>
-              <div className="flex-1 overflow-y-auto pb-2" id="chat-messages-container">
+              <div className="h-full overflow-y-auto" id="chat-messages-container" style={{ paddingBottom: '120px' }}>
                 <MessageList 
                   messages={messages} 
                   isLoading={isLoading}
@@ -426,8 +426,8 @@ const ChatWithHistory: React.FC = () => {
                 />
               </div>
               
-              {/* Fixed Bottom Input - Mobile Optimized */}
-              <div className="flex-shrink-0 border-t border-gray-200 bg-white p-3 sm:p-4">
+              {/* Fixed Bottom Input */}
+              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2 sm:p-4">
                 {renderMessageInput()}
               </div>
             </>
