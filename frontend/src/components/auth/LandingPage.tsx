@@ -1112,6 +1112,12 @@ const LandingPage: React.FC<{
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </button>
                     <button 
+                      className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
+                      onClick={() => window.location.href = '/guest-contract-analysis'}
+                    >
+                      <span className="truncate">Get Contracts Reviewed</span>
+                    </button>
+                    <button 
                       className="w-full sm:w-auto bg-green-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-green-700 transition-colors inline-flex items-center justify-center min-w-0"
                       onClick={() => window.location.href = '/create-document'}
                     >
