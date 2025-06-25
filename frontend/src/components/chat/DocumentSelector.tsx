@@ -40,24 +40,118 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
     };
   }, []);
 
-  // Calculate dropdown position
+  // Calculate dropdown position with mobile handling
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        position: 'fixed',
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width,
-        zIndex: 2147483647, // Maximum possible z-index
-        backgroundColor: 'white',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        maxHeight: '16rem',
-        overflow: 'hidden'
-      });
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const isMobile = viewportWidth < 768; // md breakpoint
+      
+      // Calculate if dropdown would go off-screen
+      const dropdownHeight = 256; // max-height in pixels
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const shouldDropUp = spaceBelow < dropdownHeight && spaceAbove > dropdownHeight;
+      
+      let style: React.CSSProperties;
+      
+      if (isMobile) {
+        // Mobile: Use safer positioning with better constraints
+        style = {
+          position: 'fixed',
+          top: shouldDropUp ? rect.top - dropdownHeight - 4 : rect.bottom + 4,
+          left: Math.max(16, Math.min(rect.left, viewportWidth - rect.width - 16)), // 16px margin
+          width: Math.min(rect.width, viewportWidth - 32), // Ensure it fits with margins
+          zIndex: 2147483647,
+          backgroundColor: 'white',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          maxHeight: Math.min(dropdownHeight, viewportHeight - 100), // Leave space for margins
+          overflow: 'hidden'
+        };
+      } else {
+        // Desktop: Use standard positioning
+        style = {
+          position: 'fixed',
+          top: shouldDropUp ? rect.top - dropdownHeight - 4 : rect.bottom + 4,
+          left: rect.left,
+          width: rect.width,
+          zIndex: 2147483647,
+          backgroundColor: 'white',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          maxHeight: dropdownHeight,
+          overflow: 'hidden'
+        };
+      }
+      
+      setDropdownStyle(style);
     }
+  }, [isOpen]);
+
+  // Handle scroll and resize events to reposition dropdown
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updatePosition = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        const isMobile = viewportWidth < 768;
+        
+        const dropdownHeight = 256;
+        const spaceBelow = viewportHeight - rect.bottom;
+        const spaceAbove = rect.top;
+        const shouldDropUp = spaceBelow < dropdownHeight && spaceAbove > dropdownHeight;
+        
+        let style: React.CSSProperties;
+        
+        if (isMobile) {
+          style = {
+            position: 'fixed',
+            top: shouldDropUp ? rect.top - dropdownHeight - 4 : rect.bottom + 4,
+            left: Math.max(16, Math.min(rect.left, viewportWidth - rect.width - 16)),
+            width: Math.min(rect.width, viewportWidth - 32),
+            zIndex: 2147483647,
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            maxHeight: Math.min(dropdownHeight, viewportHeight - 100),
+            overflow: 'hidden'
+          };
+        } else {
+          style = {
+            position: 'fixed',
+            top: shouldDropUp ? rect.top - dropdownHeight - 4 : rect.bottom + 4,
+            left: rect.left,
+            width: rect.width,
+            zIndex: 2147483647,
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            maxHeight: dropdownHeight,
+            overflow: 'hidden'
+          };
+        }
+        
+        setDropdownStyle(style);
+      }
+    };
+
+    // Add event listeners for scroll and resize
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+    
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
   }, [isOpen]);
 
   const handleDocumentToggle = (documentId: string) => {
@@ -171,6 +265,15 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
         </div>
       </div>
 
+      {/* Mobile backdrop */}
+      {isOpen && window.innerWidth < 768 && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm"
+          style={{ zIndex: 2147483646 }}
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Dropdown Menu - Rendered at root level with fixed positioning */}
       {isOpen && (
         <div 
@@ -205,10 +308,11 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
               return (
                 <div
                   key={doc.id || index}
-                  className={`flex items-center space-x-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                  className={`flex items-center space-x-3 p-3 md:p-3 sm:p-4 hover:bg-gray-50 active:bg-gray-100 cursor-pointer transition-colors touch-manipulation ${
                     isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
                   }`}
                   onClick={() => handleDocumentToggle(doc.id)}
+                  style={{ minHeight: '48px' }} // Ensure touch-friendly height
                 >
                   {/* Custom Checkbox */}
                   <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
