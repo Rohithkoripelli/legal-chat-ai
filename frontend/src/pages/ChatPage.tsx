@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import MessageList from '../components/chat/MessageList';
 import MessageInput from '../components/chat/MessageInput';
 import ChatWithHistory from '../components/chat/ChatWithHistory';
+import DocumentSelector from '../components/chat/DocumentSelector';
 import { useChat } from '../hooks/useChat';
 import { useGuestChat } from '../hooks/useGuestChat';
 import { useDocuments } from '../hooks/useDocuments';
@@ -16,7 +17,7 @@ const ChatPage: React.FC = () => {
   // Use different hooks based on authentication status
   const authenticatedChat = useChat();
   const guestChat = useGuestChat();
-  const { documents: authDocuments, loading: documentsLoading, uploadDocument } = useDocuments();
+  const { documents: authDocuments, uploadDocument } = useDocuments();
   
   // Choose the appropriate chat interface
   const { messages, isLoading, error, sendMessage } = isSignedIn ? authenticatedChat : guestChat;
@@ -27,6 +28,7 @@ const ChatPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
 
   // Load guest documents if not signed in
   useEffect(() => {
@@ -46,7 +48,17 @@ const ChatPage: React.FC = () => {
   const handleSendMessage = async (message: string) => {
     try {
       setLocalError(null);
-      await sendMessage({ message });
+      
+      if (isSignedIn) {
+        // For authenticated users, pass selected document IDs
+        await sendMessage({ message, selectedDocumentIds });
+      } else {
+        // For guest users, pass selected documents (full objects)
+        const selectedDocuments = guestDocuments.filter(doc => 
+          selectedDocumentIds.includes(doc.id)
+        );
+        await sendMessage({ message, selectedDocuments });
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
       setLocalError(errorMessage);
@@ -224,7 +236,7 @@ const ChatPage: React.FC = () => {
                 </h2>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Online • {documentCount} document{documentCount !== 1 ? 's' : ''} loaded</span>
+                  <span>Online • {selectedDocumentIds.length}/{documentCount} document{documentCount !== 1 ? 's' : ''} selected</span>
                 </div>
               </div>
             </div>
@@ -423,32 +435,21 @@ const ChatPage: React.FC = () => {
               </div>
             )}
             
-            {/* Uploaded Files Display - Below Message Input */}
-            {documentCount > 0 && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center space-x-2 mb-2">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-900">
-                    Uploaded Files ({documentCount})
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(isSignedIn ? authDocuments : guestDocuments).map((doc, index) => (
-                    <div key={doc.id || index} className="inline-flex items-center space-x-1 bg-white text-gray-700 px-2 py-1 rounded text-xs border border-gray-300">
-                      <FileText className="h-3 w-3 text-blue-600" />
-                      <span className="max-w-32 truncate">{doc.title || doc.name || `Document ${index + 1}`}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Document Selector for Guest Users */}
+            <DocumentSelector
+              documents={documents}
+              selectedDocumentIds={selectedDocumentIds}
+              onSelectionChange={setSelectedDocumentIds}
+            />
             
             {/* Help Text */}
             <div className="text-center">
               <p className="text-xs text-gray-400">
                 {documentCount === 0 
                   ? 'Ask legal questions or use the 📎 icon to upload documents for analysis'
-                  : `Chat about your ${documentCount} document${documentCount !== 1 ? 's' : ''} or ask general legal questions`
+                  : selectedDocumentIds.length === 0 
+                    ? 'Select documents above to include them in your conversation'
+                    : `Chat about your selected ${selectedDocumentIds.length} document${selectedDocumentIds.length !== 1 ? 's' : ''} or ask general legal questions`
                 }
               </p>
             </div>

@@ -5,6 +5,7 @@ import { useDocuments } from '../../hooks/useDocuments';
 import ConversationSidebar from './ConversationSidebar';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
+import DocumentSelector from './DocumentSelector';
 import { MessageSquare, Brain, AlertCircle, X, Upload, FileText } from 'lucide-react';
 
 // Hamburger Menu Component
@@ -40,6 +41,7 @@ const ChatWithHistory: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
 
   // Only show this component for signed-in users
   if (!isSignedIn) {
@@ -62,7 +64,7 @@ const ChatWithHistory: React.FC = () => {
   const handleSendMessage = async (message: string) => {
     try {
       setLocalError(null);
-      await sendMessage({ message });
+      await sendMessage({ message, selectedDocumentIds });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
       setLocalError(errorMessage);
@@ -234,32 +236,21 @@ const ChatWithHistory: React.FC = () => {
         </div>
       )}
       
-      {/* Uploaded Files Display */}
-      {documents.length > 0 && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <FileText className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium text-gray-900">
-              Uploaded Files ({documents.length})
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {documents.map((doc, index) => (
-              <div key={doc.id || index} className="inline-flex items-center space-x-1 bg-white text-gray-700 px-2 py-1 rounded text-xs border border-gray-300">
-                <FileText className="h-3 w-3 text-blue-600" />
-                <span className="max-w-24 truncate">{doc.name || `Document ${index + 1}`}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Document Selector */}
+      <DocumentSelector
+        documents={documents}
+        selectedDocumentIds={selectedDocumentIds}
+        onSelectionChange={setSelectedDocumentIds}
+      />
       
       {/* Help Text */}
       <div className="text-center">
         <p className="text-xs text-gray-400">
           {documents.length === 0 
             ? 'Ask legal questions or use the 📎 icon to upload documents for analysis'
-            : `Chat about your ${documents.length} document${documents.length !== 1 ? 's' : ''} or ask general legal questions`
+            : selectedDocumentIds.length === 0 
+              ? 'Select documents above to include them in your conversation'
+              : `Chat about your selected ${selectedDocumentIds.length} document${selectedDocumentIds.length !== 1 ? 's' : ''} or ask general legal questions`
           }
         </p>
       </div>
@@ -316,13 +307,13 @@ const ChatWithHistory: React.FC = () => {
                   <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
                   <span className="truncate">
                     <span className="hidden sm:inline">
-                      {documents.length} document{documents.length !== 1 ? 's' : ''} • {currentConversation 
+                      {selectedDocumentIds.length}/{documents.length} document{documents.length !== 1 ? 's' : ''} selected • {currentConversation 
                         ? `${currentConversation.messageCount || 0} messages`
                         : 'Start a new conversation'
                       } • {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
                     </span>
                     <span className="sm:hidden">
-                      {documents.length} docs • {conversations.length} chats
+                      {selectedDocumentIds.length}/{documents.length} docs • {conversations.length} chats
                     </span>
                   </span>
                 </div>
@@ -373,14 +364,16 @@ const ChatWithHistory: React.FC = () => {
                     </h3>
                     <p className="text-sm text-gray-600 leading-relaxed mb-3 sm:mb-4">
                       {documents.length > 0 
-                        ? `${documents.length} document${documents.length !== 1 ? 's' : ''} loaded. Ask anything about your legal documents.`
+                        ? selectedDocumentIds.length > 0 
+                          ? `${selectedDocumentIds.length} document${selectedDocumentIds.length !== 1 ? 's' : ''} selected for chat. Ask anything about your documents.`
+                          : `${documents.length} document${documents.length !== 1 ? 's' : ''} available. Select documents to include in chat.`
                         : 'Ask legal questions, analyze contracts, or upload documents for review.'
                       }
                     </p>
                   </div>
                   
                   {/* Quick Start Examples */}
-                  {documents.length > 0 && (
+                  {selectedDocumentIds.length > 0 && (
                     <div className="space-y-1.5 sm:space-y-2 mb-4">
                       <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">Quick examples:</h4>
                       <div className="space-y-1.5">

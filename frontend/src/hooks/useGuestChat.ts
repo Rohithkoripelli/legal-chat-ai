@@ -87,7 +87,7 @@ export const useGuestChat = () => {
     }
   };
 
-  const sendMessage = useCallback(async ({ message }: { message: string }) => {
+  const sendMessage = useCallback(async ({ message, selectedDocuments = [] }: { message: string; selectedDocuments?: GuestDocument[] }) => {
     setIsLoading(true);
     setError(null);
 
@@ -113,19 +113,9 @@ export const useGuestChat = () => {
     setMessages(prev => [...prev, aiMessage]);
 
     try {
-      // Get guest documents from session storage
-      const storedDocs = sessionStorage.getItem('guestDocuments');
-      let documents: GuestDocument[] = [];
-      
-      if (storedDocs) {
-        try {
-          documents = JSON.parse(storedDocs);
-        } catch (e) {
-          console.warn('Could not parse guest documents');
-        }
-      }
-
-      console.log('🔍 Found guest documents:', documents.length);
+      // Use provided selected documents instead of all documents
+      const documents = selectedDocuments;
+      console.log('🔍 Using selected guest documents:', documents.length);
       if (documents.length > 0) {
         console.log('📋 Guest document IDs:', documents.map(doc => doc.id));
         console.log('📋 Guest document names:', documents.map(doc => doc.name));

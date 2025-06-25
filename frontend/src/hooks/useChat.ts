@@ -13,7 +13,7 @@ export const useChat = () => {
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
   const [conversationsLoading, setConversationsLoading] = useState(false);
 
-  const sendMessage = useCallback(async ({ message }: { message: string }) => {
+  const sendMessage = useCallback(async ({ message, selectedDocumentIds = [] }: { message: string; selectedDocumentIds?: string[] }) => {
     if (!isSignedIn) {
       setError('Please log in to use chat functionality');
       return;
@@ -41,28 +41,9 @@ export const useChat = () => {
 
       console.log('🔑 Got auth token for chat request');
 
-      // Fetch user's available documents for chat context
-      let documentIds: string[] = [];
-      try {
-        console.log('🔍 Fetching user documents for chat context...');
-        const documentsResponse = await fetch(`https://legal-chat-ai.onrender.com/api/documents`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (documentsResponse.ok) {
-          const documents = await documentsResponse.json();
-          documentIds = documents.map((doc: any) => doc.id || doc._id);
-          console.log(`📄 Found ${documentIds.length} documents for chat context:`, documentIds);
-        } else {
-          console.warn('⚠️ Could not fetch documents for chat context:', documentsResponse.status);
-        }
-      } catch (docError) {
-        console.warn('⚠️ Error fetching documents for chat:', docError);
-        // Continue without documents - don't fail the chat
-      }
+      // Use provided selected document IDs for chat context
+      const documentIds = selectedDocumentIds;
+      console.log(`📄 Using ${documentIds.length} selected documents for chat context:`, documentIds);
 
       // Send message with document context and authentication
       console.log('📤 Sending authenticated message to chat API');
