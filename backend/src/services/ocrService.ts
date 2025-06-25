@@ -2,8 +2,6 @@ import Tesseract from 'tesseract.js';
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
-const poppler = require('pdf-poppler');
-const Jimp = require('jimp');
 
 export interface OCRResult {
   text: string;
@@ -28,6 +26,7 @@ class OCRService {
   private config: OCRConfig;
   private logger: winston.Logger;
   private tempDir: string;
+  private popplerAvailable: boolean = false;
 
   constructor(config: OCRConfig = {}) {
     this.config = config;
@@ -44,9 +43,25 @@ class OCRService {
       ]
     });
 
+    // Check if poppler is available
+    this.checkPopplerAvailability();
+    
     // Ensure temp directory exists
     this.ensureTempDir();
-    this.logger.info('OCR Service initialized with full PDF support via Tesseract.js + pdf-poppler');
+  }
+
+  private checkPopplerAvailability(): void {
+    try {
+      // Check if poppler system dependency is available
+      const { execSync } = require('child_process');
+      execSync('pdftoppm -h', { stdio: 'ignore' });
+      this.popplerAvailable = true;
+      this.logger.info('OCR Service initialized with full PDF support via Tesseract.js + pdf-poppler');
+    } catch (error) {
+      this.popplerAvailable = false;
+      this.logger.warn('Poppler not available - PDF OCR disabled. Images still supported via Tesseract.js');
+      this.logger.info('To enable PDF OCR: install poppler (brew install poppler / apt-get install poppler-utils)');
+    }
   }
 
   private async ensureTempDir(): Promise<void> {
@@ -64,7 +79,11 @@ class OCRService {
       if (mimeType.startsWith('image/')) {
         return await this.processImageFile(filePath);
       } else if (mimeType === 'application/pdf') {
-        return await this.processPDFFile(filePath);
+        if (this.popplerAvailable) {
+          return await this.processPDFFile(filePath);
+        } else {
+          return await this.createPDFUnsupportedResult();
+        }
       } else {
         throw new Error(`Unsupported file type for OCR: ${mimeType}`);
       }
@@ -72,6 +91,34 @@ class OCRService {
       this.logger.error('OCR processing failed:', error);
       throw error;
     }
+  }
+
+  private async createPDFUnsupportedResult(): Promise<OCRResult> {
+    return {
+      text: `📄 PDF file uploaded successfully.
+
+⚠️ **PDF OCR Not Available**: This server doesn't have the required system dependencies for PDF OCR processing.
+
+**For PDF OCR support, the server administrator needs to install:**
+- poppler-utils (Linux: apt-get install poppler-utils)
+- poppler (macOS: brew install poppler)
+
+**Current capabilities:**
+✅ Image files (JPG, PNG, BMP, TIFF, GIF) with OCR
+✅ Regular PDF text extraction (searchable PDFs)
+✅ Word documents (DOC, DOCX)
+
+**Workaround for scanned PDFs:**
+1. Convert PDF pages to images (JPG/PNG)
+2. Upload individual images for OCR processing
+3. Or use a regular (searchable) PDF instead
+
+The document has been uploaded and stored for reference.`,
+      confidence: 0,
+      provider: 'tesseract',
+      isScanned: false,
+      pages: []
+    };
   }
 
   private async processImageFile(filePath: string): Promise<OCRResult> {
@@ -194,6 +241,8 @@ class OCRService {
     this.logger.info(`Converting PDF to images: ${pdfPath}`);
     
     try {
+      const poppler = require('pdf-poppler');
+      
       const options = {
         format: 'png',
         out_dir: outputDir,
@@ -227,6 +276,8 @@ class OCRService {
 
   private async enhanceImageQuality(imagePath: string): Promise<string> {
     try {
+      const Jimp = require('jimp');
+      
       // Read the image
       const image = await Jimp.read(imagePath);
       
@@ -312,6 +363,11 @@ class OCRService {
 
     // If more than 20% of content seems garbled, it might be scanned
     return (suspiciousMatches / totalWords) > 0.2;
+  }
+
+  // Public method to check if PDF OCR is available
+  public isPDFOCRAvailable(): boolean {
+    return this.popplerAvailable;
   }
 }
 
