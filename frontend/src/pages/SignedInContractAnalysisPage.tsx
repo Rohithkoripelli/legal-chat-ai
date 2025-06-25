@@ -1,5 +1,6 @@
 // src/pages/SignedInContractAnalysisPage.tsx
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { useDocuments } from '../hooks/useDocuments';
 import { Document } from '../types';
@@ -71,6 +72,8 @@ interface ContractAnalysis {
 }
 
 const SignedInContractAnalysisPage: React.FC = () => {
+  const { documentId } = useParams<{ documentId: string }>();
+  const navigate = useNavigate();
   const { getToken, isSignedIn } = useAuth();
   const { documents: userDocuments, uploadDocument, refetch } = useDocuments();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
@@ -85,13 +88,23 @@ const SignedInContractAnalysisPage: React.FC = () => {
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://legal-chat-ai.onrender.com';
 
-  // Load user documents
+  // Handle URL parameter and load documents
   useEffect(() => {
     if (isSignedIn) {
       // Documents are automatically loaded by useDocuments hook
       setLoading(false);
+      
+      // If documentId is provided in URL, find and analyze that document
+      if (documentId && userDocuments.length > 0) {
+        const document = userDocuments.find(doc => doc.id === documentId);
+        if (document) {
+          analyzeContract(document);
+        } else {
+          setError(`Document with ID ${documentId} not found`);
+        }
+      }
     }
-  }, [isSignedIn, userDocuments]);
+  }, [isSignedIn, userDocuments, documentId]);
 
   // Upload handlers for inline upload
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,14 +376,18 @@ const SignedInContractAnalysisPage: React.FC = () => {
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => {
-                setAnalysis(null);
-                setSelectedDocument(null);
-                setError(null);
+                if (documentId) {
+                  navigate('/dashboard');
+                } else {
+                  setAnalysis(null);
+                  setSelectedDocument(null);
+                  setError(null);
+                }
               }}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
-              <span>Back to Document Selection</span>
+              <span>{documentId ? 'Back to Dashboard' : 'Back to Document Selection'}</span>
             </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Contract Analysis</h1>

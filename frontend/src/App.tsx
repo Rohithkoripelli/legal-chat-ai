@@ -8,6 +8,7 @@
   import UserButton from './components/auth/UserButton';
   import HeaderAuthButtons from './components/auth/HeaderAuthButtons';
   import ContractAnalysisPage from './components/contracts/ContractAnalysisPage';
+  import IndividualAnalysisPage from './components/contracts/IndividualAnalysisPage';
   import RiskDashboard from './components/contracts/RiskDashboard';
   import DocumentSelectionForAnalysis from './components/contracts/DocumentSelection';
   import CreateDocumentPage from './components/create/CreateDocumentPage';
@@ -849,6 +850,26 @@
               element={
                 isSignedIn ? (
                   <SignedInContractAnalysisPage />
+                ) : (
+                  <PremiumFeaturePrompt
+                    featureName="Contract Analysis"
+                    featureDescription="Advanced contract analysis with document storage and history requires a free account."
+                    icon={<Brain className="h-8 w-8" />}
+                    onSignUp={handleSignUp}
+                    onSignIn={handleSignIn}
+                  />
+                )
+              }
+            />
+
+            {/* Individual Contract Analysis Route */}
+            <Route 
+              path="/contract-analysis/:documentId" 
+              element={
+                isSignedIn ? (
+                  <div className="max-w-7xl mx-auto px-6 py-8">
+                    <IndividualAnalysisPage />
+                  </div>
                 ) : (
                   <PremiumFeaturePrompt
                     featureName="Contract Analysis"
