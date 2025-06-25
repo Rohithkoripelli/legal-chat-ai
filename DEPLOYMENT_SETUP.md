@@ -3,8 +3,8 @@
 ## 📋 **Current Status**
 
 ✅ **Image OCR**: Fully functional (JPG, PNG, BMP, TIFF, GIF)  
-⚠️ **PDF OCR**: Requires system dependency (poppler-utils)  
-✅ **Graceful Fallback**: App runs without PDF OCR if dependency missing  
+✅ **PDF OCR**: Works with pure JavaScript dependencies (PDF.js + Canvas)  
+✅ **No System Dependencies**: Ready for Render deployment  
 
 ## 🔧 **Deployment Options**
 

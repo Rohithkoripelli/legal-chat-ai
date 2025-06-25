@@ -52,15 +52,15 @@ class OCRService {
 
   private checkPopplerAvailability(): void {
     try {
-      // Check if poppler system dependency is available
-      const { execSync } = require('child_process');
-      execSync('pdftoppm -h', { stdio: 'ignore' });
+      // Check if PDF.js and canvas are available (pure JavaScript dependencies)
+      require('pdfjs-dist/legacy/build/pdf.js');
+      require('canvas');
       this.popplerAvailable = true;
-      this.logger.info('OCR Service initialized with full PDF support via Tesseract.js + pdf-poppler');
+      this.logger.info('OCR Service initialized with full PDF support via Tesseract.js + PDF.js (no system dependencies)');
     } catch (error) {
       this.popplerAvailable = false;
-      this.logger.warn('Poppler not available - PDF OCR disabled. Images still supported via Tesseract.js');
-      this.logger.info('To enable PDF OCR: install poppler (brew install poppler / apt-get install poppler-utils)');
+      this.logger.warn('PDF.js or canvas not available - PDF OCR disabled. Images still supported via Tesseract.js');
+      this.logger.info('To enable PDF OCR: npm install pdfjs-dist canvas');
     }
   }
 
@@ -97,11 +97,11 @@ class OCRService {
     return {
       text: `📄 PDF file uploaded successfully.
 
-⚠️ **PDF OCR Not Available**: This server doesn't have the required system dependencies for PDF OCR processing.
+⚠️ **PDF OCR Not Available**: Missing required JavaScript dependencies for PDF OCR processing.
 
 **For PDF OCR support, the server administrator needs to install:**
-- poppler-utils (Linux: apt-get install poppler-utils)
-- poppler (macOS: brew install poppler)
+- pdfjs-dist (npm install pdfjs-dist)
+- canvas (npm install canvas)
 
 **Current capabilities:**
 ✅ Image files (JPG, PNG, BMP, TIFF, GIF) with OCR
@@ -238,38 +238,62 @@ The document has been uploaded and stored for reference.`,
   }
 
   private async convertPDFToImages(pdfPath: string, outputDir: string): Promise<string[]> {
-    this.logger.info(`Converting PDF to images: ${pdfPath}`);
+    this.logger.info(`Converting PDF to images using PDF.js: ${pdfPath}`);
     
     try {
-      const poppler = require('pdf-poppler');
+      const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+      const { createCanvas } = require('canvas');
       
-      const options = {
-        format: 'png',
-        out_dir: outputDir,
-        out_prefix: 'page',
-        page: null, // Process all pages
-        scale: 2048 // High resolution for better OCR
-      };
+      // Read PDF file
+      const pdfBuffer = await fs.promises.readFile(pdfPath);
       
-      await poppler.convert(pdfPath, options);
+      // Load PDF document
+      const pdf = await pdfjsLib.getDocument({ 
+        data: pdfBuffer,
+        standardFontDataUrl: null // Disable font loading for server-side rendering
+      }).promise;
       
-      // Get list of generated image files
-      const files = await fs.promises.readdir(outputDir);
-      const imageFiles = files
-        .filter(file => file.startsWith('page') && file.endsWith('.png'))
-        .sort((a, b) => {
-          // Sort by page number
-          const aNum = parseInt(a.match(/page-(\d+)/)?.[1] || '0');
-          const bNum = parseInt(b.match(/page-(\d+)/)?.[1] || '0');
-          return aNum - bNum;
-        })
-        .map(file => path.join(outputDir, file));
+      this.logger.info(`PDF loaded: ${pdf.numPages} pages`);
       
-      this.logger.info(`Generated ${imageFiles.length} image files from PDF`);
+      const imageFiles: string[] = [];
+      
+      // Process each page
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        try {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 2.0 }); // High resolution for better OCR
+          
+          // Create canvas
+          const canvas = createCanvas(viewport.width, viewport.height);
+          const context = canvas.getContext('2d');
+          
+          // Render page to canvas
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          
+          await page.render(renderContext).promise;
+          
+          // Save canvas as PNG
+          const imagePath = path.join(outputDir, `page-${pageNum.toString().padStart(3, '0')}.png`);
+          const buffer = canvas.toBuffer('image/png');
+          await fs.promises.writeFile(imagePath, buffer);
+          
+          imageFiles.push(imagePath);
+          this.logger.info(`Page ${pageNum} rendered to: ${imagePath}`);
+          
+        } catch (pageError) {
+          this.logger.error(`Failed to render page ${pageNum}:`, pageError);
+          // Continue with other pages
+        }
+      }
+      
+      this.logger.info(`Generated ${imageFiles.length} image files from PDF using PDF.js`);
       return imageFiles;
       
     } catch (error) {
-      this.logger.error('PDF to image conversion failed:', error);
+      this.logger.error('PDF.js conversion failed:', error);
       throw new Error(`Failed to convert PDF to images: ${error.message}`);
     }
   }
