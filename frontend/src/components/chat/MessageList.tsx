@@ -61,7 +61,7 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
   return (
     <div 
       ref={containerElementRef}
-      className="h-full overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4" 
+      className="h-full overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4" 
       style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}
     >
       {/* Warning about PDF extraction if applicable */}
@@ -97,10 +97,10 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
               )}
               
               <div
-                className={`min-w-0 rounded-lg px-2 sm:px-3 py-2 ${
+                className={`min-w-0 rounded-lg px-3 py-2.5 ${
                   message.isUser
-                    ? 'bg-blue-600 text-white max-w-[calc(100vw-80px)] sm:max-w-xs lg:max-w-md xl:max-w-lg'
-                    : 'bg-white border border-gray-200 shadow-sm text-gray-800 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg'
+                    ? 'bg-blue-600 text-white max-w-[75%] sm:max-w-sm lg:max-w-md xl:max-w-lg'
+                    : 'bg-white border border-gray-200 shadow-sm text-gray-800 max-w-[85%] sm:max-w-sm lg:max-w-md xl:max-w-lg'
                 }`}
                 style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'anywhere', hyphens: 'auto' }}
               >
@@ -149,7 +149,7 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
                 </svg>
               </div>
               <div 
-                className="min-w-0 max-w-[calc(100vw-120px)] sm:max-w-xs lg:max-w-md xl:max-w-lg rounded-lg px-2 sm:px-3 py-3 bg-white border border-gray-200 shadow-sm text-gray-800" 
+                className="min-w-0 max-w-[85%] sm:max-w-sm lg:max-w-md xl:max-w-lg rounded-lg px-3 py-3 bg-white border border-gray-200 shadow-sm text-gray-800" 
                 style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'anywhere' }}
               >
                 <div className="flex items-center space-x-2">

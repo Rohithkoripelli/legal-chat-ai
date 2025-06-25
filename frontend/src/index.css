@@ -48,6 +48,20 @@ button, .interactive, .hover-effect {
     transition: none !important;
   }
   
+  /* Better mobile chat layout */
+  .chat-container {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Fix mobile input positioning */
+  .mobile-input-fix {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem) !important;
+  }
+  
   /* Reduce motion for better mobile performance */
   @media (prefers-reduced-motion: reduce) {
     * {

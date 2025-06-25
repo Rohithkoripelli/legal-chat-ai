@@ -210,7 +210,7 @@ const ChatPage: React.FC = () => {
       />
       <div className="max-w-4xl mx-auto p-4">
       {/* MAIN CHAT INTERFACE - IMPROVED UI */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 h-[650px] flex flex-col mb-6 overflow-hidden chat-container">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 h-[85vh] min-h-[600px] max-h-[900px] flex flex-col mb-6 overflow-hidden chat-container">
         {/* Header with Status */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100 p-4 no-mobile-animation">
           <div className="flex items-center justify-between">
@@ -258,7 +258,7 @@ const ChatPage: React.FC = () => {
         )}
 
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-hidden bg-gray-50">
+        <div className="flex-1 overflow-hidden bg-gray-50 min-h-0">
           {messages.length === 0 && !displayError ? (
             <div className="h-full flex items-center justify-center p-6">
               <div className="text-center max-w-md">
@@ -326,18 +326,20 @@ const ChatPage: React.FC = () => {
             </div>
           ) : (
             <div className="h-full overflow-y-auto message-list" id="chat-messages-container">
-              <MessageList 
-                messages={messages} 
-                isLoading={isLoading}
-                containerRef="chat-messages-container"
-              />
+              <div className="min-h-full flex flex-col justify-end">
+                <MessageList 
+                  messages={messages} 
+                  isLoading={isLoading}
+                  containerRef="chat-messages-container"
+                />
+              </div>
             </div>
           )}
         </div>
 
 
         {/* Message Input */}
-        <div className="border-t border-gray-200 bg-white p-4">
+        <div className="border-t border-gray-200 bg-white p-3 sm:p-4 flex-shrink-0 mobile-input-fix">
           <div className="space-y-3">
             {/* Message Input with File Upload */}
             <MessageInput 
