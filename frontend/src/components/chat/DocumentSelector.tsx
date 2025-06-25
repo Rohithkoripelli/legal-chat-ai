@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { FileText, ChevronDown, Check, X } from 'lucide-react';
 
 interface Document {
@@ -23,56 +22,21 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
   onSelectionChange
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      
-      // Check if click is outside both the button and the dropdown
-      const isOutsideButton = buttonRef.current && !buttonRef.current.contains(target);
-      const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(target);
-      
-      if (isOutsideButton && isOutsideDropdown) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
-
-  // Update dropdown position on scroll/resize
-  useEffect(() => {
-    const updatePosition = () => {
-      if (isOpen && buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setDropdownPosition({
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-          width: rect.width
-        });
-      }
-    };
-
-    if (isOpen) {
-      window.addEventListener('scroll', updatePosition, true);
-      window.addEventListener('resize', updatePosition);
-    }
-
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [isOpen]);
+  }, []);
 
   const handleDocumentToggle = (documentId: string) => {
     const isCurrentlySelected = selectedDocumentIds.includes(documentId);
@@ -99,23 +63,6 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
     }
   };
 
-  const updateDropdownPosition = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + window.scrollY + 4, // 4px gap
-        left: rect.left + window.scrollX,
-        width: rect.width
-      });
-    }
-  };
-
-  const toggleDropdown = () => {
-    if (!isOpen) {
-      updateDropdownPosition();
-    }
-    setIsOpen(!isOpen);
-  };
 
   const removeDocument = (documentId: string) => {
     const newSelection = selectedDocumentIds.filter(id => id !== documentId);
@@ -140,12 +87,11 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
   const allSelected = selectedDocumentIds.length === documents.length;
 
   return (
-    <div className="mb-3 relative z-[100]" ref={dropdownRef}>
+    <div className="mb-3 relative" ref={dropdownRef} style={{ zIndex: 9999 }}>
       {/* Dropdown Trigger */}
       <div className="relative">
         <button
-          ref={buttonRef}
-          onClick={toggleDropdown}
+          onClick={() => setIsOpen(!isOpen)}
           className={`w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
             isOpen ? 'border-blue-500 ring-2 ring-blue-500' : ''
           }`}
@@ -196,6 +142,93 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
           </div>
         )}
 
+        {/* Dropdown Menu */}
+        {isOpen && (
+          <div 
+            className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-hidden"
+            style={{ zIndex: 99999 }}
+          >
+            {/* Header with Select All */}
+            <div className="p-3 border-b border-gray-100 bg-gray-50">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  Select Documents ({selectedDocumentIds.length}/{documents.length})
+                </span>
+                <button
+                  onClick={handleSelectAll}
+                  className={`text-xs px-2 py-1 rounded ${
+                    allSelected 
+                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {allSelected ? 'Deselect All' : 'Select All'}
+                </button>
+              </div>
+            </div>
+
+            {/* Document List */}
+            <div className="max-h-48 overflow-y-auto">
+              {documents.map((doc, index) => {
+                const isSelected = selectedDocumentIds.includes(doc.id);
+                const displayName = doc.title || doc.name || `Document ${index + 1}`;
+                
+                return (
+                  <div
+                    key={doc.id || index}
+                    className={`flex items-center space-x-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                      isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                    }`}
+                    onClick={() => handleDocumentToggle(doc.id)}
+                  >
+                    {/* Custom Checkbox */}
+                    <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                      isSelected 
+                        ? 'bg-blue-600 border-blue-600' 
+                        : 'border-gray-300 hover:border-blue-400'
+                    }`}>
+                      {isSelected && <Check className="h-3 w-3 text-white" />}
+                    </div>
+                    
+                    {/* File Icon */}
+                    <FileText className={`h-4 w-4 flex-shrink-0 ${
+                      isSelected ? 'text-blue-600' : 'text-gray-400'
+                    }`} />
+                    
+                    {/* Document Info */}
+                    <div className="flex-1 min-w-0">
+                      <span className={`text-sm block truncate ${
+                        isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'
+                      }`}>
+                        {displayName}
+                      </span>
+                      {doc.type && (
+                        <span className="text-xs text-gray-500">
+                          {doc.type.split('/').pop()?.toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Selection Indicator */}
+                    {isSelected && (
+                      <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer with current selection info */}
+            {selectedDocumentIds.length > 0 && (
+              <div className="p-3 border-t border-gray-100 bg-gray-50">
+                <p className="text-xs text-gray-600">
+                  {selectedDocumentIds.length} document{selectedDocumentIds.length !== 1 ? 's' : ''} will be included in your chat
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
 
       {/* Help Text */}
@@ -207,100 +240,6 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
           }
         </p>
       </div>
-
-      {/* Portal-rendered Dropdown Menu */}
-      {isOpen && createPortal(
-        <div 
-          className="fixed bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-hidden"
-          style={{ 
-            top: dropdownPosition.top,
-            left: dropdownPosition.left,
-            width: dropdownPosition.width,
-            zIndex: 99999
-          }}
-          ref={dropdownRef}
-        >
-          {/* Header with Select All */}
-          <div className="p-3 border-b border-gray-100 bg-gray-50">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
-                Select Documents ({selectedDocumentIds.length}/{documents.length})
-              </span>
-              <button
-                onClick={handleSelectAll}
-                className={`text-xs px-2 py-1 rounded ${
-                  allSelected 
-                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {allSelected ? 'Deselect All' : 'Select All'}
-              </button>
-            </div>
-          </div>
-
-          {/* Document List */}
-          <div className="max-h-48 overflow-y-auto">
-            {documents.map((doc, index) => {
-              const isSelected = selectedDocumentIds.includes(doc.id);
-              const displayName = doc.title || doc.name || `Document ${index + 1}`;
-              
-              return (
-                <div
-                  key={doc.id || index}
-                  className={`flex items-center space-x-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                    isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                  }`}
-                  onClick={() => handleDocumentToggle(doc.id)}
-                >
-                  {/* Custom Checkbox */}
-                  <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                    isSelected 
-                      ? 'bg-blue-600 border-blue-600' 
-                      : 'border-gray-300 hover:border-blue-400'
-                  }`}>
-                    {isSelected && <Check className="h-3 w-3 text-white" />}
-                  </div>
-                  
-                  {/* File Icon */}
-                  <FileText className={`h-4 w-4 flex-shrink-0 ${
-                    isSelected ? 'text-blue-600' : 'text-gray-400'
-                  }`} />
-                  
-                  {/* Document Info */}
-                  <div className="flex-1 min-w-0">
-                    <span className={`text-sm block truncate ${
-                      isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'
-                    }`}>
-                      {displayName}
-                    </span>
-                    {doc.type && (
-                      <span className="text-xs text-gray-500">
-                        {doc.type.split('/').pop()?.toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Selection Indicator */}
-                  {isSelected && (
-                    <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Footer with current selection info */}
-          {selectedDocumentIds.length > 0 && (
-            <div className="p-3 border-t border-gray-100 bg-gray-50">
-              <p className="text-xs text-gray-600">
-                {selectedDocumentIds.length} document{selectedDocumentIds.length !== 1 ? 's' : ''} will be included in your chat
-              </p>
-            </div>
-          )}
-        </div>,
-        document.body
-      )}
     </div>
   );
 };
