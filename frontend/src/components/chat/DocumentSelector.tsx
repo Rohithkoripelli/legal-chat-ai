@@ -23,6 +23,8 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -38,15 +40,33 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
     };
   }, []);
 
+  // Calculate dropdown position
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: 'fixed',
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 2147483647, // Maximum possible z-index
+        backgroundColor: 'white',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        maxHeight: '16rem',
+        overflow: 'hidden'
+      });
+    }
+  }, [isOpen]);
+
   const handleDocumentToggle = (documentId: string) => {
     const isCurrentlySelected = selectedDocumentIds.includes(documentId);
     let newSelection: string[];
     
     if (isCurrentlySelected) {
-      // Remove from selection
       newSelection = selectedDocumentIds.filter(id => id !== documentId);
     } else {
-      // Add to selection
       newSelection = [...selectedDocumentIds, documentId];
     }
     
@@ -55,14 +75,11 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
 
   const handleSelectAll = () => {
     if (selectedDocumentIds.length === documents.length) {
-      // Deselect all
       onSelectionChange([]);
     } else {
-      // Select all
       onSelectionChange(documents.map(doc => doc.id));
     }
   };
-
 
   const removeDocument = (documentId: string) => {
     const newSelection = selectedDocumentIds.filter(id => id !== documentId);
@@ -87,10 +104,11 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
   const allSelected = selectedDocumentIds.length === documents.length;
 
   return (
-    <div className="mb-3 relative" ref={dropdownRef} style={{ zIndex: 9999 }}>
-      {/* Dropdown Trigger */}
-      <div className="relative">
+    <>
+      <div className="mb-3">
+        {/* Dropdown Trigger */}
         <button
+          ref={buttonRef}
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
             isOpen ? 'border-blue-500 ring-2 ring-blue-500' : ''
@@ -142,105 +160,104 @@ export const DocumentSelector: React.FC<DocumentSelectorProps> = ({
           </div>
         )}
 
-        {/* Dropdown Menu */}
-        {isOpen && (
-          <div 
-            className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-hidden"
-            style={{ zIndex: 99999 }}
-          >
-            {/* Header with Select All */}
-            <div className="p-3 border-b border-gray-100 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
-                  Select Documents ({selectedDocumentIds.length}/{documents.length})
-                </span>
-                <button
-                  onClick={handleSelectAll}
-                  className={`text-xs px-2 py-1 rounded ${
-                    allSelected 
-                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {allSelected ? 'Deselect All' : 'Select All'}
-                </button>
-              </div>
-            </div>
+        {/* Help Text */}
+        <div className="mt-2 text-center">
+          <p className="text-xs text-gray-400">
+            {selectedDocumentIds.length === 0 
+              ? 'Click above to select documents for your conversation'
+              : `Chat will include ${selectedDocumentIds.length} selected document${selectedDocumentIds.length !== 1 ? 's' : ''}`
+            }
+          </p>
+        </div>
+      </div>
 
-            {/* Document List */}
-            <div className="max-h-48 overflow-y-auto">
-              {documents.map((doc, index) => {
-                const isSelected = selectedDocumentIds.includes(doc.id);
-                const displayName = doc.title || doc.name || `Document ${index + 1}`;
-                
-                return (
-                  <div
-                    key={doc.id || index}
-                    className={`flex items-center space-x-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                    }`}
-                    onClick={() => handleDocumentToggle(doc.id)}
-                  >
-                    {/* Custom Checkbox */}
-                    <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      isSelected 
-                        ? 'bg-blue-600 border-blue-600' 
-                        : 'border-gray-300 hover:border-blue-400'
+      {/* Dropdown Menu - Rendered at root level with fixed positioning */}
+      {isOpen && (
+        <div 
+          ref={dropdownRef}
+          style={dropdownStyle}
+        >
+          {/* Header with Select All */}
+          <div className="p-3 border-b border-gray-100 bg-gray-50">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">
+                Select Documents ({selectedDocumentIds.length}/{documents.length})
+              </span>
+              <button
+                onClick={handleSelectAll}
+                className={`text-xs px-2 py-1 rounded ${
+                  allSelected 
+                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {allSelected ? 'Deselect All' : 'Select All'}
+              </button>
+            </div>
+          </div>
+
+          {/* Document List */}
+          <div className="max-h-48 overflow-y-auto">
+            {documents.map((doc, index) => {
+              const isSelected = selectedDocumentIds.includes(doc.id);
+              const displayName = doc.title || doc.name || `Document ${index + 1}`;
+              
+              return (
+                <div
+                  key={doc.id || index}
+                  className={`flex items-center space-x-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                    isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                  }`}
+                  onClick={() => handleDocumentToggle(doc.id)}
+                >
+                  {/* Custom Checkbox */}
+                  <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                    isSelected 
+                      ? 'bg-blue-600 border-blue-600' 
+                      : 'border-gray-300 hover:border-blue-400'
+                  }`}>
+                    {isSelected && <Check className="h-3 w-3 text-white" />}
+                  </div>
+                  
+                  {/* File Icon */}
+                  <FileText className={`h-4 w-4 flex-shrink-0 ${
+                    isSelected ? 'text-blue-600' : 'text-gray-400'
+                  }`} />
+                  
+                  {/* Document Info */}
+                  <div className="flex-1 min-w-0">
+                    <span className={`text-sm block truncate ${
+                      isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'
                     }`}>
-                      {isSelected && <Check className="h-3 w-3 text-white" />}
-                    </div>
-                    
-                    {/* File Icon */}
-                    <FileText className={`h-4 w-4 flex-shrink-0 ${
-                      isSelected ? 'text-blue-600' : 'text-gray-400'
-                    }`} />
-                    
-                    {/* Document Info */}
-                    <div className="flex-1 min-w-0">
-                      <span className={`text-sm block truncate ${
-                        isSelected ? 'text-blue-900 font-medium' : 'text-gray-700'
-                      }`}>
-                        {displayName}
+                      {displayName}
+                    </span>
+                    {doc.type && (
+                      <span className="text-xs text-gray-500">
+                        {doc.type.split('/').pop()?.toUpperCase()}
                       </span>
-                      {doc.type && (
-                        <span className="text-xs text-gray-500">
-                          {doc.type.split('/').pop()?.toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Selection Indicator */}
-                    {isSelected && (
-                      <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
                     )}
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Footer with current selection info */}
-            {selectedDocumentIds.length > 0 && (
-              <div className="p-3 border-t border-gray-100 bg-gray-50">
-                <p className="text-xs text-gray-600">
-                  {selectedDocumentIds.length} document{selectedDocumentIds.length !== 1 ? 's' : ''} will be included in your chat
-                </p>
-              </div>
-            )}
+                  
+                  {/* Selection Indicator */}
+                  {isSelected && (
+                    <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
 
-      </div>
-
-      {/* Help Text */}
-      <div className="mt-2 text-center">
-        <p className="text-xs text-gray-400">
-          {selectedDocumentIds.length === 0 
-            ? 'Click above to select documents for your conversation'
-            : `Chat will include ${selectedDocumentIds.length} selected document${selectedDocumentIds.length !== 1 ? 's' : ''}`
-          }
-        </p>
-      </div>
-    </div>
+          {/* Footer with current selection info */}
+          {selectedDocumentIds.length > 0 && (
+            <div className="p-3 border-t border-gray-100 bg-gray-50">
+              <p className="text-xs text-gray-600">
+                {selectedDocumentIds.length} document{selectedDocumentIds.length !== 1 ? 's' : ''} will be included in your chat
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
