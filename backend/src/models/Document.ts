@@ -11,6 +11,12 @@ export interface IDocument {
   content?: string;
   isVectorized?: boolean; // Whether the document has been vectorized
   vectorizedAt?: Date;    // When the document was vectorized
+  // OCR-related fields
+  ocrProcessed?: boolean;     // Whether OCR was used for text extraction
+  ocrProvider?: string;       // OCR provider used (google, aws, tesseract)
+  ocrConfidence?: number;     // OCR confidence score (0-100)
+  isScannedDocument?: boolean; // Whether document was detected as scanned
+  ocrProcessedAt?: Date;      // When OCR processing was completed
 }
 
 const documentSchema = new mongoose.Schema<IDocument>({
@@ -50,6 +56,30 @@ const documentSchema = new mongoose.Schema<IDocument>({
   },
   vectorizedAt: {
     type: Date
+  },
+  // OCR-related fields
+  ocrProcessed: {
+    type: Boolean,
+    default: false
+  },
+  ocrProvider: {
+    type: String,
+    enum: ['google', 'aws', 'tesseract'],
+    required: false
+  },
+  ocrConfidence: {
+    type: Number,
+    min: 0,
+    max: 100,
+    required: false
+  },
+  isScannedDocument: {
+    type: Boolean,
+    default: false
+  },
+  ocrProcessedAt: {
+    type: Date,
+    required: false
   }
 });
 

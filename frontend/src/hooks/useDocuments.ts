@@ -67,13 +67,19 @@ export const useDocuments = () => {
         throw new Error('Invalid response format');
       }
       
-      // Map the backend response to frontend format
+      // Map the backend response to frontend format with OCR data
       const mappedDocuments = data.map((doc: any) => ({
         id: doc._id || doc.id,
         name: doc.name || doc.originalName || 'Unnamed Document',
         size: doc.size || 0,
         type: doc.type || 'application/pdf',
-        uploadedAt: new Date(doc.uploadedAt)
+        uploadedAt: new Date(doc.uploadedAt),
+        // OCR-related fields
+        ocrProcessed: doc.ocrProcessed || false,
+        ocrProvider: doc.ocrProvider,
+        ocrConfidence: doc.ocrConfidence,
+        isScannedDocument: doc.isScannedDocument || false,
+        ocrProcessedAt: doc.ocrProcessedAt ? new Date(doc.ocrProcessedAt) : undefined
       }));
       
       console.log('✅ Mapped documents:', mappedDocuments.length, 'documents');

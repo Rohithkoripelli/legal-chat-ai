@@ -25,6 +25,12 @@ export interface Document {
   content?: string;
   extractionWarning?: boolean; // Indicates PDF extraction issues
   userId?: string; // NEW: User ID for document ownership
+  // OCR-related fields
+  ocrProcessed?: boolean;     // Whether OCR was used for text extraction
+  ocrProvider?: string;       // OCR provider used (google, aws, tesseract)
+  ocrConfidence?: number;     // OCR confidence score (0-100)
+  isScannedDocument?: boolean; // Whether document was detected as scanned
+  ocrProcessedAt?: Date;      // When OCR processing was completed
 }
 
 // Chat session

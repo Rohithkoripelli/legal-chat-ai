@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDocuments } from '../../hooks/useDocuments';
 import { FileText, BarChart3 } from 'lucide-react';
+import OCRBadge from '../common/OCRBadge';
 
 interface DocumentSelectionProps {
   onSelectDocument: (documentId: string) => void;
@@ -56,9 +57,18 @@ const DocumentSelectionForAnalysis: React.FC<DocumentSelectionProps> = ({ onSele
                   <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
                     {document.name}
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {new Date(document.uploadedAt).toLocaleDateString()}
-                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-sm text-gray-500">
+                      {new Date(document.uploadedAt).toLocaleDateString()}
+                    </p>
+                    <OCRBadge 
+                      ocrProcessed={document.ocrProcessed}
+                      ocrProvider={document.ocrProvider}
+                      ocrConfidence={document.ocrConfidence}
+                      isScannedDocument={document.isScannedDocument}
+                      size="sm"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex items-center justify-between">

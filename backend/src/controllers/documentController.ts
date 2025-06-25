@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { promises as fsPromises } from 'fs';
 import Document from '../models/Document';
-import { extractTextFromDocument } from '../services/documentService';
+import { extractTextFromDocument, extractTextWithOCR } from '../services/documentService';
 
 // Extend Request interface to include multer file
 interface MulterRequest extends Request {
@@ -34,10 +34,12 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       userId: req.userId
     });
     
-    // Extract text content from the document
-    console.log('🔍 Starting text extraction...');
-    const textContent = await extractTextFromDocument(file.path);
-    console.log('✅ Text extraction completed');
+    // Extract text content from the document with OCR support
+    console.log('🔍 Starting enhanced text extraction with OCR support...');
+    const extractionResult = await extractTextWithOCR(file.path, file.mimetype);
+    const textContent = extractionResult.text;
+    const ocrResult = extractionResult.ocrResult;
+    console.log('✅ Enhanced text extraction completed', ocrResult ? `(OCR: ${ocrResult.provider})` : '(Standard)');
     
     // Validate extracted content
     const isContentValid = validateExtractedContent(textContent);
@@ -54,7 +56,7 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       hasSpecialChars: /[^\x20-\x7E\n\r\t]/.test(textContent)
     });
 
-    // Save document metadata to database WITH USER ID
+    // Save document metadata to database WITH USER ID and OCR info
     const document = new Document({
       name: file.filename,
       originalName: file.originalname,
@@ -63,7 +65,13 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       path: file.path,
       content: textContent,
       userId: req.userId, // CRITICAL: Associate with user
-      uploadedAt: new Date()
+      uploadedAt: new Date(),
+      // OCR metadata
+      ocrProcessed: !!ocrResult,
+      ocrProvider: ocrResult?.provider,
+      ocrConfidence: ocrResult?.confidence ? Math.round(ocrResult.confidence * 100) : undefined,
+      isScannedDocument: ocrResult?.isScanned,
+      ocrProcessedAt: ocrResult ? new Date() : undefined
     });
 
     const savedDocument = await document.save();
@@ -93,7 +101,7 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       console.warn('⚠️ Skipping vectorization due to poor content quality');
     }
 
-    // Return consistent response format
+    // Return enhanced response format with OCR information
     const responseData = {
       id: savedDocument._id.toString(),
       name: savedDocument.originalName,
@@ -101,7 +109,11 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       type: savedDocument.type,
       uploadedAt: savedDocument.uploadedAt,
       contentExtracted: isContentValid,
-      contentLength: textContent.length
+      contentLength: textContent.length,
+      ocrProcessed: !!ocrResult,
+      ocrProvider: ocrResult?.provider,
+      ocrConfidence: ocrResult?.confidence ? Math.round(ocrResult.confidence * 100) : undefined,
+      isScannedDocument: ocrResult?.isScanned
     };
 
     console.log('📤 Sending response:', responseData);
@@ -253,7 +265,9 @@ export const getDocument = async (req: Request, res: Response) => {
       type: document.type,
       uploadedAt: document.uploadedAt,
       content: document.content,
-      contentPreview: document.content ? document.content.substring(0, 500) + '...' : 'No content'
+      contentPreview: document.content ? document.content.substring(0, 500) + '...' : 'No content',
+      // Extract OCR information from content if present
+      ocrInfo: extractOCRInfoFromContent(document.content || '')
     };
 
     console.log('📤 Sending document details to user:', req.userId);
@@ -310,6 +324,31 @@ export const debugDocument = async (req: Request, res: Response) => {
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
+};
+
+// Extract OCR information from document content
+const extractOCRInfoFromContent = (content: string): any => {
+  // Look for OCR processing info in the content
+  const ocrInfoMatch = content.match(/📋 \*\*.*?Processing Info:\*\*\n(.*?)(?=\n\n|$)/s);
+  if (ocrInfoMatch) {
+    const info: any = {};
+    const infoText = ocrInfoMatch[1];
+    
+    const providerMatch = infoText.match(/(?:OCR )?Provider: (\w+)/i);
+    if (providerMatch) info.provider = providerMatch[1].toLowerCase();
+    
+    const confidenceMatch = infoText.match(/(?:OCR )?Confidence: ([\d.]+)%/i);
+    if (confidenceMatch) info.confidence = parseFloat(confidenceMatch[1]);
+    
+    const scannedMatch = infoText.match(/Scanned Document: (Yes|No)/i);
+    if (scannedMatch) info.isScanned = scannedMatch[1].toLowerCase() === 'yes';
+    
+    const pagesMatch = infoText.match(/Pages Processed: (\d+)/i);
+    if (pagesMatch) info.pagesProcessed = parseInt(pagesMatch[1]);
+    
+    return Object.keys(info).length > 0 ? info : null;
+  }
+  return null;
 };
 
 // Validate extracted content quality

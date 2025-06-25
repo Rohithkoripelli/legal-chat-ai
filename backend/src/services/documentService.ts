@@ -1,12 +1,49 @@
-// backend/src/services/documentService.ts - Enhanced with Clean PDF Extraction
+// backend/src/services/documentService.ts - Enhanced with Clean PDF Extraction and OCR
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
+import OCRService, { OCRResult } from './ocrService';
 
 const readFile = promisify(fs.readFile);
 
-// Enhanced document text extraction service
-export const extractTextFromDocument = async (filePath: string): Promise<string> => {
+// Initialize OCR service
+const ocrService = new OCRService({
+  fallbackToTesseract: true
+});
+
+// Process image files directly with OCR
+const extractFromImage = async (filePath: string, mimeType: string): Promise<string> => {
+  console.log(`🖼️ Processing image file with OCR: ${path.basename(filePath)}`);
+  
+  try {
+    const ocrResult = await ocrService.processDocument(filePath, mimeType);
+    
+    if (ocrResult.text && ocrResult.text.length > 0) {
+      console.log(`✅ OCR successful for image: ${ocrResult.text.length} characters extracted`);
+      return `${ocrResult.text}
+
+📋 **OCR Processing Info:**
+- File Type: Image (${mimeType})
+- OCR Provider: ${ocrResult.provider.toUpperCase()}
+- Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%
+- Pages Processed: ${ocrResult.pages.length}`;
+    } else {
+      return `🖼️ Image file processed but no text was detected.
+
+This image may not contain readable text or the text may be too unclear for OCR processing.`;
+    }
+  } catch (error) {
+    console.error('Image OCR processing failed:', error);
+    return `🖼️ Image file uploaded successfully.
+
+⚠️ OCR processing failed: ${error instanceof Error ? error.message : 'Unknown error'}
+
+The image has been stored but text extraction was not possible.`;
+  }
+};
+
+// Enhanced document text extraction service with OCR support
+export const extractTextFromDocument = async (filePath: string, enableOCR: boolean = true): Promise<string> => {
   try {
     const fileExtension = path.extname(filePath).toLowerCase();
     const fileStats = await fs.promises.stat(filePath);
@@ -17,12 +54,26 @@ export const extractTextFromDocument = async (filePath: string): Promise<string>
       case '.txt':
         return await extractFromText(filePath);
       case '.pdf':
-        return await extractFromPDF(filePath);
+        return await extractFromPDF(filePath, enableOCR);
       case '.doc':
       case '.docx':
         return await extractFromWord(filePath);
       case '.rtf':
         return await extractFromRTF(filePath);
+      case '.jpg':
+      case '.jpeg':
+      case '.png':
+      case '.bmp':
+      case '.tiff':
+      case '.gif':
+        // For image files, determine mime type and process with OCR
+        const imageMimeType = fileExtension === '.jpg' || fileExtension === '.jpeg' ? 'image/jpeg' :
+                             fileExtension === '.png' ? 'image/png' :
+                             fileExtension === '.bmp' ? 'image/bmp' :
+                             fileExtension === '.tiff' ? 'image/tiff' :
+                             fileExtension === '.gif' ? 'image/gif' : 'image/jpeg';
+        return enableOCR ? await extractFromImage(filePath, imageMimeType) : 
+               `🖼️ Image file detected. OCR processing is disabled.`;
       default:
         try {
           return await extractFromText(filePath);
@@ -56,7 +107,7 @@ const extractFromText = async (filePath: string): Promise<string> => {
 };
 
 // Enhanced PDF extraction with proper cleaning
-const extractFromPDF = async (filePath: string): Promise<string> => {
+const extractFromPDF = async (filePath: string, enableOCR: boolean = true): Promise<string> => {
   console.log(`🔍 Attempting to extract text from PDF: ${path.basename(filePath)}`);
   
   // Method 1: Try pdf-parse first
@@ -179,6 +230,26 @@ const extractFromPDF = async (filePath: string): Promise<string> => {
     console.warn('Basic extraction failed:', basicError);
   }
   
+  // Final fallback: Try OCR if enabled
+  if (enableOCR) {
+    console.log('🔍 Attempting OCR as final fallback...');
+    try {
+      const ocrResult = await ocrService.processDocument(filePath, 'application/pdf');
+      if (ocrResult.text && ocrResult.text.length > 100) {
+        console.log(`✅ OCR successful: ${ocrResult.text.length} characters extracted with ${ocrResult.provider}`);
+        return `${ocrResult.text}
+
+📋 **OCR Processing Info:**
+- Provider: ${ocrResult.provider.toUpperCase()}
+- Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%
+- Scanned Document: ${ocrResult.isScanned ? 'Yes' : 'No'}
+- Pages Processed: ${ocrResult.pages.length}`;
+      }
+    } catch (ocrError) {
+      console.warn('OCR processing failed:', ocrError);
+    }
+  }
+  
   // Final fallback message
   return `📄 PDF file processed successfully.
 
@@ -192,6 +263,7 @@ const extractFromPDF = async (filePath: string): Promise<string> => {
 1. Try converting to Word format (.docx)
 2. Ensure PDF has selectable text (not just images)
 3. Use a simpler PDF format if possible
+${enableOCR ? '\n⚠️ OCR processing was attempted but did not yield sufficient results.' : ''}
 
 The document has been uploaded and stored for reference.`;
 };
@@ -307,6 +379,101 @@ The file has been stored but content analysis will be limited.`;
   }
 };
 
+// Enhanced text extraction with OCR detection and processing
+export const extractTextWithOCR = async (filePath: string, mimeType: string): Promise<{ text: string; ocrResult?: OCRResult }> => {
+  console.log(`🔍 Processing document with OCR support: ${path.basename(filePath)}`);
+  
+  try {
+    // First, try standard text extraction
+    const standardText = await extractTextFromDocument(filePath, false);
+    
+    // Check if the extracted text indicates a scanned document or poor extraction
+    const needsOCR = await shouldUseOCR(standardText, filePath, mimeType);
+    
+    if (needsOCR) {
+      console.log('📄 Document appears to be scanned or extraction was poor, attempting OCR...');
+      try {
+        const ocrResult = await ocrService.processDocument(filePath, mimeType);
+        
+        if (ocrResult.text && ocrResult.text.length > standardText.length * 0.5) {
+          console.log(`✅ OCR provided better results: ${ocrResult.text.length} vs ${standardText.length} characters`);
+          
+          const combinedText = combineTextResults(standardText, ocrResult.text);
+          return {
+            text: `${combinedText}
+
+📋 **Document Processing Info:**
+- Standard extraction: ${standardText.length} characters
+- OCR extraction: ${ocrResult.text.length} characters
+- OCR Provider: ${ocrResult.provider.toUpperCase()}
+- OCR Confidence: ${(ocrResult.confidence * 100).toFixed(1)}%
+- Processing Method: Combined standard + OCR`,
+            ocrResult
+          };
+        }
+      } catch (ocrError) {
+        console.warn('OCR processing failed, using standard extraction:', ocrError);
+      }
+    }
+    
+    // Return standard extraction if OCR wasn't needed or failed
+    return { text: standardText };
+    
+  } catch (error) {
+    console.error('Error in enhanced text extraction:', error);
+    throw error;
+  }
+};
+
+// Determine if OCR should be used based on extraction results
+const shouldUseOCR = async (extractedText: string, filePath: string, mimeType: string): Promise<boolean> => {
+  // Check for common indicators that suggest scanned content
+  const indicators = [
+    extractedText.length < 100, // Very little text extracted
+    extractedText.includes('Text Extraction Limited'), // Our fallback message
+    extractedText.includes('⚠️'), // Warning indicators in our extraction
+    /OCR/.test(extractedText), // Already mentions OCR needs
+    mimeType === 'application/pdf' && extractedText.length < 500 // PDF with minimal text
+  ];
+  
+  const positiveIndicators = indicators.filter(Boolean).length;
+  
+  // Use OCR if multiple indicators suggest scanned content
+  if (positiveIndicators >= 2) {
+    return true;
+  }
+  
+  // Additional check using OCR service's built-in detection
+  try {
+    return await ocrService.isDocumentScanned(filePath, extractedText);
+  } catch (error) {
+    console.warn('Failed to detect if document is scanned:', error);
+    return positiveIndicators >= 1; // Lower threshold if detection fails
+  }
+};
+
+// Combine results from standard extraction and OCR
+const combineTextResults = (standardText: string, ocrText: string): string => {
+  // Remove our fallback messages from standard text
+  let cleanStandardText = standardText
+    .replace(/📄.*?The document has been uploaded and stored for reference\./gs, '')
+    .replace(/⚠️.*?$/gm, '')
+    .trim();
+  
+  // If standard text is very short or contains mostly warnings, use OCR
+  if (cleanStandardText.length < 100 || cleanStandardText.includes('⚠️')) {
+    return ocrText;
+  }
+  
+  // If both have substantial content, prefer the longer one
+  if (ocrText.length > cleanStandardText.length * 1.5) {
+    return ocrText;
+  }
+  
+  // Default to standard extraction if it's reasonable
+  return cleanStandardText || ocrText;
+};
+
 // Utility functions
 export const isValidDocumentType = (mimetype: string): boolean => {
   const allowedTypes = [
@@ -315,7 +482,14 @@ export const isValidDocumentType = (mimetype: string): boolean => {
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/rtf',
-    'text/rtf'
+    'text/rtf',
+    // Image types for OCR
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/bmp',
+    'image/tiff',
+    'image/gif'
   ];
   
   return allowedTypes.includes(mimetype);
@@ -344,6 +518,7 @@ export const getFileInfo = (filePath: string) => {
 
 export default {
   extractTextFromDocument,
+  extractTextWithOCR,
   isValidDocumentType,
   formatFileSize,
   getFileInfo

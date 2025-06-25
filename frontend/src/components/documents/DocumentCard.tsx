@@ -1,13 +1,7 @@
 import React from 'react';
 import { FileText, Trash2, Download } from 'lucide-react';
-
-interface Document {
-  id: string;
-  name: string;
-  size: number;
-  uploadedAt: Date;
-  type: string;
-}
+import { Document } from '../../types';
+import OCRBadge from '../common/OCRBadge';
 
 interface DocumentCardProps {
   document: Document;
@@ -34,9 +28,18 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete, onDownl
             <p className="text-xs text-gray-500 mt-1">
               {formatFileSize(document.size)} • {document.type}
             </p>
-            <p className="text-xs text-gray-400 mt-1">
-              Uploaded {document.uploadedAt.toLocaleDateString()}
-            </p>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-gray-400">
+                Uploaded {document.uploadedAt.toLocaleDateString()}
+              </p>
+              <OCRBadge 
+                ocrProcessed={document.ocrProcessed}
+                ocrProvider={document.ocrProvider}
+                ocrConfidence={document.ocrConfidence}
+                isScannedDocument={document.isScannedDocument}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
         <div className="flex space-x-2">
