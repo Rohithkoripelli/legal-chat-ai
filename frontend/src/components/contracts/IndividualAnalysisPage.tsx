@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
-import { ArrowLeft, AlertCircle, FileText, Brain, Calendar, User, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, Brain, Calendar, User, CheckCircle, AlertTriangle, BarChart3 } from 'lucide-react';
 
 interface ContractAnalysis {
   documentId: string;
@@ -119,6 +119,75 @@ const IndividualAnalysisPage: React.FC = () => {
     }
   };
 
+  // Function to format the executive summary with proper structure (copied from main analysis page)
+  const formatExecutiveSummary = (overview: string) => {
+    if (!overview || typeof overview !== 'string') return [];
+    
+    const sections: { title: string; content: string[] }[] = [];
+    
+    // Look for **Section:** pattern
+    const sectionRegex = /\*\*([^:*]+):\*\*\s*([\s\S]*?)(?=\*\*[^:*]+:\*\*|$)/g;
+    let match;
+
+    while ((match = sectionRegex.exec(overview)) !== null) {
+      const title = match[1].trim();
+      const content = match[2].trim();
+      
+      // Split content into bullet points
+      const items: string[] = [];
+      
+      // Split by lines and filter out empty ones
+      const lines = content.split('\n').filter(line => line.trim().length > 0);
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        // Remove leading dashes/bullets and clean up
+        const cleanLine = trimmedLine.replace(/^[-•*]\s*/, '').trim();
+        if (cleanLine.length > 5) {
+          items.push(cleanLine);
+        }
+      }
+      
+      if (items.length > 0) {
+        sections.push({ title, content: items });
+      }
+    }
+
+    // If no sections found, try simple line-by-line parsing
+    if (sections.length === 0) {
+      const lines = overview.split('\n').filter(line => line.trim().length > 0);
+      let currentSection: { title: string; content: string[] } | null = null;
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        
+        // Check if this looks like a header (has bold formatting or ends with :)
+        if (trimmedLine.includes('**') || trimmedLine.endsWith(':')) {
+          // Save previous section
+          if (currentSection && currentSection.content.length > 0) {
+            sections.push(currentSection);
+          }
+          // Start new section
+          const title = trimmedLine.replace(/\*\*/g, '').replace(/:/g, '').trim();
+          currentSection = { title, content: [] };
+        } else if (currentSection && trimmedLine) {
+          // Add content to current section
+          const cleanContent = trimmedLine.replace(/^[-•*]\s*/, '').trim();
+          if (cleanContent.length > 5) {
+            currentSection.content.push(cleanContent);
+          }
+        }
+      }
+      
+      // Don't forget the last section
+      if (currentSection && currentSection.content.length > 0) {
+        sections.push(currentSection);
+      }
+    }
+
+    return sections;
+  };
+
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto p-6">
@@ -224,6 +293,25 @@ const IndividualAnalysisPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Premium Features Notice */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-green-900 mb-2">🎉 Premium Analysis Complete</h3>
+            <p className="text-green-800 text-sm">
+              You received a comprehensive AI contract analysis with advanced risk assessment, detailed clause review, and compliance checking. This analysis is saved to your account permanently.
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+          >
+            <BarChart3 className="h-4 w-4" />
+            <span>View Dashboard</span>
+          </button>
+        </div>
+      </div>
+
       {/* Risk Score */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Risk Assessment</h2>
@@ -241,6 +329,7 @@ const IndividualAnalysisPage: React.FC = () => {
           </div>
           <div className="text-right text-sm text-gray-500">
             Analyzed: {new Date(analysis.analyzedAt).toLocaleString()}
+            <div className="text-xs text-blue-600">Professional AI Analysis</div>
           </div>
         </div>
       </div>
@@ -248,8 +337,29 @@ const IndividualAnalysisPage: React.FC = () => {
       {/* Executive Summary */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Executive Summary</h2>
-        <div className="text-gray-700 leading-relaxed">
-          <p>{analysis.executiveSummary.overview}</p>
+        <div className="space-y-4">
+          {formatExecutiveSummary(analysis.executiveSummary.overview).map((section, index) => (
+            <div key={index} className="border-l-4 border-blue-500 pl-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                {section.title}
+              </h3>
+              <ul className="space-y-1">
+                {section.content.map((item, itemIndex) => (
+                  <li key={itemIndex} className="flex items-start space-x-2">
+                    <div className="flex-shrink-0 w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
+                    <p className="text-gray-700 leading-relaxed text-sm">{item}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          
+          {/* Fallback if no structured content */}
+          {formatExecutiveSummary(analysis.executiveSummary.overview).length === 0 && (
+            <div className="text-gray-700 leading-relaxed">
+              <p>{analysis.executiveSummary.overview}</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -409,6 +519,7 @@ const IndividualAnalysisPage: React.FC = () => {
             <h4 className="font-medium text-yellow-800 mb-2">Important Legal Notice</h4>
             <p className="text-yellow-700 text-sm">
               This AI-powered contract analysis is for informational purposes only and does not constitute legal advice. 
+              The AI analysis should supplement, not replace, consultation with qualified legal professionals. 
               Always consult with a licensed attorney for legal matters and important decisions.
             </p>
           </div>
