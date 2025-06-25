@@ -157,7 +157,7 @@ const generateAIEnhancedDocument = async (request: DocumentGenerationRequest): P
       }
       
       return await openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
