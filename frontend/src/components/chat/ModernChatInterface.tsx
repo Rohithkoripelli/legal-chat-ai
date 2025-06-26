@@ -122,7 +122,7 @@ const ModernChatInterface: React.FC = () => {
 
   // Render conversation sidebar
   const renderSidebar = () => (
-    <div className={`fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
+    <div className={`fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col h-screen ${
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0`}>
       {/* Sidebar Header */}
@@ -160,7 +160,7 @@ const ModernChatInterface: React.FC = () => {
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto p-2">
+      <div className="flex-1 overflow-y-auto p-2 min-h-0">
         {conversationsLoading ? (
           <div className="p-4 text-center text-gray-500">
             <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
@@ -214,7 +214,7 @@ const ModernChatInterface: React.FC = () => {
 
   // Render messages
   const renderMessages = () => (
-    <div className="flex-1 overflow-y-auto" ref={messagesContainerRef}>
+    <div className="h-full overflow-y-auto" ref={messagesContainerRef}>
       <div className="max-w-3xl mx-auto px-4 py-3 space-y-3">
         {messages.map((message, index) => (
           <div
@@ -450,7 +450,7 @@ const ModernChatInterface: React.FC = () => {
   );
 
   return (
-    <div className="h-screen flex bg-white">
+    <div className="h-screen flex bg-white overflow-hidden">
       {/* Sidebar overlay for mobile */}
       {showSidebar && (
         <div
@@ -460,7 +460,7 @@ const ModernChatInterface: React.FC = () => {
       )}
 
       {/* Sidebar */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block h-screen">
         {renderSidebar()}
       </div>
 
@@ -470,7 +470,7 @@ const ModernChatInterface: React.FC = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col h-screen">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Mobile hamburger menu */}
         <button
           onClick={() => setShowSidebar(true)}
@@ -493,9 +493,9 @@ const ModernChatInterface: React.FC = () => {
         {messages.length === 0 ? (
           renderEmptyState()
         ) : (
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full min-h-0">
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-0">
               {renderMessages()}
             </div>
             
