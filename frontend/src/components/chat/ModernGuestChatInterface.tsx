@@ -57,7 +57,7 @@ const ModernGuestChatInterface: React.FC = () => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
-      inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 120)}px`;
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
     }
   }, [inputText]);
 
@@ -172,43 +172,43 @@ const ModernGuestChatInterface: React.FC = () => {
   // Render messages
   const renderMessages = () => (
     <div className="flex-1 overflow-y-auto" ref={messagesContainerRef}>
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 py-3 space-y-3">
         {messages.map((message, index) => (
           <div
             key={message.id || `msg-${index}`}
-            className={`flex gap-4 ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            className={`flex gap-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
             {!message.isUser && (
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                <Brain size={16} className="text-white" />
+              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                <Brain size={12} className="text-white" />
               </div>
             )}
             
-            <div className={`max-w-[80%] ${message.isUser ? 'order-first' : ''}`}>
+            <div className={`max-w-[75%] ${message.isUser ? 'order-first' : ''}`}>
               <div
-                className={`p-4 rounded-2xl ${
+                className={`p-2 rounded-lg ${
                   message.isUser
                     ? 'bg-blue-600 text-white ml-auto'
                     : 'bg-gray-100 text-gray-900'
                 }`}
               >
                 {message.isUser ? (
-                  <p className="whitespace-pre-wrap">{message.text}</p>
+                  <p className="whitespace-pre-wrap text-sm">{message.text}</p>
                 ) : (
                   <div
-                    className="prose prose-sm max-w-none"
+                    className="prose prose-sm max-w-none text-sm"
                     dangerouslySetInnerHTML={{ __html: formatText(message.text) }}
                   />
                 )}
               </div>
-              <div className={`text-xs text-gray-500 mt-1 ${message.isUser ? 'text-right' : 'text-left'}`}>
+              <div className={`text-xs text-gray-500 mt-0.5 ${message.isUser ? 'text-right' : 'text-left'}`}>
                 {new Date(message.timestamp || Date.now()).toLocaleTimeString()}
               </div>
             </div>
 
             {message.isUser && (
-              <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-medium">U</span>
+              <div className="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center flex-shrink-0 mt-1">
+                <span className="text-white text-xs font-medium">U</span>
               </div>
             )}
           </div>
@@ -216,16 +216,16 @@ const ModernGuestChatInterface: React.FC = () => {
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="flex gap-4 justify-start">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <Brain size={16} className="text-white" />
+          <div className="flex gap-2 justify-start">
+            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+              <Brain size={12} className="text-white" />
             </div>
-            <div className="bg-gray-100 p-4 rounded-2xl">
-              <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                <span className="text-sm text-gray-600 ml-2">Thinking...</span>
+            <div className="bg-gray-100 p-2 rounded-lg">
+              <div className="flex items-center space-x-1">
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <span className="text-xs text-gray-600 ml-1">Thinking...</span>
               </div>
             </div>
           </div>
@@ -236,77 +236,88 @@ const ModernGuestChatInterface: React.FC = () => {
     </div>
   );
 
-  // Render empty state
+  // Render empty state with input first
   const renderEmptyState = () => (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
-      <div className="max-w-2xl">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Brain size={32} className="text-blue-600" />
+    <div className="flex-1 flex flex-col">
+      {/* Top section with title */}
+      <div className="flex-shrink-0 text-center pt-6 pb-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <Brain size={24} className="text-blue-600" />
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           What can I help you with?
         </h1>
-        
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-gray-600 text-sm">
           {guestDocuments.length > 0 
             ? `${guestDocuments.length} document${guestDocuments.length !== 1 ? 's' : ''} loaded. Ask anything about your legal documents.`
             : 'Ask legal questions or upload documents for analysis. No signup required!'
           }
         </p>
+      </div>
 
-        {/* Quick start examples */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {guestDocuments.length > 0 ? (
-            <>
+      {/* Input area - prominently placed */}
+      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+        <div className="max-w-3xl mx-auto">
+          {renderInputArea()}
+        </div>
+      </div>
+
+      {/* Quick start examples below input */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="max-w-2xl mx-auto">
+          <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">Quick examples:</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {guestDocuments.length > 0 ? (
+              <>
+                <button
+                  onClick={() => setInputText('What are the key risks in this contract?')}
+                  className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                >
+                  <div className="text-lg mb-1">📊</div>
+                  <div className="font-medium text-gray-900 text-sm">Analyze risks</div>
+                  <div className="text-xs text-gray-600">Identify potential legal risks</div>
+                </button>
+                <button
+                  onClick={() => setInputText('Explain the payment terms')}
+                  className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                >
+                  <div className="text-lg mb-1">💰</div>
+                  <div className="font-medium text-gray-900 text-sm">Payment terms</div>
+                  <div className="text-xs text-gray-600">Understand payment obligations</div>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setInputText('What should I include in an NDA?')}
+                  className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                >
+                  <div className="text-lg mb-1">📄</div>
+                  <div className="font-medium text-gray-900 text-sm">Draft an NDA</div>
+                  <div className="text-xs text-gray-600">Get help creating a non-disclosure agreement</div>
+                </button>
+                <button
+                  onClick={() => setInputText('How do liability clauses work?')}
+                  className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                >
+                  <div className="text-lg mb-1">⚖️</div>
+                  <div className="font-medium text-gray-900 text-sm">Liability clauses</div>
+                  <div className="text-xs text-gray-600">Understand legal responsibilities</div>
+                </button>
+              </>
+            )}
+            
+            {guestDocuments.length === 0 && (
               <button
-                onClick={() => setInputText('What are the key risks in this contract?')}
-                className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                onClick={() => document.getElementById('file-upload')?.click()}
+                className="md:col-span-2 p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
               >
-                <div className="text-2xl mb-2">📊</div>
-                <div className="font-medium text-gray-900">Analyze risks</div>
-                <div className="text-sm text-gray-600">Identify potential legal risks</div>
+                <div className="text-lg mb-1">📋</div>
+                <div className="font-medium text-blue-900 text-sm">Upload documents</div>
+                <div className="text-xs text-blue-600">Analyze your legal documents for free</div>
               </button>
-              <button
-                onClick={() => setInputText('Explain the payment terms')}
-                className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-              >
-                <div className="text-2xl mb-2">💰</div>
-                <div className="font-medium text-gray-900">Payment terms</div>
-                <div className="text-sm text-gray-600">Understand payment obligations</div>
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setInputText('What should I include in an NDA?')}
-                className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-              >
-                <div className="text-2xl mb-2">📄</div>
-                <div className="font-medium text-gray-900">Draft an NDA</div>
-                <div className="text-sm text-gray-600">Get help creating a non-disclosure agreement</div>
-              </button>
-              <button
-                onClick={() => setInputText('How do liability clauses work?')}
-                className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-              >
-                <div className="text-2xl mb-2">⚖️</div>
-                <div className="font-medium text-gray-900">Liability clauses</div>
-                <div className="text-sm text-gray-600">Understand legal responsibilities</div>
-              </button>
-            </>
-          )}
-          
-          {guestDocuments.length === 0 && (
-            <button
-              onClick={() => document.getElementById('file-upload')?.click()}
-              className="md:col-span-2 p-4 text-left bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-colors"
-            >
-              <div className="text-2xl mb-2">📋</div>
-              <div className="font-medium text-blue-900">Upload documents</div>
-              <div className="text-sm text-blue-600">Analyze your legal documents for free</div>
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -314,8 +325,7 @@ const ModernGuestChatInterface: React.FC = () => {
 
   // Render input area
   const renderInputArea = () => (
-    <div className="border-t border-gray-200 bg-white">
-      <div className="max-w-3xl mx-auto p-4">
+    <div>
         {/* File upload area */}
         {uploadingFiles.length > 0 && (
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -391,7 +401,7 @@ const ModernGuestChatInterface: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Message Legal AI..."
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32"
+              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={1}
               disabled={isLoading}
             />
@@ -432,7 +442,6 @@ const ModernGuestChatInterface: React.FC = () => {
             }
           </p>
         </div>
-      </div>
     </div>
   );
 
@@ -479,10 +488,23 @@ const ModernGuestChatInterface: React.FC = () => {
       )}
 
       {/* Messages or empty state */}
-      {messages.length === 0 ? renderEmptyState() : renderMessages()}
-
-      {/* Input area - always at bottom */}
-      {renderInputArea()}
+      {messages.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <div className="flex flex-col h-full">
+          {/* Messages area */}
+          <div className="flex-1 overflow-hidden">
+            {renderMessages()}
+          </div>
+          
+          {/* Input area - fixed at bottom for conversations */}
+          <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+            <div className="max-w-3xl mx-auto">
+              {renderInputArea()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

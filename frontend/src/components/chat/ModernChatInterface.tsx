@@ -46,7 +46,7 @@ const ModernChatInterface: React.FC = () => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
-      inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 120)}px`;
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
     }
   }, [inputText]);
 
@@ -122,23 +122,23 @@ const ModernChatInterface: React.FC = () => {
 
   // Render conversation sidebar
   const renderSidebar = () => (
-    <div className={`fixed inset-y-0 left-0 z-50 w-80 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out ${
+    <div className={`fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0`}>
       {/* Sidebar Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        <h2 className="text-lg font-semibold">Chat History</h2>
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => createConversation()}
-            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
             title="New conversation"
           >
             <Plus size={18} />
           </button>
           <button
             onClick={() => setShowSidebar(false)}
-            className="lg:hidden p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <X size={18} />
           </button>
@@ -146,13 +146,13 @@ const ModernChatInterface: React.FC = () => {
       </div>
 
       {/* New Chat Button */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="p-4 border-b border-gray-200">
         <button
           onClick={() => {
             createConversation();
             if (window.innerWidth < 1024) setShowSidebar(false);
           }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           <Plus size={16} />
           New Chat
@@ -162,13 +162,13 @@ const ModernChatInterface: React.FC = () => {
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto p-2">
         {conversationsLoading ? (
-          <div className="p-4 text-center text-gray-400">
-            <div className="animate-spin h-5 w-5 border-2 border-gray-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+          <div className="p-4 text-center text-gray-500">
+            <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
             Loading conversations...
           </div>
         ) : conversations.length === 0 ? (
           <div className="p-4 text-center text-gray-500">
-            <MessageSquare size={48} className="mx-auto mb-2 text-gray-600" />
+            <MessageSquare size={48} className="mx-auto mb-2 text-gray-300" />
             <p className="text-sm">No conversations yet</p>
           </div>
         ) : (
@@ -177,8 +177,8 @@ const ModernChatInterface: React.FC = () => {
               key={conversation._id}
               className={`group p-3 mb-1 rounded-lg cursor-pointer transition-colors ${
                 currentConversation?._id === conversation._id
-                  ? 'bg-gray-700 text-white'
-                  : 'hover:bg-gray-800 text-gray-300'
+                  ? 'bg-blue-100 border border-blue-200 text-blue-900'
+                  : 'hover:bg-gray-100 text-gray-700'
               }`}
               onClick={() => {
                 switchConversation(conversation._id);
@@ -200,7 +200,7 @@ const ModernChatInterface: React.FC = () => {
                       deleteConversation(conversation._id);
                     }
                   }}
-                  className="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-red-400 transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-all"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -215,43 +215,43 @@ const ModernChatInterface: React.FC = () => {
   // Render messages
   const renderMessages = () => (
     <div className="flex-1 overflow-y-auto" ref={messagesContainerRef}>
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 py-3 space-y-3">
         {messages.map((message, index) => (
           <div
             key={message.id || `msg-${index}`}
-            className={`flex gap-4 ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            className={`flex gap-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
             {!message.isUser && (
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                <Brain size={16} className="text-white" />
+              <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                <Brain size={12} className="text-white" />
               </div>
             )}
             
-            <div className={`max-w-[80%] ${message.isUser ? 'order-first' : ''}`}>
+            <div className={`max-w-[75%] ${message.isUser ? 'order-first' : ''}`}>
               <div
-                className={`p-4 rounded-2xl ${
+                className={`p-2 rounded-lg ${
                   message.isUser
                     ? 'bg-blue-600 text-white ml-auto'
                     : 'bg-gray-100 text-gray-900'
                 }`}
               >
                 {message.isUser ? (
-                  <p className="whitespace-pre-wrap">{message.text}</p>
+                  <p className="whitespace-pre-wrap text-sm">{message.text}</p>
                 ) : (
                   <div
-                    className="prose prose-sm max-w-none"
+                    className="prose prose-sm max-w-none text-sm"
                     dangerouslySetInnerHTML={{ __html: formatText(message.text) }}
                   />
                 )}
               </div>
-              <div className={`text-xs text-gray-500 mt-1 ${message.isUser ? 'text-right' : 'text-left'}`}>
+              <div className={`text-xs text-gray-500 mt-0.5 ${message.isUser ? 'text-right' : 'text-left'}`}>
                 {new Date(message.timestamp || Date.now()).toLocaleTimeString()}
               </div>
             </div>
 
             {message.isUser && (
-              <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-medium">U</span>
+              <div className="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center flex-shrink-0 mt-1">
+                <span className="text-white text-xs font-medium">U</span>
               </div>
             )}
           </div>
@@ -259,16 +259,16 @@ const ModernChatInterface: React.FC = () => {
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="flex gap-4 justify-start">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <Brain size={16} className="text-white" />
+          <div className="flex gap-2 justify-start">
+            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+              <Brain size={12} className="text-white" />
             </div>
-            <div className="bg-gray-100 p-4 rounded-2xl">
-              <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                <span className="text-sm text-gray-600 ml-2">Thinking...</span>
+            <div className="bg-gray-100 p-2 rounded-lg">
+              <div className="flex items-center space-x-1">
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <span className="text-xs text-gray-600 ml-1">Thinking...</span>
               </div>
             </div>
           </div>
@@ -279,59 +279,70 @@ const ModernChatInterface: React.FC = () => {
     </div>
   );
 
-  // Render empty state
+  // Render empty state with input first
   const renderEmptyState = () => (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
-      <div className="max-w-2xl">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Brain size={32} className="text-blue-600" />
+    <div className="flex-1 flex flex-col">
+      {/* Top section with title */}
+      <div className="flex-shrink-0 text-center pt-6 pb-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <Brain size={24} className="text-blue-600" />
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           What can I help you with?
         </h1>
-        
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-gray-600 text-sm">
           Ask me anything about legal documents, contracts, or general legal questions.
         </p>
+      </div>
 
-        {/* Quick start examples */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <button
-            onClick={() => setInputText('What should I include in an NDA?')}
-            className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-          >
-            <div className="text-2xl mb-2">📄</div>
-            <div className="font-medium text-gray-900">Draft an NDA</div>
-            <div className="text-sm text-gray-600">Get help creating a non-disclosure agreement</div>
-          </button>
-          
-          <button
-            onClick={() => setInputText('Explain liability clauses in contracts')}
-            className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-          >
-            <div className="text-2xl mb-2">⚖️</div>
-            <div className="font-medium text-gray-900">Analyze contracts</div>
-            <div className="text-sm text-gray-600">Review and understand contract terms</div>
-          </button>
-          
-          <button
-            onClick={() => setInputText('What are common legal risks in business?')}
-            className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-          >
-            <div className="text-2xl mb-2">🛡️</div>
-            <div className="font-medium text-gray-900">Legal risks</div>
-            <div className="text-sm text-gray-600">Understand potential legal issues</div>
-          </button>
-          
-          <button
-            onClick={() => document.getElementById('file-upload')?.click()}
-            className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
-          >
-            <div className="text-2xl mb-2">📋</div>
-            <div className="font-medium text-gray-900">Upload documents</div>
-            <div className="text-sm text-gray-600">Analyze your legal documents</div>
-          </button>
+      {/* Input area - prominently placed */}
+      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+        <div className="max-w-3xl mx-auto">
+          {renderInputArea()}
+        </div>
+      </div>
+
+      {/* Quick start examples below input */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="max-w-2xl mx-auto">
+          <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">Quick examples:</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button
+              onClick={() => setInputText('What should I include in an NDA?')}
+              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+            >
+              <div className="text-lg mb-1">📄</div>
+              <div className="font-medium text-gray-900 text-sm">Draft an NDA</div>
+              <div className="text-xs text-gray-600">Get help creating a non-disclosure agreement</div>
+            </button>
+            
+            <button
+              onClick={() => setInputText('Explain liability clauses in contracts')}
+              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+            >
+              <div className="text-lg mb-1">⚖️</div>
+              <div className="font-medium text-gray-900 text-sm">Analyze contracts</div>
+              <div className="text-xs text-gray-600">Review and understand contract terms</div>
+            </button>
+            
+            <button
+              onClick={() => setInputText('What are common legal risks in business?')}
+              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+            >
+              <div className="text-lg mb-1">🛡️</div>
+              <div className="font-medium text-gray-900 text-sm">Legal risks</div>
+              <div className="text-xs text-gray-600">Understand potential legal issues</div>
+            </button>
+            
+            <button
+              onClick={() => document.getElementById('file-upload')?.click()}
+              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+            >
+              <div className="text-lg mb-1">📋</div>
+              <div className="font-medium text-gray-900 text-sm">Upload documents</div>
+              <div className="text-xs text-gray-600">Analyze your legal documents</div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -339,8 +350,7 @@ const ModernChatInterface: React.FC = () => {
 
   // Render input area
   const renderInputArea = () => (
-    <div className="border-t border-gray-200 bg-white">
-      <div className="max-w-3xl mx-auto p-4">
+    <div>
         {/* File upload area */}
         {uploadingFiles.length > 0 && (
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -416,7 +426,7 @@ const ModernChatInterface: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Message Legal AI..."
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32"
+              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={1}
               disabled={isLoading}
             />
@@ -452,7 +462,6 @@ const ModernChatInterface: React.FC = () => {
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>
-      </div>
     </div>
   );
 
@@ -510,10 +519,23 @@ const ModernChatInterface: React.FC = () => {
         )}
 
         {/* Messages or empty state */}
-        {messages.length === 0 ? renderEmptyState() : renderMessages()}
-
-        {/* Input area - always at bottom */}
-        {renderInputArea()}
+        {messages.length === 0 ? (
+          renderEmptyState()
+        ) : (
+          <div className="flex flex-col h-full">
+            {/* Messages area */}
+            <div className="flex-1 overflow-hidden">
+              {renderMessages()}
+            </div>
+            
+            {/* Input area - fixed at bottom for conversations */}
+            <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+              <div className="max-w-3xl mx-auto">
+                {renderInputArea()}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
