@@ -301,29 +301,14 @@ const ModernGuestChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Dynamic greeting for guests */}
-      <div className="flex-shrink-0 text-center mb-6">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 shadow-sm border border-green-100">
-            <div className="flex items-center justify-center mb-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
-                <Brain size={20} className="text-white" />
-              </div>
-            </div>
-            <h1 className="text-xl font-semibold text-gray-800 mb-2">
-              {getGuestGreeting()}
-            </h1>
-            <p className="text-sm text-gray-600">
-              {guestDocuments.length > 0 
-                ? `${guestDocuments.length} document${guestDocuments.length !== 1 ? 's' : ''} loaded and ready for analysis. Ask anything!`
-                : 'Free legal AI assistance - upload documents or ask questions directly. No signup required!'
-              }
-            </p>
-          </div>
-        </div>
+      <div className="flex-shrink-0 text-center mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">
+          {getGuestGreeting()}
+        </h1>
       </div>
 
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 bg-white p-4 mt-8">
+      <div className="flex-shrink-0 bg-white p-4">
         <div className="max-w-2xl mx-auto">
           {renderInputArea()}
         </div>
