@@ -125,25 +125,34 @@ const ModernChatInterface: React.FC = () => {
     <div className={`fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col ${
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 lg:h-full`}>
-      {/* Mobile header with close button */}
+      {/* Mobile header with close button and new chat */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
-        <button
-          onClick={() => setShowSidebar(false)}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <X size={18} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              createConversation();
+              if (window.innerWidth < 1024) setShowSidebar(false);
+            }}
+            className="flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+          >
+            <Plus size={14} />
+            New
+          </button>
+          <button
+            onClick={() => setShowSidebar(false)}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
-      {/* New Chat Button */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200">
+      {/* New Chat Button - Desktop only */}
+      <div className="hidden lg:flex flex-shrink-0 p-4 border-b border-gray-200">
         <button
-          onClick={() => {
-            createConversation();
-            if (window.innerWidth < 1024) setShowSidebar(false);
-          }}
-          className="lg:w-full flex items-center justify-center gap-2 lg:px-4 lg:py-3 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors lg:text-base text-sm w-auto"
+          onClick={() => createConversation()}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           <Plus size={16} />
           New Chat
@@ -465,7 +474,7 @@ const ModernChatInterface: React.FC = () => {
         {/* Mobile chat history button */}
         <button
           onClick={() => setShowSidebar(true)}
-          className="lg:hidden fixed top-20 left-4 z-50 flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors bg-white shadow-md border border-gray-200"
+          className="lg:hidden fixed top-20 right-4 z-50 flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors bg-white shadow-md border border-gray-200"
         >
           <MessageSquare size={16} />
           <span className="text-sm font-medium">Chats</span>
