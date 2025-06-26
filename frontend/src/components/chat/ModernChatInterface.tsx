@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { useChat } from '../../hooks/useChat';
 import { useDocuments } from '../../hooks/useDocuments';
 import { Message } from '../../types';
@@ -7,6 +7,7 @@ import { MessageSquare, Send, Paperclip, Menu, X, Plus, Trash2, Brain, AlertCirc
 
 const ModernChatInterface: React.FC = () => {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const {
     messages,
     isLoading,
@@ -106,6 +107,55 @@ const ModernChatInterface: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Dynamic greeting generator
+  const getPersonalizedGreeting = () => {
+    const firstName = user?.firstName || 'there';
+    const hour = new Date().getHours();
+    const day = new Date().getDay();
+    const date = new Date().getDate();
+    
+    // Time-based greetings
+    let timeGreeting = '';
+    if (hour >= 5 && hour < 12) {
+      timeGreeting = 'Good morning';
+    } else if (hour >= 12 && hour < 17) {
+      timeGreeting = 'Good afternoon';
+    } else if (hour >= 17 && hour < 22) {
+      timeGreeting = 'Good evening';
+    } else {
+      timeGreeting = 'Hello';
+    }
+
+    // Innovative variations
+    const greetingVariations = [
+      `${timeGreeting} ${firstName}! What legal challenge can I help you tackle today?`,
+      `${timeGreeting} ${firstName}! Ready to dive into some legal matters together?`,
+      `${timeGreeting} ${firstName}! What legal questions are on your mind?`,
+      `${timeGreeting} ${firstName}! Let's explore your legal needs today.`,
+      `${timeGreeting} ${firstName}! How can I assist with your legal inquiries?`,
+      `${timeGreeting} ${firstName}! What legal puzzle can we solve together?`,
+    ];
+
+    // Weekend special greetings
+    if (day === 0 || day === 6) {
+      greetingVariations.push(
+        `${timeGreeting} ${firstName}! Working on legal matters this weekend? I'm here to help!`,
+        `${timeGreeting} ${firstName}! Even on weekends, legal questions don't rest. What can I help with?`
+      );
+    }
+
+    // Month start greetings
+    if (date <= 3) {
+      greetingVariations.push(
+        `${timeGreeting} ${firstName}! Starting the month with legal clarity? Let's get to it!`,
+        `${timeGreeting} ${firstName}! New month, new legal goals. How can I assist?`
+      );
+    }
+
+    // Select a random variation
+    return greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
   };
 
   // Format message text with markdown
@@ -282,8 +332,27 @@ const ModernChatInterface: React.FC = () => {
   // Render empty state with input first
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
+      {/* Personalized greeting */}
+      <div className="flex-shrink-0 text-center mb-6">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 shadow-sm border border-blue-100">
+            <div className="flex items-center justify-center mb-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <Brain size={20} className="text-white" />
+              </div>
+            </div>
+            <h1 className="text-xl font-semibold text-gray-800 mb-2">
+              {getPersonalizedGreeting()}
+            </h1>
+            <p className="text-sm text-gray-600">
+              I'm here to help with legal documents, contracts, and any questions you might have.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 bg-white p-4 mt-64">
+      <div className="flex-shrink-0 bg-white p-4 mt-8">
         <div className="max-w-2xl mx-auto">
           {renderInputArea()}
         </div>
