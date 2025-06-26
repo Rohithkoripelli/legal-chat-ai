@@ -10,14 +10,22 @@ interface MessageInputProps {
 
 const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, isLoading, onFileUpload, showFileUpload }) => {
   const [message, setMessage] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Focus the input when the component mounts (except on mobile to prevent keyboard pop-up)
   useEffect(() => {
-    if (inputRef.current && window.innerWidth >= 768) {
-      inputRef.current.focus();
+    if (textareaRef.current && window.innerWidth >= 768) {
+      textareaRef.current.focus();
     }
   }, []);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+    }
+  }, [message]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,40 +42,47 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, isLoading, o
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex gap-2 sm:gap-3 items-end">
-        {/* File Upload Clip Icon - Left Side */}
-        {showFileUpload && (
-          <button
-            type="button"
-            onClick={onFileUpload}
-            className="p-2.5 sm:p-3 text-gray-400 hover:text-blue-600 transition-colors rounded-xl bg-white border border-gray-300 hover:border-blue-400 shadow-sm flex-shrink-0"
-            title="Upload documents"
-          >
-            <Paperclip size={18} className="sm:w-5 sm:h-5" />
-          </button>
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center bg-white border border-gray-300 rounded-xl shadow-sm hover:border-gray-400 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-200 transition-all">
-            <input
-              ref={inputRef}
-              type="text"
+      <div className="flex items-end gap-3">
+        <div className="flex-1 relative">
+          <div className="flex items-end bg-white border border-gray-300 rounded-2xl shadow-sm hover:border-gray-400 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+            <textarea
+              ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Message Legal AI..."
-              className="w-full rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none bg-transparent text-sm sm:text-base"
+              className="w-full px-4 py-3 pr-12 rounded-2xl resize-none focus:outline-none bg-transparent text-sm sm:text-base max-h-32 min-h-[48px]"
               disabled={isLoading}
+              rows={1}
             />
+            {showFileUpload && (
+              <button
+                type="button"
+                onClick={onFileUpload}
+                className="absolute right-12 bottom-3 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Upload documents"
+              >
+                <Paperclip size={18} />
+              </button>
+            )}
             <button
               type="submit"
               disabled={!message.trim() || isLoading}
-              className="mr-2 p-2 rounded-lg bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex-shrink-0"
+              className="absolute right-3 bottom-3 p-1 text-gray-400 hover:text-blue-600 disabled:text-gray-300 transition-colors"
             >
               {isLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-opacity-50 border-t-white"></div>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
               ) : (
-                <Send size={16} />
+                <Send size={18} />
               )}
             </button>
           </div>
