@@ -125,8 +125,9 @@ const ModernChatInterface: React.FC = () => {
     <div className={`fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col ${
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 lg:h-full`}>
-      {/* Mobile close button */}
-      <div className="lg:hidden flex justify-end p-2">
+      {/* Mobile header with close button */}
+      <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
         <button
           onClick={() => setShowSidebar(false)}
           className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -136,7 +137,7 @@ const ModernChatInterface: React.FC = () => {
       </div>
 
       {/* New Chat Button */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200">
         <button
           onClick={() => {
             createConversation();
@@ -464,7 +465,7 @@ const ModernChatInterface: React.FC = () => {
         {/* Mobile hamburger menu */}
         <button
           onClick={() => setShowSidebar(true)}
-          className="lg:hidden fixed top-4 left-4 z-50 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors bg-white shadow-md"
+          className="lg:hidden fixed top-4 right-4 z-50 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors bg-white shadow-md"
         >
           <Menu size={20} />
         </button>
