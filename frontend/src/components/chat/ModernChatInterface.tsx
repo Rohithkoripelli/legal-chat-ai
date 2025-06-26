@@ -281,10 +281,9 @@ const ModernChatInterface: React.FC = () => {
 
   // Render empty state with input first
   const renderEmptyState = () => (
-    <div className="flex-1 flex flex-col">
-
+    <div className="flex-1 flex flex-col justify-center">
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4 mt-32">
+      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
         <div className="max-w-3xl mx-auto">
           {renderInputArea()}
         </div>
