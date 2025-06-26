@@ -333,8 +333,8 @@ const ModernChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Personalized greeting */}
-      <div className="flex-shrink-0 text-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">
+      <div className="flex-shrink-0 text-center mb-2 mt-64">
+        <h1 className="text-xl font-bold text-gray-800">
           {getPersonalizedGreeting()}
         </h1>
       </div>

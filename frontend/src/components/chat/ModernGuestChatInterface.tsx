@@ -301,8 +301,8 @@ const ModernGuestChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Dynamic greeting for guests */}
-      <div className="flex-shrink-0 text-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">
+      <div className="flex-shrink-0 text-center mb-2 mt-64">
+        <h1 className="text-xl font-bold text-gray-800">
           {getGuestGreeting()}
         </h1>
       </div>
