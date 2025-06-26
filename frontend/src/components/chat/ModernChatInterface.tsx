@@ -283,7 +283,7 @@ const ModernChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+      <div className="flex-shrink-0 bg-white p-4 mt-40">
         <div className="max-w-3xl mx-auto">
           {renderInputArea()}
         </div>
@@ -470,27 +470,14 @@ const ModernChatInterface: React.FC = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowSidebar(true)}
-              className="lg:hidden p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="text-lg font-semibold text-gray-900">
-              {currentConversation?.title || 'Legal AI Chat'}
-            </h1>
-          </div>
-          <button
-            onClick={() => createConversation()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            New Chat
-          </button>
-        </div>
+      <div className="flex-1 flex flex-col h-screen">
+        {/* Mobile hamburger menu */}
+        <button
+          onClick={() => setShowSidebar(true)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors bg-white shadow-md"
+        >
+          <Menu size={20} />
+        </button>
 
         {/* Error display */}
         {error && (

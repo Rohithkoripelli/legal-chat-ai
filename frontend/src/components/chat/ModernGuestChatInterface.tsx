@@ -240,7 +240,7 @@ const ModernGuestChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+      <div className="flex-shrink-0 bg-white p-4 mt-40">
         <div className="max-w-3xl mx-auto">
           {renderInputArea()}
         </div>
@@ -433,28 +433,7 @@ const ModernGuestChatInterface: React.FC = () => {
   );
 
   return (
-    <div className="h-screen flex bg-white flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Brain size={20} className="text-blue-600" />
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">Free Legal AI Chat</h1>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Online • {selectedDocumentIds.length}/{guestDocuments.length} document{guestDocuments.length !== 1 ? 's' : ''} selected</span>
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={() => window.location.href = '/sign-up'}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-        >
-          Upgrade Free
-        </button>
-      </div>
+    <div className="h-screen flex flex-col bg-white">
 
       {/* Error display */}
       {displayError && (
