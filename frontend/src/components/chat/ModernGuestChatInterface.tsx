@@ -241,7 +241,7 @@ const ModernGuestChatInterface: React.FC = () => {
     <div className="flex-1 flex flex-col">
 
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
+      <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4 mt-32">
         <div className="max-w-3xl mx-auto">
           {renderInputArea()}
         </div>
@@ -346,35 +346,6 @@ const ModernGuestChatInterface: React.FC = () => {
           </div>
         )}
 
-        {/* Document selector */}
-        {guestDocuments.length > 0 && (
-          <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="text-sm font-medium text-gray-900 mb-2">
-              Documents ({selectedDocumentIds.length}/{guestDocuments.length} selected)
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {guestDocuments.map((doc) => (
-                <button
-                  key={doc.id}
-                  onClick={() => {
-                    setSelectedDocumentIds(prev =>
-                      prev.includes(doc.id)
-                        ? prev.filter(id => id !== doc.id)
-                        : [...prev, doc.id]
-                    );
-                  }}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                    selectedDocumentIds.includes(doc.id)
-                      ? 'bg-blue-100 border-blue-300 text-blue-800'
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {doc.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Input field */}
         <div className="flex items-end gap-3">
@@ -418,13 +389,43 @@ const ModernGuestChatInterface: React.FC = () => {
           className="hidden"
         />
 
+        {/* Document selector */}
+        {guestDocuments.length > 0 && (
+          <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="text-sm font-medium text-gray-900 mb-2">
+              Documents ({selectedDocumentIds.length}/{guestDocuments.length} selected)
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {guestDocuments.map((doc) => (
+                <button
+                  key={doc.id}
+                  onClick={() => {
+                    setSelectedDocumentIds(prev =>
+                      prev.includes(doc.id)
+                        ? prev.filter(id => id !== doc.id)
+                        : [...prev, doc.id]
+                    );
+                  }}
+                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                    selectedDocumentIds.includes(doc.id)
+                      ? 'bg-blue-100 border-blue-300 text-blue-800'
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {doc.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Help text */}
         <div className="mt-2 text-center">
           <p className="text-xs text-gray-500">
             {guestDocuments.length === 0 
               ? 'Ask legal questions or use the 📎 icon to upload documents for analysis'
               : selectedDocumentIds.length === 0 
-                ? 'Select documents above to include them in your conversation'
+                ? 'Select documents below to include them in your conversation'
                 : `Chat about your selected ${selectedDocumentIds.length} document${selectedDocumentIds.length !== 1 ? 's' : ''} or ask general legal questions`
             }
           </p>
