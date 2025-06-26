@@ -471,14 +471,23 @@ const ModernChatInterface: React.FC = () => {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col h-screen">
-        {/* Mobile chat history button */}
-        <button
-          onClick={() => setShowSidebar(true)}
-          className="lg:hidden fixed top-20 right-4 z-50 flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors bg-white shadow-md border border-gray-200"
-        >
-          <MessageSquare size={16} />
-          <span className="text-sm font-medium">Chats</span>
-        </button>
+        {/* Mobile chat buttons */}
+        <div className="lg:hidden fixed top-20 left-4 z-50 flex items-center gap-2">
+          <button
+            onClick={() => setShowSidebar(true)}
+            className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors bg-white shadow-md border border-gray-200"
+          >
+            <MessageSquare size={16} />
+            <span className="text-sm font-medium">Chats</span>
+          </button>
+          <button
+            onClick={() => createConversation()}
+            className="flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors shadow-md"
+          >
+            <Plus size={16} />
+            <span className="text-sm font-medium">New</span>
+          </button>
+        </div>
 
         {/* Error display */}
         {error && (
