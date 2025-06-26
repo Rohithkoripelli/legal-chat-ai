@@ -282,18 +282,6 @@ const ModernChatInterface: React.FC = () => {
   // Render empty state with input first
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col">
-      {/* Top section with title */}
-      <div className="flex-shrink-0 text-center pt-6 pb-4">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <Brain size={24} className="text-blue-600" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          What can I help you with?
-        </h1>
-        <p className="text-gray-600 text-sm">
-          Ask me anything about legal documents, contracts, or general legal questions.
-        </p>
-      </div>
 
       {/* Input area - prominently placed */}
       <div className="flex-shrink-0 border-t border-gray-200 bg-white p-4">
@@ -421,7 +409,7 @@ const ModernChatInterface: React.FC = () => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Message Legal AI..."
+              placeholder="Ask me anything about legal documents, contracts, or general legal questions..."
               className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent overflow-hidden"
               rows={1}
               disabled={isLoading}
