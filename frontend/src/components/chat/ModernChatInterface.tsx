@@ -304,43 +304,39 @@ const ModernChatInterface: React.FC = () => {
 
       {/* Quick start examples below input */}
       <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <div className="max-w-2xl mx-auto">
-          <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">Quick examples:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="max-w-xl mx-auto">
+          <h3 className="text-xs font-medium text-gray-600 mb-2 text-center">Quick examples:</h3>
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setInputText('What should I include in an NDA?')}
-              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+              className="p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
             >
-              <div className="text-lg mb-1">📄</div>
-              <div className="font-medium text-gray-900 text-sm">Draft an NDA</div>
-              <div className="text-xs text-gray-600">Get help creating a non-disclosure agreement</div>
+              <div className="text-sm mb-0.5">📄</div>
+              <div className="font-medium text-gray-900 text-xs">Draft an NDA</div>
             </button>
             
             <button
               onClick={() => setInputText('Explain liability clauses in contracts')}
-              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+              className="p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
             >
-              <div className="text-lg mb-1">⚖️</div>
-              <div className="font-medium text-gray-900 text-sm">Analyze contracts</div>
-              <div className="text-xs text-gray-600">Review and understand contract terms</div>
+              <div className="text-sm mb-0.5">⚖️</div>
+              <div className="font-medium text-gray-900 text-xs">Analyze contracts</div>
             </button>
             
             <button
               onClick={() => setInputText('What are common legal risks in business?')}
-              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+              className="p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
             >
-              <div className="text-lg mb-1">🛡️</div>
-              <div className="font-medium text-gray-900 text-sm">Legal risks</div>
-              <div className="text-xs text-gray-600">Understand potential legal issues</div>
+              <div className="text-sm mb-0.5">🛡️</div>
+              <div className="font-medium text-gray-900 text-xs">Legal risks</div>
             </button>
             
             <button
               onClick={() => document.getElementById('file-upload')?.click()}
-              className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+              className="p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
             >
-              <div className="text-lg mb-1">📋</div>
-              <div className="font-medium text-gray-900 text-sm">Upload documents</div>
-              <div className="text-xs text-gray-600">Analyze your legal documents</div>
+              <div className="text-sm mb-0.5">📋</div>
+              <div className="font-medium text-gray-900 text-xs">Upload docs</div>
             </button>
           </div>
         </div>
@@ -426,7 +422,7 @@ const ModernChatInterface: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Message Legal AI..."
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent overflow-hidden"
               rows={1}
               disabled={isLoading}
             />
@@ -524,7 +520,7 @@ const ModernChatInterface: React.FC = () => {
         ) : (
           <div className="flex flex-col h-full">
             {/* Messages area */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
               {renderMessages()}
             </div>
             
