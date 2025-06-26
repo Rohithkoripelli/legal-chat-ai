@@ -125,24 +125,14 @@ const ModernChatInterface: React.FC = () => {
     <div className={`fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col ${
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 lg:h-full`}>
-      {/* Sidebar Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => createConversation()}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
-            title="New conversation"
-          >
-            <Plus size={18} />
-          </button>
-          <button
-            onClick={() => setShowSidebar(false)}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X size={18} />
-          </button>
-        </div>
+      {/* Mobile close button */}
+      <div className="lg:hidden flex justify-end p-2">
+        <button
+          onClick={() => setShowSidebar(false)}
+          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* New Chat Button */}
@@ -471,20 +461,13 @@ const ModernChatInterface: React.FC = () => {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col h-screen">
-        {/* Header with hamburger menu */}
-        <div className="flex-shrink-0 flex items-center p-4 bg-white border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowSidebar(true)}
-              className="lg:hidden p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="text-lg font-semibold text-gray-900">
-              Legal Chat
-            </h1>
-          </div>
-        </div>
+        {/* Mobile hamburger menu */}
+        <button
+          onClick={() => setShowSidebar(true)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors bg-white shadow-md"
+        >
+          <Menu size={20} />
+        </button>
 
         {/* Error display */}
         {error && (
@@ -497,7 +480,7 @@ const ModernChatInterface: React.FC = () => {
         )}
 
         {/* Content area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden h-full">
           {/* Messages or empty state */}
           {messages.length === 0 ? (
             renderEmptyState()
