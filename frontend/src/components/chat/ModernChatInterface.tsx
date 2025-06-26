@@ -109,8 +109,12 @@ const ModernChatInterface: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Dynamic greeting generator
-  const getPersonalizedGreeting = () => {
+  // Dynamic greeting generator - memoized for session
+  const [sessionGreeting, setSessionGreeting] = useState<string>('');
+
+  useEffect(() => {
+    if (!sessionGreeting) {
+      const generateGreeting = () => {
     const firstName = user?.firstName || 'there';
     const hour = new Date().getHours();
     const day = new Date().getDay();
@@ -154,9 +158,13 @@ const ModernChatInterface: React.FC = () => {
       );
     }
 
-    // Select a random variation
-    return greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
-  };
+        // Select a random variation
+        return greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
+      };
+      
+      setSessionGreeting(generateGreeting());
+    }
+  }, [user?.firstName, sessionGreeting]);
 
   // Format message text with markdown
   const formatText = (text: string) => {
@@ -335,7 +343,7 @@ const ModernChatInterface: React.FC = () => {
       {/* Personalized greeting */}
       <div className="flex-shrink-0 text-center mb-2 mt-64">
         <h1 className="text-xl font-bold text-gray-800">
-          {getPersonalizedGreeting()}
+          {sessionGreeting}
         </h1>
       </div>
 

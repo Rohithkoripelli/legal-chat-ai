@@ -150,8 +150,12 @@ const ModernGuestChatInterface: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Dynamic greeting generator for guests
-  const getGuestGreeting = () => {
+  // Dynamic greeting generator for guests - memoized for session
+  const [sessionGreeting, setSessionGreeting] = useState<string>('');
+
+  useEffect(() => {
+    if (!sessionGreeting) {
+      const generateGreeting = () => {
     const hour = new Date().getHours();
     const day = new Date().getDay();
     const date = new Date().getDate();
@@ -207,9 +211,13 @@ const ModernGuestChatInterface: React.FC = () => {
       );
     }
 
-    // Select a random variation
-    return greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
-  };
+        // Select a random variation
+        return greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
+      };
+      
+      setSessionGreeting(generateGreeting());
+    }
+  }, [guestDocuments.length, sessionGreeting]);
 
   // Format message text with markdown
   const formatText = (text: string) => {
@@ -303,7 +311,7 @@ const ModernGuestChatInterface: React.FC = () => {
       {/* Dynamic greeting for guests */}
       <div className="flex-shrink-0 text-center mb-2 mt-64">
         <h1 className="text-xl font-bold text-gray-800">
-          {getGuestGreeting()}
+          {sessionGreeting}
         </h1>
       </div>
 
