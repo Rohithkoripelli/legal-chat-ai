@@ -472,7 +472,7 @@ const ModernChatInterface: React.FC = () => {
       {/* Main content */}
       <div className="flex-1 flex flex-col h-screen">
         {/* Header with hamburger menu */}
-        <div className="flex-shrink-0 flex items-center justify-between p-4 bg-white border-b border-gray-200">
+        <div className="flex-shrink-0 flex items-center p-4 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowSidebar(true)}
@@ -484,12 +484,6 @@ const ModernChatInterface: React.FC = () => {
               Legal Chat
             </h1>
           </div>
-          <button
-            onClick={() => createConversation()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            New Chat
-          </button>
         </div>
 
         {/* Error display */}
