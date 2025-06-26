@@ -21,17 +21,6 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 }) => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffTime = now.getTime() - new Date(date).getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays - 1} days ago`;
-    
-    return new Date(date).toLocaleDateString();
-  };
 
   const truncateTitle = (title: string, maxLength: number = 35) => {
     return title.length > maxLength ? title.substring(0, maxLength) + '...' : title;
@@ -104,16 +93,6 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                     <h3 className="font-medium text-gray-800 text-sm truncate">
                       {truncateTitle(conversation.title)}
                     </h3>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-xs text-gray-500">
-                        {formatDate(conversation.updatedAt)}
-                      </p>
-                      {conversation.messageCount && conversation.messageCount > 0 && (
-                        <span className="text-xs text-gray-400">
-                          {conversation.messageCount} messages
-                        </span>
-                      )}
-                    </div>
                   </div>
                   
                   {/* Menu Button */}
