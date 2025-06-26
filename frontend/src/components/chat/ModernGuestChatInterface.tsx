@@ -240,8 +240,8 @@ const ModernGuestChatInterface: React.FC = () => {
   const renderEmptyState = () => (
     <div className="flex-1 flex flex-col justify-center">
       {/* Input area - prominently placed */}
-      <div className="flex-shrink-0 bg-white p-4 mt-64">
-        <div className="max-w-3xl mx-auto">
+      <div className="flex-shrink-0 bg-white p-4 mt-72">
+        <div className="max-w-2xl mx-auto">
           {renderInputArea()}
         </div>
       </div>
@@ -359,7 +359,7 @@ const ModernGuestChatInterface: React.FC = () => {
                 : 'Ask legal questions or upload documents for analysis. No signup required!'
               }
               className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent overflow-hidden"
-              rows={1}
+              rows={3}
               disabled={isLoading}
             />
             <button
