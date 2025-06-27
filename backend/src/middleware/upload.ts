@@ -49,7 +49,7 @@ const storage = multer.diskStorage({
 
 // File filter for allowed document types
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  console.log('= File filter check:', {
+  console.log('File filter check:', {
     originalname: file.originalname,
     mimetype: file.mimetype,
     size: file.size
@@ -79,11 +79,11 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
       const maxSizeStr = file.mimetype === 'application/pdf' ? '15MB' : '8MB';
       cb(new Error(`File too large. Maximum size is ${maxSizeStr}.`));
     } else {
-      console.log(' File passed validation');
+      console.log('File passed validation');
       cb(null, true);
     }
   } else {
-    console.log('L File validation failed:', { extname, mimetype });
+    console.log('File validation failed:', { extname, mimetype });
     cb(new Error('Only PDF, Word, Text, and RTF files are allowed!'));
   }
 };
@@ -103,7 +103,7 @@ export const uploadSingleDocument = upload.single('document');
 
 // Handle multer errors
 export const handleUploadError = (error: any, req: any, res: any, next: any) => {
-  console.error('L Upload error:', error);
+  console.error('Upload error:', error);
   
   if (error instanceof multer.MulterError) {
     switch (error.code) {
