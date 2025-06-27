@@ -410,6 +410,7 @@ const ChatWithHistory: React.FC = () => {
                   messages={messages} 
                   isLoading={isLoading}
                   containerRef="chat-messages-container"
+                  enableSmartScroll={true}
                 />
               </div>
               

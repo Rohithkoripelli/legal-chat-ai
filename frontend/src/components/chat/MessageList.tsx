@@ -6,32 +6,59 @@ interface MessageListProps {
   isLoading?: boolean;
   hasTextExtractionWarning?: boolean;
   containerRef?: string;
+  enableSmartScroll?: boolean; // New prop to enable smart scroll behavior
 }
 
-const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, hasTextExtractionWarning, containerRef }) => {
+const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, hasTextExtractionWarning, containerRef, enableSmartScroll = false }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerElementRef = useRef<HTMLDivElement>(null);
+  const userMessageRefs = useRef<{ [key: string]: HTMLDivElement }>({});
 
-  // Auto-scroll to the bottom when messages change, but keep it within chat container
+  // Smart scroll logic that can either scroll to user questions or to bottom
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (containerRef) {
-        // Scroll within the specific chat container
-        const container = document.getElementById(containerRef);
-        if (container && messagesEndRef.current) {
-          container.scrollTop = container.scrollHeight;
+      if (enableSmartScroll) {
+        // Smart scroll to user's question
+        const lastUserMessage = messages.slice().reverse().find(msg => msg.isUser);
+        const userMessageCount = messages.filter(msg => msg.isUser).length;
+        
+        if (lastUserMessage && lastUserMessage.id && userMessageCount > 0 && !isLoading) {
+          const userMessageElement = userMessageRefs.current[lastUserMessage.id.toString()];
+          
+          if (userMessageElement) {
+            // For first question, scroll to top of page
+            if (userMessageCount === 1) {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              // For follow-up questions, scroll to show the user's question
+              userMessageElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start',
+                inline: 'nearest'
+              });
+            }
+          }
         }
       } else {
-        // Fallback to element scrolling
-        messagesEndRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end'
-        });
+        // Original scroll behavior - scroll to bottom
+        if (containerRef) {
+          // Scroll within the specific chat container
+          const container = document.getElementById(containerRef);
+          if (container && messagesEndRef.current) {
+            container.scrollTop = container.scrollHeight;
+          }
+        } else {
+          // Fallback to element scrolling
+          messagesEndRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end'
+          });
+        }
       }
     }, 100); // Small delay to ensure DOM is updated
     
     return () => clearTimeout(timer);
-  }, [messages, isLoading, containerRef]);
+  }, [messages, enableSmartScroll, containerRef, isLoading]); // Watch messages for smart scroll timing
 
   // Format text with simple markdown-like syntax - memoized for performance
   const formatText = useMemo(() => (text: string) => {
@@ -83,6 +110,9 @@ const MessageList: React.FC<MessageListProps> = memo(({ messages, isLoading, has
           {messages.map((message, index) => (
             <div
               key={message.id || `msg-${index}-${Date.now()}`}
+              ref={enableSmartScroll && message.isUser && message.id ? (el) => {
+                if (el) userMessageRefs.current[message.id.toString()] = el;
+              } : undefined}
               className={`flex items-start gap-2 mb-4 w-full min-w-0 ${
                 message.isUser ? 'justify-end flex-row-reverse' : 'justify-start'
               }`}

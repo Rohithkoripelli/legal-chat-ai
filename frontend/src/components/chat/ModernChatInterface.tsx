@@ -35,13 +35,37 @@ const ModernChatInterface: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const userMessageRefs = useRef<{ [key: string]: HTMLDivElement }>({});
 
-  // Auto-scroll to bottom when messages change
+  // Smart scroll logic - scroll to user's question instead of bottom
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    const scrollToUserQuestion = () => {
+      // Find the last user message
+      const lastUserMessage = messages.slice().reverse().find(msg => msg.isUser);
+      
+      if (lastUserMessage && lastUserMessage.id) {
+        const userMessageElement = userMessageRefs.current[lastUserMessage.id.toString()];
+        
+        if (userMessageElement) {
+          // Always scroll to show the user's question that was just submitted
+          userMessageElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }
+    };
+    
+    // Count user messages to detect when a new user message is added
+    const userMessageCount = messages.filter(msg => msg.isUser).length;
+    
+    // Only scroll when there are user messages and we're not loading
+    if (userMessageCount > 0 && !isLoading) {
+      // Small delay to ensure DOM is updated
+      setTimeout(scrollToUserQuestion, 100);
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading]); // Watch full messages array for user message changes
 
   // Auto-resize textarea
   useEffect(() => {
@@ -277,6 +301,9 @@ const ModernChatInterface: React.FC = () => {
         {messages.map((message, index) => (
           <div
             key={message.id || `msg-${index}`}
+            ref={message.isUser && message.id ? (el) => {
+              if (el) userMessageRefs.current[message.id.toString()] = el;
+            } : undefined}
             className={`flex gap-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
             {!message.isUser && (
@@ -295,11 +322,19 @@ const ModernChatInterface: React.FC = () => {
               >
                 {message.isUser ? (
                   <p className="whitespace-pre-wrap text-sm">{message.text}</p>
-                ) : (
+                ) : message.text ? (
                   <div
                     className="prose prose-sm max-w-none text-sm"
                     dangerouslySetInnerHTML={{ __html: formatText(message.text) }}
                   />
+                ) : (
+                  // Show thinking indicator for empty AI messages (loading state)
+                  <div className="flex items-center space-x-1">
+                    <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <span className="text-xs text-gray-600 ml-1">Thinking...</span>
+                  </div>
                 )}
               </div>
               <div className={`text-xs text-gray-500 mt-0.5 ${message.isUser ? 'text-right' : 'text-left'}`}>
@@ -315,22 +350,6 @@ const ModernChatInterface: React.FC = () => {
           </div>
         ))}
 
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="flex gap-2 justify-start">
-            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
-              <Brain size={12} className="text-white" />
-            </div>
-            <div className="bg-gray-100 p-2 rounded-lg">
-              <div className="flex items-center space-x-1">
-                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                <span className="text-xs text-gray-600 ml-1">Thinking...</span>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div ref={messagesEndRef} />
       </div>
