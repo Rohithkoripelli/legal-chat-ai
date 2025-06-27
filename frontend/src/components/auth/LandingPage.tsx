@@ -1375,7 +1375,7 @@ const LandingPage: React.FC<{
                 <p className="text-gray-600">Everything you need for professional use</p>
               </div>
               
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-3 mb-8">
                 <li className="flex items-center text-gray-700">
                   <CheckCircle className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
                   Unlimited document uploads
