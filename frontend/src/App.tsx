@@ -228,11 +228,11 @@
     const location = useLocation();
     
     useEffect(() => {
-      // If user is signed in and on home page WITHOUT the explicit parameter, redirect to chat
-      if (isSignedIn && !location.search.includes('explicit')) {
+      // Redirect ALL users (signed in and guests) to /chat unless they have explicit parameter
+      if (!location.search.includes('explicit')) {
         navigate('/chat', { replace: true });
       }
-    }, [isSignedIn, navigate, location.search]);
+    }, [navigate, location.search]);
 
     return <LandingPage onSignUp={onSignUp} onSignIn={onSignIn} />;
   };
