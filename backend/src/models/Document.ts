@@ -11,6 +11,9 @@ export interface IDocument {
   content?: string;
   isVectorized?: boolean; // Whether the document has been vectorized
   vectorizedAt?: Date;    // When the document was vectorized
+  // Processing status for async operations
+  processingStatus?: 'pending' | 'completed' | 'failed';
+  processingError?: string;
   // OCR-related fields
   ocrProcessed?: boolean;     // Whether OCR was used for text extraction
   ocrProvider?: string;       // OCR provider used (google, aws, tesseract)
@@ -56,6 +59,16 @@ const documentSchema = new mongoose.Schema<IDocument>({
   },
   vectorizedAt: {
     type: Date
+  },
+  // Processing status for async operations
+  processingStatus: {
+    type: String,
+    enum: ['pending', 'completed', 'failed'],
+    default: 'completed'
+  },
+  processingError: {
+    type: String,
+    required: false
   },
   // OCR-related fields
   ocrProcessed: {

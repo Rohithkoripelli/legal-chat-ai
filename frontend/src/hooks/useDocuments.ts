@@ -139,6 +139,11 @@ export const useDocuments = () => {
       const result = await response.json();
       console.log('✅ Upload successful:', result);
       
+      // Show processing message for large files
+      if (result.processing) {
+        console.log('📦 Large file upload - processing in background');
+      }
+      
       // Refresh document list
       await fetchDocuments();
     } catch (error) {

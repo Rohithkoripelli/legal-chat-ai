@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import Document from '../models/Document';
 import * as documentController from '../controllers/documentController';
 import { clerkAuthMiddleware } from '../middleware/auth';
-import { uploadSingleDocument, handleUploadError } from '../../uploads/upload';
+import { uploadSingleDocument, handleUploadError } from '../middleware/upload';
 
 const router = express.Router();
 

@@ -33,13 +33,58 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       path: file.path,
       userId: req.userId
     });
+
+    // For large files (> 5MB), save metadata first and process asynchronously
+    const isLargeFile = file.size > 5 * 1024 * 1024; // 5MB
     
-    // Extract text content from the document with OCR support
-    console.log('🔍 Starting enhanced text extraction with OCR support...');
+    if (isLargeFile) {
+      console.log('📦 Large file detected, using optimized processing...');
+      
+      // Save document metadata immediately without content
+      const document = new Document({
+        name: file.filename,
+        originalName: file.originalname,
+        size: file.size,
+        type: file.mimetype,
+        path: file.path,
+        content: '', // Will be processed asynchronously
+        userId: req.userId,
+        uploadedAt: new Date(),
+        processingStatus: 'pending'
+      });
+
+      const savedDocument = await document.save();
+      console.log('💾 Document metadata saved for user:', req.userId, 'Doc ID:', savedDocument._id);
+
+      // Return response immediately
+      const responseData = {
+        id: savedDocument._id.toString(),
+        name: savedDocument.originalName,
+        size: savedDocument.size,
+        type: savedDocument.type,
+        uploadedAt: savedDocument.uploadedAt,
+        contentExtracted: false,
+        contentLength: 0,
+        processing: true,
+        message: 'Document uploaded successfully. Content extraction is in progress.'
+      };
+
+      console.log('📤 Sending immediate response for large file');
+      res.status(201).json(responseData);
+
+      // Process content asynchronously (don't await)
+      processDocumentAsync(savedDocument._id.toString(), file.path, file.mimetype)
+        .catch(error => console.error('❌ Async processing failed:', error));
+
+      return;
+    }
+
+    // For smaller files, process immediately as before
+    console.log('🔍 Starting text extraction for small file...');
     const extractionResult = await extractTextWithOCR(file.path, file.mimetype);
     const textContent = extractionResult.text;
     const ocrResult = extractionResult.ocrResult;
-    console.log('✅ Enhanced text extraction completed', ocrResult ? `(OCR: ${ocrResult.provider})` : '(Standard)');
+    console.log('✅ Text extraction completed', ocrResult ? `(OCR: ${ocrResult.provider})` : '(Standard)');
     
     // Validate extracted content
     const isContentValid = validateExtractedContent(textContent);
@@ -47,16 +92,7 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       console.warn('⚠️ Extracted content may have issues, but proceeding...');
     }
     
-    // Log content sample for debugging (first 200 chars)
-    console.log('📝 Content sample:', textContent.substring(0, 200) + '...');
-    console.log('📊 Content stats:', {
-      length: textContent.length,
-      hasValidText: /[a-zA-Z]{3,}/.test(textContent),
-      wordCount: textContent.split(/\s+/).length,
-      hasSpecialChars: /[^\x20-\x7E\n\r\t]/.test(textContent)
-    });
-
-    // Save document metadata to database WITH USER ID and OCR info
+    // Save document metadata to database WITH content
     const document = new Document({
       name: file.filename,
       originalName: file.originalname,
@@ -64,8 +100,9 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       type: file.mimetype,
       path: file.path,
       content: textContent,
-      userId: req.userId, // CRITICAL: Associate with user
+      userId: req.userId,
       uploadedAt: new Date(),
+      processingStatus: 'completed',
       // OCR metadata
       ocrProcessed: !!ocrResult,
       ocrProvider: ocrResult?.provider,
@@ -75,33 +112,15 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
     });
 
     const savedDocument = await document.save();
-    console.log('💾 Document saved to database for user:', req.userId, 'Doc ID:', savedDocument._id);
+    console.log('💾 Small document fully processed and saved for user:', req.userId);
 
-    // Try to vectorize the document if content is valid
+    // Vectorize in background for small files too
     if (isContentValid && textContent.length > 50) {
-      try {
-        console.log('🔄 Starting vectorization...');
-        const { vectorizeDocument } = await import('../services/vectorizationService');
-        const vectorized = await vectorizeDocument(
-          savedDocument._id.toString(),
-          savedDocument.originalName,
-          textContent
-        );
-        
-        if (vectorized) {
-          console.log('✅ Document vectorized successfully');
-        } else {
-          console.warn('⚠️ Vectorization failed, but document saved');
-        }
-      } catch (vectorError) {
-        console.error('❌ Vectorization error:', vectorError);
-        // Don't fail the upload if vectorization fails
-      }
-    } else {
-      console.warn('⚠️ Skipping vectorization due to poor content quality');
+      vectorizeDocumentAsync(savedDocument._id.toString(), savedDocument.originalName, textContent)
+        .catch(error => console.error('❌ Background vectorization failed:', error));
     }
 
-    // Return enhanced response format with OCR information
+    // Return response
     const responseData = {
       id: savedDocument._id.toString(),
       name: savedDocument.originalName,
@@ -116,7 +135,7 @@ export const uploadDocument = async (req: MulterRequest, res: Response) => {
       isScannedDocument: ocrResult?.isScanned
     };
 
-    console.log('📤 Sending response:', responseData);
+    console.log('📤 Sending response for small file');
     res.status(201).json(responseData);
     
   } catch (error) {
@@ -349,6 +368,82 @@ const extractOCRInfoFromContent = (content: string): any => {
     return Object.keys(info).length > 0 ? info : null;
   }
   return null;
+};
+
+// Async processing function for large files
+const processDocumentAsync = async (documentId: string, filePath: string, mimeType: string) => {
+  try {
+    console.log('🔄 Starting async processing for document:', documentId);
+    console.log('🧠 Memory before processing:', `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    
+    // Process with memory-efficient text extraction
+    const extractionResult = await extractTextWithOCR(filePath, mimeType);
+    const textContent = extractionResult.text;
+    const ocrResult = extractionResult.ocrResult;
+    
+    console.log('🧠 Memory after extraction:', `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    
+    // Validate content
+    const isContentValid = validateExtractedContent(textContent);
+    
+    // Update document with content
+    await Document.findByIdAndUpdate(documentId, {
+      content: textContent,
+      processingStatus: 'completed',
+      ocrProcessed: !!ocrResult,
+      ocrProvider: ocrResult?.provider,
+      ocrConfidence: ocrResult?.confidence ? Math.round(ocrResult.confidence * 100) : undefined,
+      isScannedDocument: ocrResult?.isScanned,
+      ocrProcessedAt: ocrResult ? new Date() : undefined
+    });
+    
+    console.log('✅ Async processing completed for document:', documentId);
+    
+    // Vectorize in background if content is valid
+    if (isContentValid && textContent.length > 50) {
+      const document = await Document.findById(documentId);
+      if (document) {
+        // Use setTimeout to delay vectorization and allow memory cleanup
+        setTimeout(() => {
+          vectorizeDocumentAsync(documentId, document.originalName, textContent)
+            .catch(error => console.error('❌ Background vectorization failed:', error));
+        }, 5000); // 5 second delay
+      }
+    }
+    
+    // Force garbage collection if available
+    if (global.gc) {
+      global.gc();
+      console.log('🧹 Garbage collection triggered');
+    }
+    
+    console.log('🧠 Memory after processing:', `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`);
+    
+  } catch (error) {
+    console.error('❌ Async processing failed for document:', documentId, error);
+    // Update document with error status
+    await Document.findByIdAndUpdate(documentId, {
+      processingStatus: 'failed',
+      processingError: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+// Async vectorization function
+const vectorizeDocumentAsync = async (documentId: string, documentName: string, content: string) => {
+  try {
+    console.log('🔄 Starting async vectorization for document:', documentId);
+    const { vectorizeDocument } = await import('../services/vectorizationService');
+    const vectorized = await vectorizeDocument(documentId, documentName, content);
+    
+    if (vectorized) {
+      console.log('✅ Async vectorization completed for document:', documentId);
+    } else {
+      console.warn('⚠️ Async vectorization failed for document:', documentId);
+    }
+  } catch (error) {
+    console.error('❌ Async vectorization error for document:', documentId, error);
+  }
 };
 
 // Validate extracted content quality
