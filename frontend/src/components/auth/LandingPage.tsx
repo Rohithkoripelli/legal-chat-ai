@@ -1109,7 +1109,6 @@ const LandingPage: React.FC<{
                       }}
                     >
                       <span className="truncate">Start Free Chat</span>
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </button>
                     <button 
                       className="w-full sm:w-auto bg-purple-600 text-white px-4 sm:px-6 py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center min-w-0"
