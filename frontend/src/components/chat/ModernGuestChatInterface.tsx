@@ -442,7 +442,7 @@ const ModernGuestChatInterface: React.FC = () => {
               onKeyPress={handleKeyPress}
               placeholder={guestDocuments.length > 0 
                 ? `Ask anything about your ${guestDocuments.length} uploaded document${guestDocuments.length !== 1 ? 's' : ''}...`
-                : 'Ask legal questions or upload documents for analysis. No signup required!'
+                : 'Ask legal questions or upload documents for analysis.'
               }
               className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent overflow-hidden"
               rows={3}

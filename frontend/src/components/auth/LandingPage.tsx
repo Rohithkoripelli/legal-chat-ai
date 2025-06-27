@@ -1108,7 +1108,7 @@ const LandingPage: React.FC<{
                         window.location.href = '/chat';
                       }}
                     >
-                      <span className="truncate">Get Instant Insights</span>
+                      <span className="truncate">Start Free Chat →</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                     </button>
                     <button 
