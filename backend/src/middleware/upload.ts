@@ -72,11 +72,11 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   const mimetype = allowedMimeTypes.includes(file.mimetype);
   
   if (extname && mimetype) {
-    // Check file size (15MB for PDF, 8MB for others - reduced for Render memory limits)
-    const maxSize = file.mimetype === 'application/pdf' ? 15 * 1024 * 1024 : 8 * 1024 * 1024;
+    // Check file size (10MB for PDF, 5MB for others - conservative for 512MB memory limit)
+    const maxSize = file.mimetype === 'application/pdf' ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
     
     if (file.size && file.size > maxSize) {
-      const maxSizeStr = file.mimetype === 'application/pdf' ? '15MB' : '8MB';
+      const maxSizeStr = file.mimetype === 'application/pdf' ? '10MB' : '5MB';
       cb(new Error(`File too large. Maximum size is ${maxSizeStr}.`));
     } else {
       console.log('File passed validation');
@@ -92,8 +92,8 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
 export const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 15 * 1024 * 1024, // 15MB max (reduced for Render)
-    fieldSize: 15 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024, // 10MB max (conservative for 512MB memory)
+    fieldSize: 10 * 1024 * 1024,
   },
   fileFilter: fileFilter
 });
@@ -110,7 +110,7 @@ export const handleUploadError = (error: any, req: any, res: any, next: any) => 
       case 'LIMIT_FILE_SIZE':
         return res.status(400).json({ 
           error: 'File too large', 
-          details: 'Maximum file size is 15MB for PDF and 8MB for other formats' 
+          details: 'Maximum file size is 10MB for PDF and 5MB for other formats' 
         });
       case 'LIMIT_UNEXPECTED_FILE':
         return res.status(400).json({ 
