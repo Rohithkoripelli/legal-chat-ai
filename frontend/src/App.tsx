@@ -1005,8 +1005,8 @@
               </div>
 
               {!isSignedIn && (
-                <div className="mb-4 space-y-2">
-                  <div className="inline-flex items-center space-x-4 text-sm text-gray-600">
+                <div className="mb-4">
+                  <div className="inline-flex items-center space-x-4 text-sm text-gray-600 mb-4">
                     <span className="flex items-center">
                       <FileText className="h-4 w-4 mr-1 text-blue-600" />
                       Free document upload
