@@ -1004,31 +1004,6 @@
                 </button>
               </div>
 
-              {!isSignedIn && (
-                <div className="mb-4">
-                  <div className="inline-flex items-center space-x-4 text-sm text-gray-600 mb-8">
-                    <span className="flex items-center">
-                      <FileText className="h-4 w-4 mr-1 text-blue-600" />
-                      Free document upload
-                    </span>
-                    <span className="flex items-center">
-                      <MessageSquare className="h-4 w-4 mr-1 text-green-600" />
-                      Free AI chat
-                    </span>
-                    <span className="flex items-center">
-                      <Crown className="h-4 w-4 mr-1 text-yellow-500" />
-                      Premium features available
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleSignUp}
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    Create Free Account for Premium Features
-                  </button>
-                </div>
-              )}
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
                 <p className="text-sm text-yellow-800">
                   ⚖️ <strong>Important:</strong> This tool is for informational purposes only and does not constitute legal advice.
