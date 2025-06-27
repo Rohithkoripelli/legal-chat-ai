@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { useDocuments } from '../hooks/useDocuments';
 import { Document } from '../types';
-import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, BarChart3, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, BarChart3, ChevronDown, ChevronUp, X, Trash2 } from 'lucide-react';
 
 interface ContractAnalysis {
   documentId: string;
@@ -75,7 +75,7 @@ const SignedInContractAnalysisPage: React.FC = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const navigate = useNavigate();
   const { getToken, isSignedIn } = useAuth();
-  const { documents: userDocuments, uploadDocument, refetch } = useDocuments();
+  const { documents: userDocuments, uploadDocument, deleteDocument, refetch } = useDocuments();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [analysis, setAnalysis] = useState<ContractAnalysis | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -816,9 +816,23 @@ const SignedInContractAnalysisPage: React.FC = () => {
               {userDocuments.map((document) => (
                 <div
                   key={document.id}
-                  className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300 cursor-pointer"
+                  className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300 cursor-pointer relative group"
                   onClick={() => analyzeContract(document)}
                 >
+                  {/* Delete button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`Delete "${document.name}"?`)) {
+                        deleteDocument(document.id);
+                      }
+                    }}
+                    className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10"
+                    title="Delete document"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                  
                   <div className="flex items-start space-x-4">
                     <div className="p-3 bg-blue-100 rounded-lg">
                       <FileText className="h-6 w-6 text-blue-600" />

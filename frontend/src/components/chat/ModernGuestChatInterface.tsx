@@ -141,6 +141,16 @@ const ModernGuestChatInterface: React.FC = () => {
     }
   };
 
+  // Remove guest document
+  const removeGuestDocument = (documentId: string) => {
+    const updatedDocuments = guestDocuments.filter(doc => doc.id !== documentId);
+    setGuestDocuments(updatedDocuments);
+    sessionStorage.setItem('guestDocuments', JSON.stringify(updatedDocuments));
+    
+    // Also remove from selected documents
+    setSelectedDocumentIds(prev => prev.filter(id => id !== documentId));
+  };
+
   // Format file size
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -472,23 +482,37 @@ const ModernGuestChatInterface: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {guestDocuments.map((doc) => (
-                <button
-                  key={doc.id}
-                  onClick={() => {
-                    setSelectedDocumentIds(prev =>
-                      prev.includes(doc.id)
-                        ? prev.filter(id => id !== doc.id)
-                        : [...prev, doc.id]
-                    );
-                  }}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                    selectedDocumentIds.includes(doc.id)
-                      ? 'bg-blue-100 border-blue-300 text-blue-800'
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {doc.name}
-                </button>
+                <div key={doc.id} className="relative group">
+                  <button
+                    onClick={() => {
+                      setSelectedDocumentIds(prev =>
+                        prev.includes(doc.id)
+                          ? prev.filter(id => id !== doc.id)
+                          : [...prev, doc.id]
+                      );
+                    }}
+                    className={`px-3 py-1 pr-8 text-xs rounded-full border transition-colors ${
+                      selectedDocumentIds.includes(doc.id)
+                        ? 'bg-blue-100 border-blue-300 text-blue-800'
+                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {doc.name}
+                  </button>
+                  {/* Delete button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`Delete "${doc.name}"?`)) {
+                        removeGuestDocument(doc.id);
+                      }
+                    }}
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete document"
+                  >
+                    <X size={8} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>

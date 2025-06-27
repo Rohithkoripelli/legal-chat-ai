@@ -483,23 +483,37 @@ const ModernChatInterface: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {documents.map((doc) => (
-                <button
-                  key={doc.id}
-                  onClick={() => {
-                    setSelectedDocumentIds(prev =>
-                      prev.includes(doc.id)
-                        ? prev.filter(id => id !== doc.id)
-                        : [...prev, doc.id]
-                    );
-                  }}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                    selectedDocumentIds.includes(doc.id)
-                      ? 'bg-blue-100 border-blue-300 text-blue-800'
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {doc.name}
-                </button>
+                <div key={doc.id} className="relative group">
+                  <button
+                    onClick={() => {
+                      setSelectedDocumentIds(prev =>
+                        prev.includes(doc.id)
+                          ? prev.filter(id => id !== doc.id)
+                          : [...prev, doc.id]
+                      );
+                    }}
+                    className={`px-3 py-1 pr-8 text-xs rounded-full border transition-colors ${
+                      selectedDocumentIds.includes(doc.id)
+                        ? 'bg-blue-100 border-blue-300 text-blue-800'
+                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {doc.name}
+                  </button>
+                  {/* Delete button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`Delete "${doc.name}"?`)) {
+                        deleteDocument(doc.id);
+                      }
+                    }}
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete document"
+                  >
+                    <X size={8} />
+                  </button>
+                </div>
               ))}
             </div>
           </div>

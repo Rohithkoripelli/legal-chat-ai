@@ -1,6 +1,6 @@
 // src/pages/GuestContractAnalysisPage.tsx
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Upload, FileText, Brain, Shield, CheckCircle, ArrowRight, AlertCircle, AlertTriangle, Calendar, User, DollarSign, Clock, RefreshCw, ArrowLeft, Zap, Users, ChevronDown, ChevronUp, X, Trash2 } from 'lucide-react';
 
 interface GuestDocument {
   id: string;
@@ -303,6 +303,13 @@ const GuestContractAnalysisPage: React.FC = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  // Remove guest document
+  const removeGuestDocument = (documentId: string) => {
+    const updatedDocuments = guestDocuments.filter(doc => doc.id !== documentId);
+    setGuestDocuments(updatedDocuments);
+    sessionStorage.setItem('guestDocuments', JSON.stringify(updatedDocuments));
   };
 
   // Function to format the executive summary with proper structure
@@ -804,9 +811,23 @@ const GuestContractAnalysisPage: React.FC = () => {
               {guestDocuments.map((document) => (
                 <div
                   key={document.id}
-                  className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300 cursor-pointer"
+                  className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300 cursor-pointer relative group"
                   onClick={() => analyzeContract(document)}
                 >
+                  {/* Delete button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`Delete "${document.name}"?`)) {
+                        removeGuestDocument(document.id);
+                      }
+                    }}
+                    className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10"
+                    title="Delete document"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                  
                   <div className="flex items-start space-x-4">
                     <div className="p-3 bg-blue-100 rounded-lg">
                       <FileText className="h-6 w-6 text-blue-600" />
