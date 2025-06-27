@@ -984,12 +984,6 @@
                 </div>
                 <span className="text-lg font-semibold text-gray-900">Legal AI</span>
               </div>
-              <p className="text-gray-600 mb-4">
-                {isSignedIn
-                  ? 'Professional AI Legal Document Analysis Assistant'
-                  : 'Free AI Legal Document Analysis - No Signup Required'
-                }
-              </p>
 
               {/* Footer Links */}
               <div className="flex justify-center space-x-6 mb-6 text-sm text-gray-600">
