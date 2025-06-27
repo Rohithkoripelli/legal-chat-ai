@@ -184,7 +184,7 @@ const ModernChatInterface: React.FC = () => {
       showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 lg:h-full`}>
       {/* Mobile header with close button */}
-      <div className="lg:hidden flex items-center justify-between p-3 border-b border-gray-200">
+      <div className="lg:hidden flex items-center justify-between p-3 border-b border-gray-200 mt-16">
         <h2 className="text-lg font-semibold text-gray-800">Chat History</h2>
         <button
           onClick={() => setShowSidebar(false)}
@@ -539,7 +539,7 @@ const ModernChatInterface: React.FC = () => {
         {/* Mobile control center */}
         <button
           onClick={() => setShowSidebar(true)}
-          className="lg:hidden fixed top-20 right-4 z-50 w-6 h-6 grid grid-cols-2 gap-0.5 hover:opacity-80 transition-opacity"
+          className="lg:hidden fixed top-24 right-2 z-50 w-6 h-6 grid grid-cols-2 gap-0.5 hover:opacity-80 transition-opacity"
         >
           <div className="bg-blue-500 rounded-sm w-2.5 h-2.5"></div>
           <div className="bg-gray-400 rounded-sm w-2.5 h-2.5"></div>
