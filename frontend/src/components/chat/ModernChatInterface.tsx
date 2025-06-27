@@ -180,8 +180,8 @@ const ModernChatInterface: React.FC = () => {
 
   // Render conversation sidebar
   const renderSidebar = () => (
-    <div className={`fixed inset-y-0 lg:left-0 right-0 lg:right-auto z-40 w-80 bg-white lg:border-r border-l lg:border-l-0 border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col ${
-      showSidebar ? 'translate-x-0' : 'translate-x-full lg:-translate-x-full lg:translate-x-0'
+    <div className={`fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col ${
+      showSidebar ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 lg:h-full`}>
       {/* Mobile header with close button */}
       <div className="lg:hidden flex items-center justify-between p-3 border-b border-gray-200">
@@ -539,17 +539,12 @@ const ModernChatInterface: React.FC = () => {
         {/* Mobile control center */}
         <button
           onClick={() => setShowSidebar(true)}
-          className="lg:hidden fixed top-20 right-4 z-50 w-10 h-10 bg-white hover:bg-gray-50 rounded-xl shadow-lg border border-gray-200 flex items-center justify-center transition-all duration-200 hover:shadow-xl"
+          className="lg:hidden fixed top-20 right-4 z-50 w-6 h-6 grid grid-cols-2 gap-0.5 hover:opacity-80 transition-opacity"
         >
-          <div className="w-5 h-5 relative">
-            {/* Control center icon with partition */}
-            <div className="absolute inset-0 grid grid-cols-2 gap-0.5">
-              <div className="bg-blue-500 rounded-tl-sm"></div>
-              <div className="bg-gray-300 rounded-tr-sm"></div>
-              <div className="bg-gray-300 rounded-bl-sm"></div>
-              <div className="bg-blue-500 rounded-br-sm"></div>
-            </div>
-          </div>
+          <div className="bg-blue-500 rounded-sm w-2.5 h-2.5"></div>
+          <div className="bg-gray-400 rounded-sm w-2.5 h-2.5"></div>
+          <div className="bg-gray-400 rounded-sm w-2.5 h-2.5"></div>
+          <div className="bg-blue-500 rounded-sm w-2.5 h-2.5"></div>
         </button>
 
         {/* Error display */}
