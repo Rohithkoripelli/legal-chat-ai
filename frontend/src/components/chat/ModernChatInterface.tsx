@@ -21,7 +21,7 @@ const ModernChatInterface: React.FC = () => {
     deleteConversation
   } = useChat();
 
-  const { documents, uploadDocument } = useDocuments();
+  const { documents, uploadDocument, deleteDocument } = useDocuments();
 
   // State management
   const [inputText, setInputText] = useState('');
