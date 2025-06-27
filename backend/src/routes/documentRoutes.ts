@@ -1,9 +1,8 @@
 import express, { Request, Response } from 'express';
-import multer from 'multer';
-import path from 'path';
 import Document from '../models/Document';
 import * as documentController from '../controllers/documentController';
 import { clerkAuthMiddleware } from '../middleware/auth';
+import { uploadSingleDocument, handleUploadError } from '../../uploads/upload';
 
 const router = express.Router();
 
@@ -14,37 +13,6 @@ router.use(clerkAuthMiddleware);
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter: (req: MulterRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    // Check file type
-    const allowedTypes = /\.(pdf|doc|docx|txt|rtf)$/i;
-    const extname = allowedTypes.test(path.extname(file.originalname));
-    const mimetype = /^(application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)|text\/(plain|rtf))$/.test(file.mimetype);
-    
-    if (mimetype && extname) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF, Word, Text, and RTF files are allowed!'));
-    }
-  }
-});
 
 // Test route - now shows only user's documents
 router.get('/test', async (req: Request, res: Response) => {
@@ -80,8 +48,8 @@ router.get('/test', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/documents/upload - Upload a document (protected)
-router.post('/upload', upload.single('document'), documentController.uploadDocument);
+// POST /api/documents/upload - Upload a document (protected) - using enhanced upload middleware
+router.post('/upload', uploadSingleDocument, handleUploadError, documentController.uploadDocument);
 
 // GET /api/documents - Get user's documents (protected)
 router.get('/', documentController.getDocuments);

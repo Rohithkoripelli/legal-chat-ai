@@ -47,9 +47,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Standard middleware (keeping your existing setup)
+// Standard middleware (keeping your existing setup + increased timeouts)
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Set timeout for incoming requests (important for file uploads)
+app.use((req, res, next) => {
+  // Set a longer timeout for upload endpoints
+  if (req.url.includes('/upload')) {
+    req.setTimeout(120000); // 2 minutes for uploads
+    res.setTimeout(120000);
+  }
+  next();
+});
 
 // Serve static files from uploads directory (keeping existing)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -204,6 +214,8 @@ const PORT = Number(process.env.PORT) || 3001;
 
 // START SERVER WITH KEEP-ALIVE SERVICE
 const server = app.listen(PORT, '0.0.0.0', () => {
+  // Set server timeout for file uploads
+  server.timeout = 120000; // 2 minutes
   console.log(`🚀 Legal Chat AI Backend running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Server URL: http://localhost:${PORT}`);

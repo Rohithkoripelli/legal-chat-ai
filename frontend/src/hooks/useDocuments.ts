@@ -109,6 +109,11 @@ export const useDocuments = () => {
       formData.append('document', file);
 
       console.log('🌐 Making authenticated upload request');
+      
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+      
       const response = await fetch(`https://legal-chat-ai.onrender.com/api/documents/upload`, {
         method: 'POST',
         headers: {
@@ -116,7 +121,10 @@ export const useDocuments = () => {
           // Don't set Content-Type for FormData - browser will set it with boundary
         },
         body: formData,
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       console.log('📡 Upload response status:', response.status);
 
@@ -135,6 +143,17 @@ export const useDocuments = () => {
       await fetchDocuments();
     } catch (error) {
       console.error('❌ Upload error:', error);
+      
+      // Handle specific error types
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Upload timed out. Please try again with a smaller file or check your connection.');
+        }
+        if (error.message.includes('Failed to fetch')) {
+          throw new Error('Network error during upload. Please check your connection and try again.');
+        }
+      }
+      
       throw error;
     }
   }, [getToken, isSignedIn, fetchDocuments]);
