@@ -1006,7 +1006,7 @@
 
               {!isSignedIn && (
                 <div className="mb-4">
-                  <div className="inline-flex items-center space-x-4 text-sm text-gray-600 mb-6">
+                  <div className="inline-flex items-center space-x-4 text-sm text-gray-600 mb-8">
                     <span className="flex items-center">
                       <FileText className="h-4 w-4 mr-1 text-blue-600" />
                       Free document upload
