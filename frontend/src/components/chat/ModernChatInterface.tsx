@@ -306,7 +306,7 @@ const ModernChatInterface: React.FC = () => {
             } : undefined}
             className={`flex gap-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
-            {!message.isUser && (
+            {!message.isUser && message.text && (
               <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
                 <Brain size={12} className="text-white" />
               </div>
