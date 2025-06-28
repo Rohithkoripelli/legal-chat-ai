@@ -285,38 +285,31 @@ const GuestContractAnalysisPage: React.FC = () => {
     setUploadError(null);
 
     try {
-      // Memory optimization: Upload files sequentially to prevent memory spikes
-      const uploadedDocs: GuestDocument[] = [];
-      
-      for (const file of selectedFiles) {
-        const formData = new FormData();
+      // Keep original multi-file upload to match existing backend API
+      const formData = new FormData();
+      selectedFiles.forEach(file => {
         formData.append('documents', file);
+      });
 
-        const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
-          method: 'POST',
-          body: formData,
-        });
+      const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
+        method: 'POST',
+        body: formData,
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Upload failed for ${file.name}`);
-        }
-
-        const result = await response.json();
-        const docs: GuestDocument[] = result.documents.map((doc: any) => ({
-          id: doc.id,
-          name: doc.name,
-          size: doc.size,
-          type: doc.type,
-          uploadedAt: new Date(doc.uploadedAt),
-          content: doc.content
-        }));
-        
-        uploadedDocs.push(...docs);
-        
-        // Memory cleanup: Explicit cleanup of FormData
-        formData.delete('documents');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
       }
+
+      const result = await response.json();
+      const uploadedDocs: GuestDocument[] = result.documents.map((doc: any) => ({
+        id: doc.id,
+        name: doc.name,
+        size: doc.size,
+        type: doc.type,
+        uploadedAt: new Date(doc.uploadedAt),
+        content: doc.content
+      }));
 
       setGuestDocuments(prev => [...prev, ...uploadedDocs]);
       sessionStorage.setItem('guestDocuments', JSON.stringify([...guestDocuments, ...uploadedDocs]));
