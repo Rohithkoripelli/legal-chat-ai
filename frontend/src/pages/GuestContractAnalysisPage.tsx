@@ -264,34 +264,59 @@ const GuestContractAnalysisPage: React.FC = () => {
   const uploadFiles = async () => {
     if (selectedFiles.length === 0) return;
 
+    // Memory optimization: Check file sizes before processing
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for guests
+    const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB total limit
+    
+    const oversizedFiles = selectedFiles.filter(file => file.size > MAX_FILE_SIZE);
+    const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+    
+    if (oversizedFiles.length > 0) {
+      setUploadError(`Files too large: ${oversizedFiles.map(f => f.name).join(', ')}. Maximum 5MB per file for guests.`);
+      return;
+    }
+    
+    if (totalSize > MAX_TOTAL_SIZE) {
+      setUploadError(`Total file size too large (${(totalSize / 1024 / 1024).toFixed(1)}MB). Maximum 10MB total for guests.`);
+      return;
+    }
+
     setUploading(true);
     setUploadError(null);
 
     try {
-      const formData = new FormData();
-      selectedFiles.forEach(file => {
+      // Memory optimization: Upload files sequentially to prevent memory spikes
+      const uploadedDocs: GuestDocument[] = [];
+      
+      for (const file of selectedFiles) {
+        const formData = new FormData();
         formData.append('documents', file);
-      });
 
-      const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
-        method: 'POST',
-        body: formData,
-      });
+        const response = await fetch(`${API_BASE_URL}/api/guest/documents/upload`, {
+          method: 'POST',
+          body: formData,
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Upload failed for ${file.name}`);
+        }
+
+        const result = await response.json();
+        const docs: GuestDocument[] = result.documents.map((doc: any) => ({
+          id: doc.id,
+          name: doc.name,
+          size: doc.size,
+          type: doc.type,
+          uploadedAt: new Date(doc.uploadedAt),
+          content: doc.content
+        }));
+        
+        uploadedDocs.push(...docs);
+        
+        // Memory cleanup: Explicit cleanup of FormData
+        formData.delete('documents');
       }
-
-      const result = await response.json();
-      const uploadedDocs: GuestDocument[] = result.documents.map((doc: any) => ({
-        id: doc.id,
-        name: doc.name,
-        size: doc.size,
-        type: doc.type,
-        uploadedAt: new Date(doc.uploadedAt),
-        content: doc.content
-      }));
 
       setGuestDocuments(prev => [...prev, ...uploadedDocs]);
       sessionStorage.setItem('guestDocuments', JSON.stringify([...guestDocuments, ...uploadedDocs]));

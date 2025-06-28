@@ -98,6 +98,13 @@ export const useDocuments = () => {
       throw new Error('Please log in to upload documents');
     }
 
+    // Memory optimization: Check file size before processing
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit for signed-in users
+    
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error(`File too large: ${file.name}. Maximum 10MB per file for signed-in users.`);
+    }
+
     console.log('📤 Uploading document:', file.name);
     try {
       const token = await getToken();
@@ -143,6 +150,9 @@ export const useDocuments = () => {
       if (result.processing) {
         console.log('📦 Large file upload - processing in background');
       }
+      
+      // Memory cleanup: Explicit cleanup of FormData
+      formData.delete('document');
       
       // Refresh document list
       await fetchDocuments();

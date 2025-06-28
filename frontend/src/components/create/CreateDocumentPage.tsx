@@ -183,6 +183,13 @@ const LogoUpload: React.FC<{
   };
 
   const fileToBase64 = (file: File): Promise<string> => {
+    // Memory optimization: Check file size before processing
+    const MAX_LOGO_SIZE = 5 * 1024 * 1024; // 5MB limit for logos
+    
+    if (file.size > MAX_LOGO_SIZE) {
+      throw new Error(`Logo file too large: ${file.name}. Maximum 5MB for logos.`);
+    }
+    
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
